@@ -44,7 +44,8 @@ gulp.task("angular-views", function() {
             prefix: "/partials/"
         }))
         .pipe(concat("angular-views.min.js"))
-        .pipe(gulp.dest(paths["public"] + "/scripts"));
+        .pipe(gulp.dest(paths["public"] + "/scripts"))
+        .pipe(livereload());
 });
 
 gulp.task("bower", function() {
@@ -124,10 +125,15 @@ gulp.task("styles", function() {
 });
 
 gulp.task("views", function() {
-    return gulp.src(paths.views).pipe(gulp.dest(paths["public"])).pipe(livereload());
+    return gulp.src([
+            paths.views]
+        )
+        .pipe(gulp.dest(paths["public"]))
+        .pipe(livereload());
 });
 
 gulp.task("watch", function() {
+    livereload.listen();
     gulp.watch(paths.partials, ["angular-views"]);
     gulp.watch(paths.bowerjson, ["bower"]);
     gulp.watch(paths.images, ["images"]);
