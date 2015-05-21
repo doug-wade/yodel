@@ -1,29 +1,31 @@
 var yodelApp = angular.module("yodel", [
     'about',
     'events',
-    'ngRoute',
+    'ui.router',
     'profile',
     'nav'
 ]);
 
 yodelApp.config([
-    '$routeProvider',
-    function($routeProvider) {
-        $routeProvider.
-            when('/events', {
+    '$stateProvider',
+    '$urlRouterProvider',
+    function($stateProvider, $urlRouterProvider) {
+        $urlRouterProvider.otherwise('/events');
+        $stateProvider.
+            state('events', {
+                url: '/events',
                 templateUrl: '/partials/events-browser/events.html',
                 controller: 'EventsCtrl'
             }).
-            when('/profile', {
+            state('profile', {
+                url: '/profile',
                 templateUrl: '/partials/profile/profile.html',
                 controller: 'ProfileCtrl'
             }).
-            when('/about', {
+            state('about', {
+                url: '/about',
                 templateUrl: '/partials/about/about.html',
                 controller: 'AboutCtrl'
-            }).
-            otherwise({
-                redirectTo: '/events'
             });
     }
 ]);

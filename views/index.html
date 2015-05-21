@@ -2,22 +2,20 @@
 <html lang="en">
 
 <head>
+    <meta charset="utf-8" />
     <title>Yodel</title>
-    <link rel="stylesheet" type="text/css" href="/vendor/bootstrap/dist/css/bootstrap.min.css"/>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width"/>
+    <link rel="stylesheet" type="text/css" href="/vendor/ionic/css/ionic.min.css"/>
     <link rel="stylesheet" type="text/css" href="/css/app.css"/>
-    <script src="/vendor/jquery/dist/jquery.js"></script>
-    <script src="/vendor/angular/angular.min.js"></script>
-    <script src="/vendor/angular-route/angular-route.min.js"></script>
+    <script src="/vendor/ionic/js/ionic.bundle.js"></script>
+    <!-- TODO include cordova.js -->
     <script src="/scripts/all.js"></script>
     <script src="/scripts/angular-views.min.js"></script>
 </head>
 
 <body ng-app="yodel">
-
-    <nav ng-include="'/partials/nav/nav.html'" class="navbar navbar-default navbar-fixed-top" role="navigation"></nav>
-    <div class="container">
-        <div ng-view></div>
-    </div>
+    <nav ng-include="'/partials/nav/nav.html'" role="navigation"></nav>
+    <ion-content ui-view></ion-content>
 
 </body>
 
