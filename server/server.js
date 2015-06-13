@@ -7,6 +7,7 @@ var parse      = require("co-body");
 var route      = require("koa-route");
 var serve      = require("koa-static");
 var session    = require("koa-session");
+var validate   = require("koa-validate");
 var views      = require("co-views");
 
 var app        = module.exports = koa();
@@ -19,6 +20,7 @@ app.use(bunyan(logger, {
 app.use(json());
 app.use(session());
 app.use(bodyParser());
+app.use(validate());
 
 var render = views("views/");
 
@@ -32,56 +34,49 @@ app.use(route.get("/", function*() {
 
 var users = [];
 app.use(route.post("/login", function*() {
-    var login = this.request.body;
-
-    this.status = 400;
-    if (!login) {
-        this.body = 'Must provide a username';
-    } else if (!login.username) {
-        this.body = 'Must provide a username';
-    } else if (!login.password) {
-        this.body = 'Must provide a password';
-    } else {
-        this.status = 401;
-        var username = login.username;
-        var matchingUsers = users.filter(function(element) { return element.username === username });
-        if (matchingUsers.length === 0) {
-            this.body = 'Unauthorized';
-        } else if (matchingUsers[0].password !== login.password) {
-            this.body = 'Unauthorized';
-        } else {
-            this.status = 200;
-            this.body = 'success';
-        }
+    this.checkBody('username').notEmpty();
+    this.checkBody('password').notEmpty();
+    if (this.errors) {
+        this.status = 400;
+        this.body = this.errors;
+        return;
     }
+
+    var login = this.request.body;
+    var username = login.username;
+    var matchingUsers = users.filter(function(element) { return element.username === username });
+    if (matchingUsers.length === 0 || matchingUsers[0].password !== login.password) {
+        this.status = 401;
+        this.body = 'Unauthorized';
+        return;
+    }
+
+    this.status = 200;
+    this.body = 'success';
 }));
 
 app.use(route.post("/signup", function*() {
     var signup = this.request.body;
+    this.checkBody('username').notEmpty();
+    this.checkBody('email').isEmail();
+    this.checkBody('password1').notEmpty().len(6);
+    this.checkBody('password2').notEmpty().eq(signup.password1, 'Passwords must match');
 
-    // signup validation
-    this.status = 400;
-    if (!signup) {
-        this.body = 'Must provide a username'
-    } else if (!signup.username) {
-        this.body = 'Must provide a username';
-    } else if (!signup.email) {
-        this.body = 'Must provide an email';
-    } else if (!signup.password1) {
-        this.body = 'Must provide a password';
-    } else if (!signup.password2) {
-        this.body = 'Must confirm password';
-    } else if (signup.password1.length < 6) {
-        this.body = 'Password must be at least 6 characters long';
-    } else if (signup.password1 !== signup.password2) {
-        this.body = 'Passwords must match';
-    } else if (isUsernameTaken(signup.username)) {
-        this.body = 'Username is in use';
-    } else {
-        users.push({ username: signup.username, email: signup.email, password: signup.password1 });
-        this.body = 'success';
-        this.status = 200;
+    if (isUsernameTaken(signup.username)) {
+        if (!this.errors) {
+            this.errors = [];
+        }
+        this.errors.push({ username: 'Username is taken' });
     }
+
+    if (this.errors) {
+        this.status = 400;
+        this.body = this.errors;
+        return;
+    }
+
+    users.push({ username: signup.username, email: signup.email, password: signup.password1 });
+    this.body = 'success';
 
     function isUsernameTaken(username) {
         var matchingUsers = users.filter(function(element) { return element.username === username; });
