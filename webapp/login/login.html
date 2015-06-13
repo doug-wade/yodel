@@ -1,0 +1,31 @@
+<ion-view>
+
+    <ion-nav-title>
+        <h1>Log In</h1>
+    </ion-nav-title>
+
+    <ion-content class="has-header">
+        <form name="loginForm" novalidate="" ng-submit="login(loginForm, loginParams)">
+            <label class="item item-input" ng-class="{ 'has-errors' : loginForm.username.$invalid, 'no-errors' : loginForm.username.$valid }" ng-messages-include="/partials/login/error-list.html">
+                <span class="input-label">Username</span>
+                <input type="text" placeholder="Enter your username" name="username" ng-model="loginParams.username" required />
+            </label>
+            <div class="error-container" ng-show="loginForm.username.$error" ng-messages="loginForm.username.$error" ng-messages-include="/partials/login/error-list.html"></div>
+
+            <label class="item item-input" ng-class="{ 'has-errors' : loginForm.password.$invalid, 'no-errors' : loginForm.password.$valid }" ng-messages-include="/partials/login/error-list.html">
+                <span class="input-label">Password</span>
+                <input type="password" placeholder="Enter your password" name="password" ng-model="loginParams.password" required ng-minlength="6"/>
+            </label>
+            <div class="error-container" ng-show="loginForm.password.$error" ng-messages="loginForm.password.$error" ng-messages-include="/partials/login/error-list.html"></div>
+        </form>
+        <button type="submit" class="button button-block button-positive" ng-click="login(loginForm, loginParams)">
+            Log In
+        </button>
+
+        <br/>
+        <div>
+          <p>Don't have an account yet? <a ui-sref="signup">Sign up now!</a></p>
+        </div>
+    </ion-content>
+
+</ion-view>

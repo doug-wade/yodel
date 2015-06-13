@@ -1,0 +1,39 @@
+<ion-view>
+
+    <ion-nav-title>
+        <h1>Sign Up</h1>
+    </ion-nav-title>
+
+    <ion-content class="has-header">
+        <form name="signupForm" novalidate="" ng-submit="signUp(signupForm, signupParams)">
+            <label class="item item-input" ng-class="{ 'has-errors' : signupForm.username.$invalid, 'no-errors' : signupForm.username.$valid }" ng-messages-include="/partials/signup/error-list.html">
+                <span class="input-label">Username</span>
+                <input type="text" placeholder="Pick a username..." name="username" ng-model="signupParams.username" required />
+            </label>
+            <div class="error-container" ng-show="signupForm.username.$error" ng-messages="signupForm.username.$error" ng-messages-include="/partials/signup/error-list.html"></div>
+
+            <label class="item item-input" ng-class="{ 'has-errors' : signupForm.email.$invalid, 'no-errors' : signupForm.email.$valid }" ng-messages-include="/partials/signup/error-list.html">
+                <span class="input-label">Email</span>
+                <input type="email" placeholder="Enter your email..." name="email" ng-model="signupParams.email" required />
+            </label>
+            <div class="error-container" ng-show="signupForm.email.$error" ng-messages="signupForm.email.$error" ng-messages-include="/partials/signup/error-list.html"></div>
+
+            <label class="item item-input" ng-class="{ 'has-errors' : signupForm.password1.$invalid, 'no-errors' : signupForm.password1.$valid }" ng-messages-include="/partials/signup/error-list.html">
+                <span class="input-label">Password</span>
+                <input type="password" placeholder="Choose a password..." name="password1" ng-model="signupParams.password1" required ng-minlength="6" />
+            </label>
+            <div class="error-container" ng-show="signupForm.password1.$error" ng-messages="signupForm.password1.$error" ng-messages-include="/partials/signup/error-list.html"></div>
+
+            <label class="item item-input" ng-class="{ 'has-errors' : signupForm.password2.$invalid, 'no-errors' : signupForm.password2.$valid }" ng-messages-include="/partials/signup/error-list.html">
+                <span class="input-label">Password</span>
+                <input type="password" placeholder="Confirm your password..." name="password2" ng-model="signupParams.password2" required compare-to="signupForm.password1" />
+            </label>
+            <div class="error-container" ng-show="signupForm.password2.$error" ng-messages="signupForm.password2.$error" ng-messages-include="/partials/signup/error-list.html"></div>
+        </form>
+
+        <button type="submit" class="button button-block button-positive" ng-click="signUp(signupForm, signupParams)">
+            Create Account
+        </button>
+    </ion-content>
+
+</ion-view>
