@@ -35,7 +35,7 @@ yodelApp.config([
                 controller: 'EventsCtrl'
             }).
             state('profile', {
-                url: '/profile',
+                url: '/profile/:username',
                 templateUrl: '/partials/profile/profile.html',
                 controller: 'ProfileCtrl'
             }).

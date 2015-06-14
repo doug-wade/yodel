@@ -1,12 +1,14 @@
 angular.module('profile',[
 ]).controller('ProfileCtrl', [
     '$http',
+    '$location',
     '$q',
     '$scope',
-    function($http, $q, $scope) {
+    '$stateParams',
+    function($http, $location, $q, $scope, $stateParams) {
         function initialize() {
-            getUserDetails('ivan').then(function(response) { $scope.user = response.data; }, errorHandler);
-            getUserPortfolios('ivan').then(function(response) { $scope.portfolios = response.data; }, errorHandler);
+            getUserDetails($stateParams.username).then(function(response) { $scope.user = response.data; }, errorHandler);
+            getUserPortfolios($stateParams.username).then(function(response) { $scope.portfolios = response.data; }, errorHandler);
         }
 
         function errorHandler(data) {
