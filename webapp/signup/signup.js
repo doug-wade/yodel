@@ -6,11 +6,13 @@ angular.module('signup', [
     function($http, $location, $scope) {
         function initialize() {
             $scope.signUp = signUp;
+            $scope.showValidation = false;
             $scope.signupParams = {};
         }
 
         function signUp(form, inputs) {
             if (form && form.$valid) {
+                initialize();
                 $http.post('/signup', inputs).then(
                     function() {
                         $location.url('/profile');
@@ -18,6 +20,8 @@ angular.module('signup', [
                     function(data) {
                         console.log('Unable to sign up.', data);
                     });
+            } else if (form && form.$invalid) {
+                $scope.showValidation = true;
             }
         }
 

@@ -1,5 +1,6 @@
 <ion-view view-title="Login" align-title="left">
-    <ion-content class="has-header" style="background: url(images/login.png) center; background-size: cover;">
+    <ion-content class="has-header splash">
+
         <div class="hero no-header flat">
             <div class="content">
                 <div class="app-icon"></div>
@@ -7,6 +8,7 @@
                 <h4>Don't have an account yet? <a ui-sref="signup">Sign up now!</a></h4>
             </div>
         </div>
+
         <div class="list">
             <form name="loginForm" novalidate="" ng-submit="login(loginForm, loginParams)">
                 <label class="item item-input login" ng-class="{ 'has-errors' : loginForm.username.$invalid && showValidation, 'no-errors' : loginForm.username.$valid || !showValidation }" ng-messages-include="/partials/login/error-list.html">
@@ -25,9 +27,9 @@
             </form>
         </div>
         <div class="padding">
-            <button ng-click="login(loginForm, loginParams)" class="button button-full button-assertive ink">Login</button>
+            <button type="submit" ng-click="login(loginForm, loginParams)" class="button button-full button-assertive ink">Login</button>
         </div>
-        <div class="button-bar social-login">
+        <div class="button-bar">
             <button class="button button-small button-border icon-left ion-social-google button-assertive-900">Google+</button>
             <button class="button button-small button-border icon-left ion-social-twitter button-calm-900">Twitter</button>
             <button class="button button-small button-border icon-left ion-social-facebook button-positive-900">Facebook</button>

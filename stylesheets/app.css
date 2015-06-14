@@ -137,3 +137,8 @@ label.login {
     -webkit-transition: all .2s ease;
     z-index: 2;
 }
+
+.splash {
+    background: url(../images/gradient.png) center;
+    background-size: cover;
+}
