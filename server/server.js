@@ -28,11 +28,63 @@ app.use(serve("public/"));
 
 require("koa-qs")(app);
 
+// ===========================
+// Test data
+// ===========================
+var users = [
+    {
+        username: 'noel',
+        email: 'noel@yodel.to',
+        password: 'test'
+    },
+    {
+        username: 'ivan',
+        email: 'ivan@yodel.to',
+        password: 'test'
+    }
+];
+var userDetails = {
+    'noel': {
+        fullName: 'Noel Sardana',
+        artistType: 'Hipster Coder',
+        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+    },
+    'ivan': {
+        fullName: 'Ivan Melyakov',
+        artistType: 'Coder Bro',
+        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+    }
+};
+var userPortfolios = {
+    'noel': [
+        {
+            imageUrl: 'images/jon-snow.jpg',
+            title: 'Spring Collection',
+            caption: 'Flowers, trees, and bees'
+        },
+        {
+            imageUrl: 'images/sansa.jpg',
+            title: 'Winter Collection',
+            caption: 'Hot cocoa and snow angels'
+        }
+    ],
+    'ivan': [
+        {
+            imageUrl: 'images/tyrion.jpg',
+            title: 'Sounds of Seattle',
+            caption: 'There ain\'t no riot here...'
+        }
+    ]
+};
+
+// ===========================
+// Routes
+// ===========================
+
 app.use(route.get("/", function*() {
     this.redirect("/index.html");
 }));
 
-var users = [];
 app.use(route.post("/login", function*() {
     this.checkBody('username').notEmpty();
     this.checkBody('password').notEmpty();
@@ -81,6 +133,24 @@ app.use(route.post("/signup", function*() {
     function isUsernameTaken(username) {
         var matchingUsers = users.filter(function(element) { return element.username === username; });
         return matchingUsers.length > 0;
+    }
+}));
+
+app.use(route.get("/user/:username", function*(username) {
+    // TODO check authorization
+
+    this.body = [];
+    if (userDetails[username]) {
+        this.body = userDetails[username];
+    }
+}));
+
+app.use(route.get("/user/:username/portfolio", function*(username) {
+    // TODO check authorizatoin
+
+    this.body = [];
+    if (userPortfolios[username]) {
+        this.body = userPortfolios[username];
     }
 }));
 
