@@ -16,7 +16,7 @@
             <h4 class="content padding double-padding-x">Portfolios</h4>
             <div class="list">
                 <a collection-repeat="portfolio in portfolios" class="item item-avatar item-icon-right">
-                    <img src="{{ portfolio.imageUrl }}">
+                    <img ng-src="{{ portfolio.imageUrl }}">
                     <h2>{{ portfolio.title }}</h2>
                     <p>{{ portfolio.caption }}</p>
                     <i class="icon ion-arrow-right-c muted"></i>
