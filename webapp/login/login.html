@@ -1,31 +1,55 @@
-<ion-view>
+<!--<ion-view>-->
 
-    <ion-nav-title>
-        <h1>Log In</h1>
-    </ion-nav-title>
+    <!--<ion-nav-title>-->
+        <!--<h1>Log In</h1>-->
+    <!--</ion-nav-title>-->
 
-    <ion-content class="has-header">
-        <form name="loginForm" novalidate="" ng-submit="login(loginForm, loginParams)">
-            <label class="item item-input" ng-class="{ 'has-errors' : loginForm.username.$invalid, 'no-errors' : loginForm.username.$valid }" ng-messages-include="/partials/login/error-list.html">
-                <span class="input-label">Username</span>
-                <input type="text" placeholder="Enter your username" name="username" ng-model="loginParams.username" required />
-            </label>
-            <div class="error-container" ng-show="loginForm.username.$error" ng-messages="loginForm.username.$error" ng-messages-include="/partials/login/error-list.html"></div>
+    <!--<ion-content class="has-header">-->
+        <!--<form name="loginForm" novalidate="" ng-submit="login(loginForm, loginParams)">-->
+            <!--<label class="item item-input" ng-class="{ 'has-errors' : loginForm.username.$invalid, 'no-errors' : loginForm.username.$valid }" ng-messages-include="/partials/login/error-list.html">-->
+                <!--<span class="input-label">Username</span>-->
+                <!--<input type="text" placeholder="Enter your username" name="username" ng-model="loginParams.username" required />-->
+            <!--</label>-->
+            <!--<div class="error-container" ng-show="loginForm.username.$error" ng-messages="loginForm.username.$error" ng-messages-include="/partials/login/error-list.html"></div>-->
 
-            <label class="item item-input" ng-class="{ 'has-errors' : loginForm.password.$invalid, 'no-errors' : loginForm.password.$valid }" ng-messages-include="/partials/login/error-list.html">
-                <span class="input-label">Password</span>
-                <input type="password" placeholder="Enter your password" name="password" ng-model="loginParams.password" required ng-minlength="6"/>
-            </label>
-            <div class="error-container" ng-show="loginForm.password.$error" ng-messages="loginForm.password.$error" ng-messages-include="/partials/login/error-list.html"></div>
-        </form>
-        <button type="submit" class="button button-block button-positive" ng-click="login(loginForm, loginParams)">
-            Log In
-        </button>
+            <!--<label class="item item-input" ng-class="{ 'has-errors' : loginForm.password.$invalid, 'no-errors' : loginForm.password.$valid }" ng-messages-include="/partials/login/error-list.html">-->
+                <!--<span class="input-label">Password</span>-->
+                <!--<input type="password" placeholder="Enter your password" name="password" ng-model="loginParams.password" required ng-minlength="6"/>-->
+            <!--</label>-->
+            <!--<div class="error-container" ng-show="loginForm.password.$error" ng-messages="loginForm.password.$error" ng-messages-include="/partials/login/error-list.html"></div>-->
+        <!--</form>-->
+        <!--<button type="submit" class="button button-block button-positive" ng-click="login(loginForm, loginParams)">-->
+            <!--Log In-->
+        <!--</button>-->
 
-        <br/>
-        <div>
-          <p>Don't have an account yet? <a ui-sref="signup">Sign up now!</a></p>
+        <!--<br/>-->
+        <!--<div>-->
+          <!--<p>Don't have an account yet? <a ui-sref="signup">Sign up now!</a></p>-->
+        <!--</div>-->
+    <!--</ion-content>-->
+
+<!--</ion-view>-->
+
+
+<ion-view view-title="Login" align-title="left">
+    <ion-content style="background: url(images/login.jpg) center; background-size: cover;">
+        <div class="hero no-header flat">
+            <div class="content">
+                <div class="app-icon"></div>
+                <h1>Yodel</h1>
+            </div>
+        </div>
+        <div class="list">
+            <ion-md-input placeholder="Username" highlight-color="balanced" type="text"></ion-md-input>
+            <ion-md-input placeholder="Password" highlight-color="energized" type="password"></ion-md-input>
+        </div>
+        <div class="padding">
+            <button ui-sref="app.profile" class="button button-full button-assertive ink">Login</button>
+        </div>
+        <div class="button-bar social-login">
+            <button class="button button-small button-border icon-left ion-social-google button-assertive-900">Google+</button>
+            <button class="button button-small button-border icon-left ion-social-twitter button-calm-900">Twitter</button>
+            <button class="button button-small button-border icon-left ion-social-facebook button-positive-900">Facebook</button>
         </div>
     </ion-content>
-
 </ion-view>

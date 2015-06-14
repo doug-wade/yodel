@@ -1,11 +1,27 @@
-<ion-view>
-
-    <ion-nav-title>
-        <h1>Profile</h1>
-    </ion-nav-title>
-
+<ion-view view-title="Profile">
     <ion-content class="has-header">
-        <p>{{ message }}</p>
-    </ion-content>
+        <div class="hero" style="background-image: url('images/profile-bg.jpg');">
+            <div class="content">
+                <div class="avatar" style="background-image: url('images/daenerys.jpg');"></div>
+                <h3><a class="light">{{ user.name }}</a></h3>
+                <h4>{{ user.nickname }}</h4>
+            </div>
+        </div>
+        <div>
+            <h4 class="content padding double-padding-x">Description</h4>
+            <p class="list">{{ user.description }}</p>
+        </div>
 
+        <div>
+            <h4 class="content padding double-padding-x">Portfolios</h4>
+            <div class="list">
+                <a collection-repeat="portfolio in portfolios" class="item item-avatar item-icon-right">
+                    <img src="{{ portfolio.imageUrl }}">
+                    <h2>{{ portfolio.title }}</h2>
+                    <p>{{ portfolio.caption }}</p>
+                    <i class="icon ion-arrow-right-c muted"></i>
+                </a>
+            </div>
+        </div>
+    </ion-content>
 </ion-view>
