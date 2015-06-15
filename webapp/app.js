@@ -41,11 +41,11 @@ yodelApp.factory('jwtAuthInterceptor', [
                 // TODO add a success toast
                 return response || $q.when(response);
             },
-            responseError: function(response) {
+            responseError: function(rejection) {
                 if (response.status === 401 && $location.url() !== '/login') {
                     $location.url('/login');
                 }
-                return response || $q.when(response);
+                return $q.reject(rejection);
             }
         };
     }
