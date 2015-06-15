@@ -1,5 +1,6 @@
 <div class="tabs tabs-icon-top">
-    <a class="tab-item HighlightTab" ui-sref="profile"><i class="icon ion-person"></i>Profile</a>
+    <a ng-if="username" class="tab-item HighlightTab" ui-sref="profile({ username: username })"><i class="icon ion-person"></i>Profile</a>
+    <a ng-if="!username" class="tab-item HighlightTab" ui-sref="login"><i class="icon ion-person"></i>Login</a>
     <a class="tab-item HighlightTab" ui-sref="events"><i class="icon ion-android-film"></i>Events</a>
     <a class="tab-item HighlightTab" ui-sref="about"><i class="icon ion-information-circled"></i>About</a>
 </div>
