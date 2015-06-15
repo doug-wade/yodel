@@ -3,7 +3,8 @@ angular.module('login', [
     '$http',
     '$location',
     '$scope',
-    function($http, $location, $scope) {
+    '$window',
+    function($http, $location, $scope, $window) {
         function initialize() {
             $scope.login = login;
             $scope.showValidation = false;
@@ -14,11 +15,13 @@ angular.module('login', [
             if (form && form.$valid) {
                 initialize();
                 $http.post('/login', inputs).then(
-                    function() {
-                        $location.url('/profile');
+                    function(response) {
+                        $window.sessionStorage.token = response.data.token;
+                        $location.url('/profile/' + response.data.username);
                     },
                     function(data) {
-                        console.log('Unable to sign in.', data);
+                        delete $window.sessionStorage.token;
+                        $scope.showValidation = true;
                     });
             } else if (form && form.$invalid) {
                 $scope.showValidation = true;

@@ -7,6 +7,9 @@ angular.module('profile',[
     '$stateParams',
     function($http, $location, $q, $scope, $stateParams) {
         function initialize() {
+            $scope.user = {};
+            $scope.portfolios = [];
+
             getUserDetails($stateParams.username).then(function(response) { $scope.user = response.data; }, errorHandler);
             getUserPortfolios($stateParams.username).then(function(response) { $scope.portfolios = response.data; }, errorHandler);
         }

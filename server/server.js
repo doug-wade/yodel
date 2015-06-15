@@ -1,6 +1,7 @@
 var bodyParser = require("koa-bodyparser");
 var bunyan     = require("koa-bunyan");
 var json       = require("koa-json");
+var jwt        = require("koa-jwt");
 var koa        = require("koa");
 var logger     = require("./logger.js");
 var parse      = require("co-body");
@@ -17,6 +18,20 @@ app.use(bunyan(logger, {
     timeLimit: 250
 }));
 
+// TODO load this from a file using a "refresher" strategy; see https://github.com/auth0/node-jsonwebtoken
+var jwtAuthSecret = 'yodel-super-secret';
+app.use(jwt({ secret: jwtAuthSecret }).unless({ path : [
+    /^\/$/,
+    /^\/css/,
+    /^\/images/,
+    /^\/js/,
+    /^\/login/,
+    /^\/public/,
+    /^\/scripts/,
+    /^\/signup/,
+    /^\/vendor/
+]}));
+
 app.use(json());
 app.use(session());
 app.use(bodyParser());
@@ -31,18 +46,18 @@ require("koa-qs")(app);
 // ===========================
 // Test data
 // ===========================
-var users = [
-    {
+var users = {
+    'noel': {
         username: 'noel',
         email: 'noel@yodel.to',
-        password: 'test'
+        password: 'testtest'
     },
-    {
+    'ivan': {
         username: 'ivan',
         email: 'ivan@yodel.to',
-        password: 'test'
+        password: 'testtest'
     }
-];
+};
 var userDetails = {
     'noel': {
         fullName: 'Noel Sardana',
@@ -86,6 +101,7 @@ app.use(route.get("/", function*() {
 }));
 
 app.use(route.post("/login", function*() {
+    // basic login validation
     this.checkBody('username').notEmpty();
     this.checkBody('password').notEmpty();
     if (this.errors) {
@@ -95,16 +111,32 @@ app.use(route.post("/login", function*() {
     }
 
     var login = this.request.body;
-    var username = login.username;
-    var matchingUsers = users.filter(function(element) { return element.username === username });
-    if (matchingUsers.length === 0 || matchingUsers[0].password !== login.password) {
+    var user = getUser(login.username);
+    if (isInvalidPassword(user, login.password)) {
         this.status = 401;
         this.body = 'Unauthorized';
         return;
     }
 
-    this.status = 200;
-    this.body = 'success';
+    this.body = {
+        username: user.username,
+        token: jwt.sign(constructProfile(user), jwtAuthSecret, { expiresInMinutes: 1 })
+    };
+
+    function constructProfile(/* Object */ user) {
+        return {
+            username: user.username,
+            email: user.email
+        };
+    }
+
+    function getUser(/* String */ username) {
+        return users[username];
+    }
+
+    function isInvalidPassword(/* Object */ user, /* String */ password) {
+        return user === undefined || user.password !== password;
+    }
 }));
 
 app.use(route.post("/signup", function*() {
@@ -130,7 +162,7 @@ app.use(route.post("/signup", function*() {
     users.push({ username: signup.username, email: signup.email, password: signup.password1 });
     this.body = 'success';
 
-    function isUsernameTaken(username) {
+    function isUsernameTaken(/* String */ username) {
         var matchingUsers = users.filter(function(element) { return element.username === username; });
         return matchingUsers.length > 0;
     }

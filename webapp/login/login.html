@@ -21,7 +21,7 @@
 
                 <label class="item item-input login" ng-class="{ 'has-errors' : loginForm.password.$invalid && showValidation, 'no-errors' : loginForm.password.$valid || !showValidation }" ng-messages-include="/partials/login/error-list.html">
                     <span>Password</span>
-                    <input type="text" placeholder="Enter your password" name="password" ng-model="loginParams.password" required ng-minlength="6"/>
+                    <input type="password" placeholder="Enter your password" name="password" ng-model="loginParams.password" required ng-minlength="6"/>
                 </label>
                 <div class="error-container" ng-show="loginForm.password.$error && showValidation" ng-messages="loginForm.password.$error" ng-messages-include="/partials/login/error-list.html"></div>
             </form>

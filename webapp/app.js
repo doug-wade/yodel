@@ -23,10 +23,39 @@ yodelApp.run(
     }
 );
 
+yodelApp.factory('jwtAuthInterceptor', [
+    '$location',
+    '$rootScope',
+    '$q',
+    '$window',
+    function ($location, $rootScope, $q, $window) {
+        return {
+            request: function(config) {
+                config.headers = config.headers || {};
+                if ($window.sessionStorage.token) {
+                    config.headers.Authorization = 'Bearer ' + $window.sessionStorage.token;
+                }
+                return config;
+            },
+            response: function(response) {
+                // TODO add a success toast
+                return response || $q.when(response);
+            },
+            responseError: function(response) {
+                if (response.status === 401 && $location.url() !== '/login') {
+                    $location.url('/login');
+                }
+                return response || $q.when(response);
+            }
+        };
+    }
+]);
+
 yodelApp.config([
+    '$httpProvider',
     '$stateProvider',
     '$urlRouterProvider',
-    function($stateProvider, $urlRouterProvider) {
+    function($httpProvider, $stateProvider, $urlRouterProvider) {
         $urlRouterProvider.otherwise('/events');
         $stateProvider.
             state('events', {
@@ -54,5 +83,7 @@ yodelApp.config([
                 templateUrl: '/partials/signup/signup.html',
                 controller: 'SignupCtrl'
             });
+
+        $httpProvider.interceptors.push('jwtAuthInterceptor');
     }
 ]);
