@@ -65,6 +65,7 @@ yodelApp.config([
                 templateUrl: '/partials/events-browser/events.html',
                 controller: 'EventsCtrl'
             }).
+            // TODO redirect a user from /profile to /profile/username (pull the username from the $rootScope)
             state('profile', {
                 url: '/profile/:username',
                 templateUrl: '/partials/profile/profile.html',
@@ -92,5 +93,7 @@ yodelApp.config([
             });
 
         $httpProvider.interceptors.push('jwtAuthInterceptor');
+
+        // TODO if a user reloads the page, the $rootScope is wiped even if $window.sessionStorage.token still exists (and contains the username); we should re-create the $rootScope username state from the JWT token in this case
     }
 ]);
