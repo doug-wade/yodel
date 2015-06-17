@@ -139,6 +139,11 @@ label.login {
 }
 
 .splash {
-    background: url(../images/gradient.png) center;
-    background-size: cover;
+    background-color: #886aea;
+}
+
+.button.button-energized {
+    background-color: #fad13b;
+    color: #362a5e;
+    font-weight: 700;
 }

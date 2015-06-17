@@ -1,10 +1,11 @@
-<ion-view view-title="Sign Up" align-title="left">
-    <ion-content class="has-header splash">
+<ion-view view-title="Sign Up" align-title="left" hide-nav-bar="true">
+    <ion-content class="splash">
 
         <div class="hero no-header flat">
             <div class="content">
                 <div class="app-icon"></div>
                 <h1>Yodel</h1>
+                <h4>Don't have an account yet? <a ui-sref="signup">Sign up now!</a></h4>
             </div>
         </div>
 
@@ -43,7 +44,7 @@
         </div>
 
         <div class="padding">
-            <button type="submit" ng-click="signUp(signupForm, signupParams)" class="button button-full button-assertive ink">Create Account</button>
+            <button type="submit" ng-click="signUp(signupForm, signupParams)" class="button button-full button-energized ink">Create Account</button>
         </div>
     </ion-content>
 
