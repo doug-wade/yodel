@@ -123,13 +123,6 @@ app.use(route.post("/login", function*() {
         token: jwt.sign(constructProfile(user), jwtAuthSecret, { expiresInMinutes: 1 })
     };
 
-    function constructProfile(/* Object */ user) {
-        return {
-            username: user.username,
-            email: user.email
-        };
-    }
-
     function getUser(/* String */ username) {
         return users[username];
     }
@@ -139,7 +132,15 @@ app.use(route.post("/login", function*() {
     }
 }));
 
+function constructProfile(/* Object */ user) {
+    return {
+        username: user.username,
+        email: user.email
+    };
+}
+
 app.use(route.post("/signup", function*() {
+    // basic signup validation
     var signup = this.request.body;
     this.checkBody('username').notEmpty();
     this.checkBody('email').isEmail();
@@ -160,6 +161,11 @@ app.use(route.post("/signup", function*() {
     }
 
     users.push({ username: signup.username, email: signup.email, password: signup.password1 });
+
+    this.body = {
+        username: signup.username,
+        token: jwt.sign(constructProfile(signup), jwtAuthSecret, { expiresInMinutes: 1 })
+    };
     this.body = 'success';
 
     function isUsernameTaken(/* String */ username) {

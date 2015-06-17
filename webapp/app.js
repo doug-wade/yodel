@@ -24,11 +24,11 @@ yodelApp.run(
 );
 
 yodelApp.factory('jwtAuthInterceptor', [
-    '$location',
+    '$injector',
     '$rootScope',
     '$q',
     '$window',
-    function ($location, $rootScope, $q, $window) {
+    function ($injector, $rootScope, $q, $window) {
         return {
             request: function(config) {
                 config.headers = config.headers || {};
@@ -42,8 +42,9 @@ yodelApp.factory('jwtAuthInterceptor', [
                 return response || $q.when(response);
             },
             responseError: function(response) {
-                if (response.status === 401 && $location.url() !== '/login') {
-                    $location.url('/login');
+                var $state = $injector.get('$state');
+                if (response.status === 401 && $state.current.name !== 'login') {
+                    $state.go('login');
                 }
                 return $q.reject(response);
             }

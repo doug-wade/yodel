@@ -1,9 +1,9 @@
 angular.module('signup', [
 ]).controller('SignupCtrl', [
     '$http',
-    '$location',
     '$scope',
-    function($http, $location, $scope) {
+    '$state',
+    function($http, $scope, $state) {
         function initialize() {
             $scope.signUp = signUp;
             $scope.showValidation = false;
@@ -15,10 +15,13 @@ angular.module('signup', [
                 initialize();
                 $http.post('/signup', inputs).then(
                     function() {
-                        $location.url('/profile');
+                        $window.sessionStorage.token = response.data.token;
+                        $rootScope.username = response.data.username;
+                        $state.go('profile', { username: response.data.username });
                     },
                     function(data) {
-                        console.log('Unable to sign up.', data);
+                        delete $window.sessionStorage.token;
+                        $scope.showValidation = true;
                     });
             } else if (form && form.$invalid) {
                 $scope.showValidation = true;

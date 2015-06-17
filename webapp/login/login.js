@@ -1,11 +1,11 @@
 angular.module('login', [
 ]).controller('LoginCtrl', [
     '$http',
-    '$location',
     '$rootScope',
     '$scope',
+    '$state',
     '$window',
-    function($http, $location, $rootScope, $scope, $window) {
+    function($http, $rootScope, $scope, $state, $window) {
         function initialize() {
             $scope.login = login;
             $scope.showValidation = false;
@@ -19,7 +19,7 @@ angular.module('login', [
                     function(response) {
                         $window.sessionStorage.token = response.data.token;
                         $rootScope.username = response.data.username;
-                        $location.url('/profile/' + response.data.username);
+                        $state.go('profile', { username: response.data.username });
                     },
                     function(data) {
                         delete $window.sessionStorage.token;
