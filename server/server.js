@@ -91,6 +91,32 @@ var userPortfolios = {
         }
     ]
 };
+var userPortfolioItems = {
+    'noel': {
+        'Spring Collection': [
+            {
+                resourceUrl: 'someUrl',
+                resourceType: 'picture',
+                caption: 'pink rose'
+            },
+            {
+                resourceUrl: 'someOtherUrl',
+                resourceType: 'picture',
+                caption: 'a raven'
+            }
+        ],
+        'Winter Collection': []
+    },
+    'ivan': {
+        'Sounds of Seattle': [
+            {
+                resourceUrl: 'someThirdUrl',
+                resourceType: 'lyric',
+                caption: 'edibles'
+            }
+        ]
+    }
+};
 
 // ===========================
 // Routes
@@ -120,7 +146,7 @@ app.use(route.post("/login", function*() {
 
     this.body = {
         username: user.username,
-        token: jwt.sign(constructProfile(user), jwtAuthSecret, { expiresInMinutes: 1 })
+        token: jwt.sign(constructProfile(user), jwtAuthSecret, { expiresInMinutes: 60 })
     };
 
     function getUser(/* String */ username) {
@@ -175,7 +201,7 @@ app.use(route.post("/signup", function*() {
 }));
 
 app.use(route.get("/user/:username", function*(username) {
-    // TODO check authorization
+    // TODO check authorization (access control)
 
     this.body = [];
     if (userDetails[username]) {
@@ -184,11 +210,20 @@ app.use(route.get("/user/:username", function*(username) {
 }));
 
 app.use(route.get("/user/:username/portfolio", function*(username) {
-    // TODO check authorizatoin
+    // TODO check authorization (access control)
 
     this.body = [];
     if (userPortfolios[username]) {
         this.body = userPortfolios[username];
+    }
+}));
+
+app.use(route.get("/user/:username/portfolio/:portfolio", function*(username, portfolio) {
+    // TODO check authorization (access control)
+
+    this.body = [];
+    if (userPortfolioItems[username] && userPortfolioItems[username][portfolio]) {
+        this.body = userPortfolioItems[username][portfolio];
     }
 }));
 

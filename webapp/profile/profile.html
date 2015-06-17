@@ -16,7 +16,7 @@
             <h4 class="content padding double-padding-x">Portfolios</h4>
             <div class="list">
                 <p class="double-padding-x" ng-if="!portfolios || portfolios.length === 0">You don't have any portfolios yet.</p>
-                <a collection-repeat="portfolio in portfolios" class="item item-avatar item-icon-right">
+                <a collection-repeat="portfolio in portfolios" class="item item-avatar item-icon-right" ui-sref="portfolio({ username: username, portfolio: portfolio.title })">
                     <img ng-src="{{ portfolio.imageUrl }}">
                     <h2>{{ portfolio.title }}</h2>
                     <p>{{ portfolio.caption }}</p>
@@ -24,9 +24,7 @@
                 </a>
                 <div class="collection-repeat-after-container">
                     <a class="item item-avatar item-icon-right">
-                        <div>
-                            <i class="icon icon-plus"></i>
-                        </div>
+                        <i class="icon icon-plus"></i>
                         <h2>Add a new portfolio</h2>
                         <p>Test this stuff</p>
                         <i class="icon icon-arrow-right-c muted"></i>

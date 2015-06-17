@@ -1,0 +1,14 @@
+<ion-view view-title="{{ portfolio }}" cache-view="false">
+    <ion-content class="has-header">
+
+        <!-- TODO make this better -->
+        <div ng-if="!portfolioItems || portfolioItems.length === 0" class="padding">
+            <p><strong>{{portfolio}}</strong> doesn't have any items yet!</p>
+        </div>
+        <div collection-repeat="item in portfolioItems">
+            <p>{{ item.resourceUrl }} &nbsp; {{ item.resourceType }} &nbsp; {{ item.caption }}</p>
+            <br/>
+        </div>
+
+    </ion-content>
+</ion-view>

@@ -5,6 +5,7 @@ var yodelApp = angular.module("yodel", [
     'ui.router',
     'login',
     'profile',
+    'portfolio',
     'nav',
     'ngMessages',
     'signup'
@@ -68,6 +69,11 @@ yodelApp.config([
                 url: '/profile/:username',
                 templateUrl: '/partials/profile/profile.html',
                 controller: 'ProfileCtrl'
+            }).
+            state('portfolio', {
+                url: '/profile/:username/portfolio/:portfolio',
+                templateUrl: '/partials/portfolio/portfolio.html',
+                controller: 'PortfolioCtrl'
             }).
             state('about', {
                 url: '/about',
