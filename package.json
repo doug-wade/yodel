@@ -62,7 +62,8 @@
     "koa-validate": "^0.2.11",
     "lodash.defaults": "3.0.0",
     "mocha": "^2.2.4",
-    "then-jade": "2.2.1"
+    "then-jade": "2.2.1",
+    "aws-sdk": "2.1.34"
   },
   "engines": {
     "node": ">= 0.11.10"

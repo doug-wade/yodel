@@ -10,6 +10,7 @@ var serve      = require("koa-static");
 var session    = require("koa-session");
 var validate   = require("koa-validate");
 var views      = require("co-views");
+var aws        = require("aws-sdk");
 
 var app        = module.exports = koa();
 
@@ -20,6 +21,14 @@ app.use(bunyan(logger, {
 
 // TODO load this from a file using a "refresher" strategy; see https://github.com/auth0/node-jsonwebtoken
 var jwtAuthSecret = 'yodel-super-secret';
+var s3bucket = 'yodel88';
+var s3 = new aws.S3({params: {Bucket: s3bucket}});
+// TOdo load this from a file
+process.env['AWS_ACCESS_KEY_ID '] = 'ACCESS';
+process.env['AWS_SECRET_ACCESS_KEY '] = 'SECRET';
+
+aws.config.region = 'us-west-2';
+
 app.use(jwt({ secret: jwtAuthSecret }).unless({ path : [
     /^\/$/,
     /^\/css/,
@@ -29,7 +38,10 @@ app.use(jwt({ secret: jwtAuthSecret }).unless({ path : [
     /^\/public/,
     /^\/scripts/,
     /^\/signup/,
-    /^\/vendor/
+    /^\/vendor/,
+    /*Temporary*/    
+    /^\/get/,
+    /^\/put/
 ]}));
 
 app.use(json());
@@ -226,5 +238,25 @@ app.use(route.get("/user/:username/portfolio/:portfolio", function*(username, po
         this.body = userPortfolioItems[username][portfolio];
     }
 }));
+
+app.use(route.get("/get/:resourceId", function*(resourceId){
+    var params = {Bucket: s3bucket, Key: resourceId};
+    this.body = s3.getObject(params).createReadStream();
+}));
+
+app.use(route.put("/put/:resourceId/:resource", function*(resourceId, resource){
+   //TODO: read post body not the /:resource string, this is a test
+   var params = {Key: resourceId, Body: resource};
+    s3.upload(params, function(err, data) {
+    if (err) {
+      this.status = 400;
+      this.body = "Error uploading data: " + err;
+    } else {
+      this.status = 200;
+      this.body = "Successfully uploaded data to " + s3bucket;
+    }
+  });
+}));
+
 
 app.listen(3000);
