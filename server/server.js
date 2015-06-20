@@ -1,6 +1,7 @@
 var bodyParser = require("koa-bodyparser");
 var bunyan     = require("koa-bunyan");
 var config     = require("./config.js");
+var fs         = require("fs");
 var json       = require("koa-json");
 var jwt        = require("koa-jwt");
 var koa        = require("koa");
@@ -160,7 +161,7 @@ app.use(route.post("/login", function*() {
 
     this.body = {
         username: user.username,
-        token: jwt.sign(constructProfile(user), jwtAuthSecret, { expiresInMinutes: 60 })
+        token: jwt.sign(constructProfile(user), config.jwtAuthSecret, { expiresInMinutes: 60 })
     };
 
     function getUser(/* String */ username) {
@@ -204,7 +205,7 @@ app.use(route.post("/signup", function*() {
 
     this.body = {
         username: signup.username,
-        token: jwt.sign(constructProfile(signup), jwtAuthSecret, { expiresInMinutes: 1 })
+        token: jwt.sign(constructProfile(signup), config.jwtAuthSecret, { expiresInMinutes: 1 })
     };
     this.body = 'success';
 
@@ -253,8 +254,7 @@ app.use(route.post("/user/:username/portfolio", function*(username) {
     var createParams;
     var context = {};
     var uploadKey = username + '/' + (Date.now());
-    var upload = s3UploadStream.upload({ 'Bucket': config.aws.yodelS3Bucket, 'Key': uploadKey });
-    upload.on('error', function (error) { console.log(error); });
+    var upload = getUploadWriteStream(uploadKey);
 
     while (part = yield parts) {
         if (part.length && part[0] === 'createParams') {
@@ -288,6 +288,20 @@ app.use(route.post("/user/:username/portfolio", function*(username) {
     function checkParams(key) {
         return new validate.Validator(context, key, createParams[key], key in createParams, createParams);
     }
+
+    function getUploadWriteStream(key) {
+        console.log("********", __dirname);
+        var stream = fs.createWriteStream('./' + config.aws.yodelS3Bucket + '/' + key);
+        stream.on('error', function(error) { console.log(error); });
+        return fs.createWriteStream('./' + config.aws.yodelS3Bucket + '/' + key);
+    }
+
+    // TODO uncomment to enable s3 uploading strategy
+//    function getUploadWriteStream(key) {
+//        var upload = s3UploadStream.upload({ 'Bucket': config.aws.yodelS3Bucket, 'Key': uploadKey });
+//        upload.on('error', function (error) { console.log(error); });
+//        return upload;
+//    }
 }));
 
 //app.use(route.get("/get/:resourceId", function*(resourceId){
