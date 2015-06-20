@@ -16,6 +16,7 @@ angular.module('signup', [
                 $http.post('/signup', inputs).then(
                     function() {
                         $window.sessionStorage.token = response.data.token;
+                        $window.sessionStorage.username = response.data.username;
                         $rootScope.username = response.data.username;
                         $state.go('profile', { username: response.data.username });
                     },

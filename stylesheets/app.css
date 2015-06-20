@@ -147,3 +147,21 @@ label.login {
     color: #362a5e;
     font-weight: 700;
 }
+
+#add-portfolio {
+    font-size: 40px;
+    height: 100%;
+    left: -35px;
+    max-height: 40px;
+    max-width: 40px;
+    top: 16px;
+    width: 100%;
+}
+input.create-portfolio {
+    padding-left: 5px;
+    width: 100%;
+}
+
+.import-file .placeholder {
+    color: #aaaaaa;
+}

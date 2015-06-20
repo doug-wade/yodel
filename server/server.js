@@ -109,12 +109,16 @@ var userPortfolioItems = {
             {
                 resourceUrl: 'someUrl',
                 resourceType: 'picture',
-                caption: 'pink rose'
+                caption: 'pink rose',
+                likes: 2,
+                comments: 2
             },
             {
                 resourceUrl: 'someOtherUrl',
                 resourceType: 'picture',
-                caption: 'a raven'
+                caption: 'a raven',
+                likes: 20,
+                comments: 500
             }
         ],
         'Winter Collection': []
@@ -124,7 +128,9 @@ var userPortfolioItems = {
             {
                 resourceUrl: 'someThirdUrl',
                 resourceType: 'lyric',
-                caption: 'edibles'
+                caption: 'edibles',
+                likes: 1000000,
+                comments: 0
             }
         ]
     }
