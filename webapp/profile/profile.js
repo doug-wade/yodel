@@ -1,4 +1,4 @@
-angular.module('profile',[
+angular.module('profile', [
 ]).controller('ProfileCtrl', [
     '$http',
     '$q',
@@ -10,8 +10,17 @@ angular.module('profile',[
             $scope.portfolios = [];
             $scope.username = $stateParams.username;
 
-            getUserDetails($stateParams.username).then(function(response) { $scope.user = response.data; }, errorHandler);
-            getUserPortfolios($stateParams.username).then(function(response) { $scope.portfolios = response.data; }, errorHandler);
+            getUserDetails($stateParams.username).then(
+                function(response) {
+                    $scope.user = response.data;
+                },
+                errorHandler);
+
+            getUserPortfolios($stateParams.username).then(
+                function(response) {
+                    $scope.portfolios = response.data;
+                },
+                errorHandler);
         }
 
         function errorHandler(data) { }

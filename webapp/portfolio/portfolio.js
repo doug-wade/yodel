@@ -1,4 +1,5 @@
 angular.module('portfolio', [
+    'create-portfolio'
 ]).controller('PortfolioCtrl', [
     '$http',
     '$q',
@@ -9,7 +10,11 @@ angular.module('portfolio', [
             $scope.portfolioItems = [];
             $scope.portfolio = $stateParams.portfolio;
 
-            getPortfolioItems($stateParams.username, $stateParams.portfolio).then(function(response) { $scope.portfolioItems = response.data}, errorHandler);
+            getPortfolioItems($stateParams.username, $stateParams.portfolio).then(
+                function(response) {
+                    $scope.portfolioItems = response.data;
+                },
+                errorHandler);
         }
 
         function errorHandler() { }

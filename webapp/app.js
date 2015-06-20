@@ -77,6 +77,11 @@ yodelApp.config([
                 templateUrl: '/partials/portfolio/portfolio.html',
                 controller: 'PortfolioCtrl'
             }).
+            state('createPortfolio', {
+                url: '/profile/:username/create-portfolio',
+                templateUrl: '/partials/portfolio/create/create-portfolio.html',
+                controller: 'CreatePortfolioCtrl'
+            }).
             state('about', {
                 url: '/about',
                 templateUrl: '/partials/about/about.html',
@@ -101,5 +106,16 @@ yodelApp.config([
         $httpProvider.interceptors.push('jwtAuthInterceptor');
 
         // TODO if a user reloads the page, the $rootScope is wiped even if $window.sessionStorage.token still exists (and contains the username); we should re-create the $rootScope username state from the JWT token in this case
+    }
+]);
+
+yodelApp.run([
+    '$rootScope',
+    '$window',
+    function($rootScope, $window) {
+        if ($window && $window.sessionStorage && $window.sessionStorage.token) {
+            // TODO get this out of the token if the token is still valid (not expired)
+            $rootScope.username = $window.sessionStorage.username;
+        }
     }
 ]);

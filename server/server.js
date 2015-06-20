@@ -1,11 +1,15 @@
 var bodyParser = require("koa-bodyparser");
 var bunyan     = require("koa-bunyan");
+var config     = require("./config/config.js");
+var fs         = require("fs");
 var json       = require("koa-json");
 var jwt        = require("koa-jwt");
 var koa        = require("koa");
 var logger     = require("./logger.js");
 var parse      = require("co-body");
+var multiparse = require("co-busboy");
 var route      = require("koa-route");
+var s3stream   = require('s3-upload-stream');
 var serve      = require("koa-static");
 var session    = require("koa-session");
 var validate   = require("koa-validate");
@@ -19,19 +23,10 @@ app.use(bunyan(logger, {
     timeLimit: 250
 }));
 
-var jwtMinsValid = 60;
+aws.config.region = config.aws.region;
+var s3UploadStream = s3stream(new aws.S3());
 
-// TODO load this from a file using a "refresher" strategy; see https://github.com/auth0/node-jsonwebtoken
-var jwtAuthSecret = 'yodel-super-secret';
-var s3bucket = 'yodel88';
-var s3 = new aws.S3({params: {Bucket: s3bucket}});
-// TOdo load this from a file
-process.env['AWS_ACCESS_KEY_ID '] = 'ACCESS';
-process.env['AWS_SECRET_ACCESS_KEY '] = 'SECRET';
-
-aws.config.region = 'us-west-2';
-
-app.use(jwt({ secret: jwtAuthSecret }).unless({ path : [
+app.use(jwt({ secret: config.jwtAuthSecret }).unless({ path : [
     /^\/$/,
     /^\/css/,
     /^\/images/,
@@ -40,10 +35,7 @@ app.use(jwt({ secret: jwtAuthSecret }).unless({ path : [
     /^\/public/,
     /^\/scripts/,
     /^\/signup/,
-    /^\/vendor/,
-    /*Temporary*/    
-    /^\/get/,
-    /^\/put/
+    /^\/vendor/
 ]}));
 
 app.use(json());
@@ -89,19 +81,22 @@ var userPortfolios = {
         {
             imageUrl: 'images/jon-snow.jpg',
             title: 'Spring Collection',
-            caption: 'Flowers, trees, and bees'
+            date: Date.now(),
+            description: 'Flowers, trees, and bees'
         },
         {
             imageUrl: 'images/sansa.jpg',
             title: 'Winter Collection',
-            caption: 'Hot cocoa and snow angels'
+            date: Date.now(),
+            description: 'Hot cocoa and snow angels'
         }
     ],
     'ivan': [
         {
             imageUrl: 'images/tyrion.jpg',
             title: 'Sounds of Seattle',
-            caption: 'There ain\'t no riot here...'
+            date: Date.now(),
+            description: 'There ain\'t no riot here...'
         }
     ]
 };
@@ -111,12 +106,16 @@ var userPortfolioItems = {
             {
                 resourceUrl: 'someUrl',
                 resourceType: 'picture',
-                caption: 'pink rose'
+                caption: 'pink rose',
+                likes: 2,
+                comments: 2
             },
             {
                 resourceUrl: 'someOtherUrl',
                 resourceType: 'picture',
-                caption: 'a raven'
+                caption: 'a raven',
+                likes: 20,
+                comments: 500
             }
         ],
         'Winter Collection': []
@@ -126,7 +125,9 @@ var userPortfolioItems = {
             {
                 resourceUrl: 'someThirdUrl',
                 resourceType: 'lyric',
-                caption: 'edibles'
+                caption: 'edibles',
+                likes: 1000000,
+                comments: 0
             }
         ]
     }
@@ -176,7 +177,7 @@ app.use(route.post("/login", function*() {
 
     this.body = {
         username: user.username,
-        token: jwt.sign(constructProfile(user), jwtAuthSecret, { expiresInMinutes: jwtMinsValid })
+        token: jwt.sign(constructProfile(user), config.jwtAuthSecret, { expiresInMinutes: 60 })
     };
 
     function getUser(/* String */ username) {
@@ -221,7 +222,7 @@ app.use(route.post("/signup", function*() {
 
     this.body = {
         username: signup.username,
-        token: jwt.sign(constructProfile(signup), jwtAuthSecret, { expiresInMinutes: jwtMinsValid })
+        token: jwt.sign(constructProfile(signup), config.jwtAuthSecret, { expiresInMinutes: 60 })
     };
 
     function isUsernameTaken(/* String */ username) {       
@@ -256,25 +257,67 @@ app.use(route.get("/user/:username/portfolio/:portfolio", function*(username, po
     }
 }));
 
-app.use(route.get("/get/:resourceId", function*(resourceId){
-    var params = {Bucket: s3bucket, Key: resourceId};
-    this.body = s3.getObject(params).createReadStream();
-}));
+app.use(route.post("/user/:username/portfolio", function*(username) {
+    // TODO check authorization (access control)
 
-app.use(route.put("/put/:resourceId/:resource", function*(resourceId, resource){
-   //TODO: read post body not the /:resource string, this is a test
-   var params = {Key: resourceId, Body: resource};
-    s3.upload(params, function(err, data) {
-    if (err) {
-      this.status = 400;
-      this.body = "Error uploading data: " + err;
-    } else {
-      this.status = 200;
-      this.body = "Successfully uploaded data to " + s3bucket;
+    if (!this.request.is('multipart/*')) {
+        return yield next;
     }
-  });
-}));
 
+    var parts = multiparse(this);
+    var part;
+    var createParams;
+    var context = {};
+    var uploadKey = username + '/' + (Date.now());
+    var upload = getUploadWriteStream(uploadKey);
+
+    while (part = yield parts) {
+        if (part.length && part[0] === 'createParams') {
+            createParams = JSON.parse(part[1]);
+            checkParams('title').notEmpty();
+            checkParams('date').isDate();
+
+            if (context.errors) {
+                this.status = 400;
+                this.body = context.errors;
+                return;
+            }
+        } else {
+            part.pipe(upload);
+        }
+    }
+
+    console.log(createParams.date);
+    if (!userPortfolios[username]) {
+        userPortfolios[username] = [];
+    }
+    userPortfolios[username].push({
+        imageUrl: uploadKey,
+        title: createParams.title,
+        date: createParams.date,
+        description: createParams.description
+    });
+
+    this.body = 'success';
+
+    function checkParams(key) {
+        return new validate.Validator(context, key, createParams[key], key in createParams, createParams);
+    }
+
+    function getUploadWriteStream(key) {
+        console.log("********", __dirname);
+        var stream = fs.createWriteStream('./' + config.aws.yodelS3Bucket + '/' + key);
+        stream.on('error', function(error) { console.log(error); });
+        return fs.createWriteStream('./' + config.aws.yodelS3Bucket + '/' + key);
+    }
+
+    // TODO uncomment to enable s3 uploading strategy
+//    function getUploadWriteStream(key) {
+//        var upload = s3UploadStream.upload({ 'Bucket': config.aws.yodelS3Bucket, 'Key': uploadKey });
+//        upload.on('error', function (error) { console.log(error); });
+//        return upload;
+//    }
+}));
 
 app.use(route.get("/user/:username/disciplines", function*(username){
     console.log(username);
@@ -290,3 +333,4 @@ app.use(route.post("/user/:username/disciplines", function*(username){
 }));
                   
 app.listen(3000);
+

@@ -29,7 +29,7 @@ paths = {
     partials: "webapp/**/*.html",
     public: "public",
     scripts: "webapp/**/*.js",
-    server: "server/*.js",
+    server: "server/**/*.js",
     serverspecs: "test/server/*.spec.js",
     styles: "./stylesheets/**/*.css",
     views: "views/*.html"
