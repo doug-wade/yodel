@@ -1,0 +1,49 @@
+<ion-view ng-controller="SignupInfoCtrl" view-title="Sign Up" align-title="left" hide-nav-bar="true" cache-view="false">
+    <div ng-switch on="step">
+        <div ng-switch-when=1>
+            <ion-content class="splash">
+                <h1 align="center">Disciplines</h1>
+                    <div class="card toggle toggle-energized"> 
+                        <div class="ion-list">
+                            <div class="ion-item">
+                                <ion-toggle ng-repeat="item in disciplines"
+                                            ng-model="item.checked" 
+                                            ng-checked="item.checked">
+                                        {{ item.text }}
+                                </ion-toggle>
+                            </div>
+                        </div>                                 
+                    </div>
+                <div class="card">
+                    <button type="submit" ng-click="postDisciplines()" class="button button-bar button-energized ink activated">Next</button>
+                </div>
+            </ion-content>
+        </div>
+        <div ng-switch-when=2>
+            <ion-content class="splash">
+                <h1 align="center">What kind of?</h1>
+                <div class="ion-list">
+                    <div class="ion-item">
+                        <div ng-repeat="item in disciplines">
+                            <div class="card toggle toggle-energized">
+                                <div ng-if="item.checked === true">
+                                    <div class="item"> 
+                                        {{ item.text }}
+                                    </div>
+                                    <ion-toggle ng-repeat="type in item.types"
+                                                ng-model="type.checked"
+                                                ng-checked="type.checked">
+                                        {{ type.text }}
+                                    </ion-toggle>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <button type="submit" ng-click="postDisciplines()" class="button button-bar button-energized ink activated">Submit</button>
+                </div>
+            </ion-content>
+        </div>
+    </div>
+</ion-view>
