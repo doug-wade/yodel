@@ -3,7 +3,9 @@ angular.module('signup', [
     '$http',
     '$scope',
     '$state',
-    function($http, $scope, $state) {
+    '$window',
+    '$rootScope',
+    function($http, $scope, $state, $window, $rootScope) {
         function initialize() {
             $scope.signUp = signUp;
             $scope.showValidation = false;
@@ -14,10 +16,11 @@ angular.module('signup', [
             if (form && form.$valid) {
                 initialize();
                 $http.post('/signup', inputs).then(
-                    function() {
+                    function(response) {
                         $window.sessionStorage.token = response.data.token;
                         $rootScope.username = response.data.username;
-                        $state.go('profile', { username: response.data.username });
+                        //$state.go('profile', { username: response.data.username });
+                        $state.go('signup-info');
                     },
                     function(data) {
                         delete $window.sessionStorage.token;

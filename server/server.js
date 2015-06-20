@@ -19,6 +19,8 @@ app.use(bunyan(logger, {
     timeLimit: 250
 }));
 
+var jwtMinsValid = 60;
+
 // TODO load this from a file using a "refresher" strategy; see https://github.com/auth0/node-jsonwebtoken
 var jwtAuthSecret = 'yodel-super-secret';
 var s3bucket = 'yodel88';
@@ -130,6 +132,22 @@ var userPortfolioItems = {
     }
 };
 
+var disciplines = 
+    [
+        { "text" : "Artist", "checked" : false, "types" : [{"text" : "Studio Art", "checked" : false}, {"text" : "Hipster Art", "checked" : false}] },
+        { "text" : "Musician", "checked" : false, "types" : [{"text" : "Folk Music", "checked" : false}, {"text" : "Thrash Metal", "checked" : false}] },
+        { "text" : "Dancer", "checked" : false, "types" : [{"text" : "Ballet", "checked" : false}, {"text" : "Breakdance", "checked" : false}] },
+        { "text" : "Actor", "checked" : false, "types" : [{"text" : "Theatre", "checked" : false}, {"text" : "Movie", "checked" : false}] },
+        { "text" : "Sculptor", "checked" : false, "types" : [{"text" : "Bronze", "checked" : false}, {"text" : "Wood", "checked" : false}] },
+        { "text" : "Singer", "checked" : false, "types" : [{"text" : "Opera", "checked" : false}, {"text" : "Yodeling", "checked" : false}] },
+        { "text" : "Coder", "checked" : false, "types" : [{"text" : "C++", "checked" : false}, {"text" : "Javascript", "checked" : false}] },
+        { "text" : "Acrobat", "checked" : false, "types" : [{"text" : "Circus", "checked" : false}, {"text" : "Kamasutra", "checked" : false}]},
+        { "text" : "Pantomime", "checked" : false, "types" : [{"text" : "French Guy", "checked" : false}, {"text" : "Hipster Mime", "checked" : false}] },
+        { "text" : "Poet", "checked" : false, "types" : [{"text" : "Postmodern", "checked" : false}, {"text" : "Slam Poetry", "checked" : false}] },
+        { "text" : "Model", "checked" : false, "types" : [{"text" : "Hand", "checked" : false}, {"text" : "Full Body", "checked" : false}] },
+        { "text" : "Photographer", "checked" : false, "types" : [{"text" : "War", "checked" : false}, {"text" : "Guerrila", "checked" : false}] }
+    ];
+
 // ===========================
 // Routes
 // ===========================
@@ -158,7 +176,7 @@ app.use(route.post("/login", function*() {
 
     this.body = {
         username: user.username,
-        token: jwt.sign(constructProfile(user), jwtAuthSecret, { expiresInMinutes: 60 })
+        token: jwt.sign(constructProfile(user), jwtAuthSecret, { expiresInMinutes: jwtMinsValid })
     };
 
     function getUser(/* String */ username) {
@@ -185,6 +203,7 @@ app.use(route.post("/signup", function*() {
     this.checkBody('password1').notEmpty().len(6);
     this.checkBody('password2').notEmpty().eq(signup.password1, 'Passwords must match');
 
+    
     if (isUsernameTaken(signup.username)) {
         if (!this.errors) {
             this.errors = [];
@@ -197,18 +216,16 @@ app.use(route.post("/signup", function*() {
         this.body = this.errors;
         return;
     }
-
-    users.push({ username: signup.username, email: signup.email, password: signup.password1 });
+    
+    users[signup.username] = { username: signup.username, email: signup.email, password: signup.password1 };
 
     this.body = {
         username: signup.username,
-        token: jwt.sign(constructProfile(signup), jwtAuthSecret, { expiresInMinutes: 1 })
+        token: jwt.sign(constructProfile(signup), jwtAuthSecret, { expiresInMinutes: jwtMinsValid })
     };
-    this.body = 'success';
 
-    function isUsernameTaken(/* String */ username) {
-        var matchingUsers = users.filter(function(element) { return element.username === username; });
-        return matchingUsers.length > 0;
+    function isUsernameTaken(/* String */ username) {       
+        return users[username] !== undefined;
     }
 }));
 
@@ -259,4 +276,17 @@ app.use(route.put("/put/:resourceId/:resource", function*(resourceId, resource){
 }));
 
 
+app.use(route.get("/user/:username/disciplines", function*(username){
+    console.log(username);
+    this.body = disciplines;
+}));
+
+app.use(route.post("/user/:username/disciplines", function*(username){
+    console.log(this.request.body);
+    this.status = 200;
+    /* TODO : Store these disciplines in association with a particular username here */
+    users[username]['disciplines'] = this.body;
+    this.body = "'Success'";
+}));
+                  
 app.listen(3000);

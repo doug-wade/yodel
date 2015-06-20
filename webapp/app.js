@@ -8,7 +8,8 @@ var yodelApp = angular.module("yodel", [
     'portfolio',
     'nav',
     'ngMessages',
-    'signup'
+    'signup',
+    'signup-info'
 ]);
 
 yodelApp.run(
@@ -90,6 +91,11 @@ yodelApp.config([
                 url: '/signup',
                 templateUrl: '/partials/signup/signup.html',
                 controller: 'SignupCtrl'
+            }).
+            state('signup-info', {
+                url: '/signup-info',
+                templateUrl: '/partials/signup-info/signup-info.html',
+                conroller: 'SignupInfoCtrl'
             });
 
         $httpProvider.interceptors.push('jwtAuthInterceptor');
