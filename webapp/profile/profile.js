@@ -9,6 +9,8 @@ angular.module('profile', [
             $scope.user = {};
             $scope.portfolios = [];
             $scope.username = $stateParams.username;
+            $scope.getBanner = getBanner;
+            $scope.getAvatar = getAvatar;
 
             getUserDetails($stateParams.username).then(
                 function(response) {
@@ -24,6 +26,21 @@ angular.module('profile', [
         }
 
         function errorHandler(data) { }
+
+        function getBanner(user) {
+            if (user.banner) {
+                return 'url("resource/' + user.banner + '")';
+            }
+            return '';
+        }
+
+        function getAvatar(user) {
+            if (user.profilePic) {
+                return 'url("resource/' + user.profilePic + '")';
+            }
+
+            return '';
+        }
 
         function getUserDetails(username) {
             var deferred = $q.defer();

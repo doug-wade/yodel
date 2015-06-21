@@ -35,7 +35,8 @@ app.use(jwt({ secret: config.jwtAuthSecret }).unless({ path : [
     /^\/public/,
     /^\/scripts/,
     /^\/signup/,
-    /^\/vendor/
+    /^\/vendor/,
+    /^\/resource/
 ]}));
 
 app.use(json());
@@ -56,36 +57,39 @@ var users = {
     'noel': {
         username: 'noel',
         email: 'noel@yodel.to',
-        password: 'testtest'
+        password: 'testtest',
     },
     'ivan': {
         username: 'ivan',
         email: 'ivan@yodel.to',
-        password: 'testtest'
+        password: 'testtest',
     }
 };
 var userDetails = {
     'noel': {
         fullName: 'Noel Sardana',
         artistType: 'Hipster Coder',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+        banner: 'noel/banner.jpg'
     },
     'ivan': {
         fullName: 'Ivan Melyakov',
         artistType: 'Coder Bro',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+        banner: 'ivan/banner.png',
+        profilePic: 'ivan/profile.jpg'
     }
 };
 var userPortfolios = {
     'noel': [
         {
-            imageUrl: 'images/jon-snow.jpg',
+            imageUrl: 'noel/spring.jpg',
             title: 'Spring Collection',
             date: Date.now(),
             description: 'Flowers, trees, and bees'
         },
         {
-            imageUrl: 'images/sansa.jpg',
+            imageUrl: 'noel/winter.jpg',
             title: 'Winter Collection',
             date: Date.now(),
             description: 'Hot cocoa and snow angels'
@@ -93,7 +97,7 @@ var userPortfolios = {
     ],
     'ivan': [
         {
-            imageUrl: 'images/tyrion.jpg',
+            imageUrl: 'ivan/seattle.jpg',
             title: 'Sounds of Seattle',
             date: Date.now(),
             description: 'There ain\'t no riot here...'
@@ -287,7 +291,6 @@ app.use(route.post("/user/:username/portfolio", function*(username) {
         }
     }
 
-    console.log(createParams.date);
     if (!userPortfolios[username]) {
         userPortfolios[username] = [];
     }
@@ -305,8 +308,15 @@ app.use(route.post("/user/:username/portfolio", function*(username) {
     }
 
     function getUploadWriteStream(key) {
-        console.log("********", __dirname);
-        var stream = fs.createWriteStream('./' + config.aws.yodelS3Bucket + '/' + key);
+        var root = __dirname + '/../' + config.aws.yodelS3Bucket;
+
+        try {
+            fs.lstatSync(root + '/' + username);
+        } catch (e) {
+            fs.mkdir(root + '/' + username);
+        }
+
+        var stream = fs.createWriteStream(__dirname + '/../' + config.aws.yodelS3Bucket + '/' + key);
         stream.on('error', function(error) { console.log(error); });
         return fs.createWriteStream('./' + config.aws.yodelS3Bucket + '/' + key);
     }
@@ -318,6 +328,29 @@ app.use(route.post("/user/:username/portfolio", function*(username) {
 //        return upload;
 //    }
 }));
+
+app.use(route.get("/resource/:username/:resourceId", function*(username, resourceId) {
+    // TODO how to determine the proper type
+    this.body = fs.createReadStream(__dirname + '/../' + config.aws.yodelS3Bucket + '/' + username + '/' + resourceId);
+
+    // TODO uncomment to serve from s3
+//    var params = { Bucket: config.aws.yodelS3bucket, Key: username + '/' + resourceId };
+//    this.body = s3.getObject(params).createReadStream();
+}));
+
+//app.use(route.put("/put/:resourceId/:resource", function*(resourceId, resource){
+//   //TODO: read post body not the /:resource string, this is a test
+//   var params = {Key: resourceId, Body: resource};
+//    s3.upload(params, function(err, data) {
+//    if (err) {
+//      this.status = 400;
+//      this.body = "Error uploading data: " + err;
+//    } else {
+//      this.status = 200;
+//      this.body = "Successfully uploaded data to " + s3bucket;
+//    }
+//  });
+//}));
 
 app.use(route.get("/user/:username/disciplines", function*(username){
     console.log(username);

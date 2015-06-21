@@ -165,3 +165,8 @@ input.create-portfolio {
 .import-file .placeholder {
     color: #aaaaaa;
 }
+
+.avatar, hero {
+    background: #fff;
+    background-size: cover;
+}
