@@ -138,7 +138,7 @@ var userPortfolioItems = {
     }
 };
 
-var disciplines = 
+var disciplines =
     [
         { "text" : "Artist", "checked" : false, "types" : [{"text" : "Studio Art", "checked" : false}, {"text" : "Hipster Art", "checked" : false}] },
         { "text" : "Musician", "checked" : false, "types" : [{"text" : "Folk Music", "checked" : false}, {"text" : "Thrash Metal", "checked" : false}] },
@@ -209,7 +209,7 @@ app.use(route.post("/signup", function*() {
     this.checkBody('password1').notEmpty().len(6);
     this.checkBody('password2').notEmpty().eq(signup.password1, 'Passwords must match');
 
-    
+
     if (isUsernameTaken(signup.username)) {
         if (!this.errors) {
             this.errors = [];
@@ -222,7 +222,7 @@ app.use(route.post("/signup", function*() {
         this.body = this.errors;
         return;
     }
-    
+
     users[signup.username] = { username: signup.username, email: signup.email, password: signup.password1 };
 
     this.body = {
@@ -230,7 +230,7 @@ app.use(route.post("/signup", function*() {
         token: jwt.sign(constructProfile(signup), config.jwtAuthSecret, { expiresInMinutes: 60 })
     };
 
-    function isUsernameTaken(/* String */ username) {       
+    function isUsernameTaken(/* String */ username) {
         return users[username] !== undefined;
     }
 }));
@@ -318,14 +318,14 @@ app.use(route.post("/user/:username/portfolio", function*(username) {
         }
 
         var stream = fs.createWriteStream(__dirname + '/../' + config.aws.yodelS3Bucket + '/' + key);
-        stream.on('error', function(error) { console.log(error); });
+        stream.on('error', function(error) { logger.error(error); });
         return fs.createWriteStream('./' + config.aws.yodelS3Bucket + '/' + key);
     }
 
     // TODO uncomment to enable s3 uploading strategy
 //    function getUploadWriteStream(key) {
 //        var upload = s3UploadStream.upload({ 'Bucket': config.aws.yodelS3Bucket, 'Key': uploadKey });
-//        upload.on('error', function (error) { console.log(error); });
+//        upload.on('error', function (error) { logger.error(error); });
 //        return upload;
 //    }
 }));
@@ -354,17 +354,16 @@ app.use(route.get("/resource/:username/:resourceId", function*(username, resourc
 //}));
 
 app.use(route.get("/user/:username/disciplines", function*(username){
-    console.log(username);
+    logger.info("getting disciplines for " + username);
     this.body = disciplines;
 }));
 
 app.use(route.post("/user/:username/disciplines", function*(username){
-    console.log(this.request.body);
+    logger.info(this.request.body);
     this.status = 200;
     /* TODO : Store these disciplines in association with a particular username here */
     users[username]['disciplines'] = this.body;
     this.body = "'Success'";
 }));
-                  
-app.listen(3000);
 
+app.listen(3000);
