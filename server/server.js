@@ -1,3 +1,4 @@
+var aws        = require("aws-sdk");
 var bodyParser = require("koa-bodyparser");
 var bunyan     = require("koa-bunyan");
 var config     = require("./config/config.js");
@@ -6,15 +7,16 @@ var json       = require("koa-json");
 var jwt        = require("koa-jwt");
 var koa        = require("koa");
 var logger     = require("./logger.js");
-var parse      = require("co-body");
 var multiparse = require("co-busboy");
+var parse      = require("co-body");
+var path       = require("path");
 var route      = require("koa-route");
 var s3stream   = require('s3-upload-stream');
 var serve      = require("koa-static");
 var session    = require("koa-session");
+var uuid       = require("node-uuid");
 var validate   = require("koa-validate");
 var views      = require("co-views");
-var aws        = require("aws-sdk");
 
 var app        = module.exports = koa();
 
@@ -155,6 +157,21 @@ var disciplines =
     ];
 
 // ===========================
+// Utils
+// ===========================
+
+function getProjectPath(/* String */ username, /* UUID */ projectid) {
+  return path.join(__dirname, "..", "yodel88", username, projectid);
+}
+
+function constructProfile(/* Object */ user) {
+  return {
+    username: user.username,
+    email: user.email
+  };
+}
+
+// ===========================
 // Routes
 // ===========================
 
@@ -182,7 +199,7 @@ app.use(route.post("/login", function*() {
 
     this.body = {
         username: user.username,
-        token: jwt.sign(constructProfile(user), config.jwtAuthSecret, { expiresInMinutes: 60 })
+        token: jwt.sign(constructProfile(user), config.jwtAuthSecret, { expiresInMinutes: config.jwtTtl })
     };
 
     function getUser(/* String */ username) {
@@ -193,13 +210,6 @@ app.use(route.post("/login", function*() {
         return user === undefined || user.password !== password;
     }
 }));
-
-function constructProfile(/* Object */ user) {
-    return {
-        username: user.username,
-        email: user.email
-    };
-}
 
 app.use(route.post("/signup", function*() {
     // basic signup validation
@@ -364,6 +374,37 @@ app.use(route.post("/user/:username/disciplines", function*(username){
     /* TODO : Store these disciplines in association with a particular username here */
     users[username]['disciplines'] = this.body;
     this.body = "'Success'";
+}));
+
+app.use(route.post("/user/:username/projects", function*(username){
+  var project, callback, filePath;
+
+  project = this.request.body;
+  project.id = uuid.v4();
+  project.username = username;
+
+  filePath = getProjectPath(username, project.id);
+  callback = function(err) {
+    if (err) {
+      logger.error("Got error " + err + " writing project " + JSON.stringify(project) + " to file " + filePath);
+    } else {
+      logger.info("successfully wrote project " + JSON.stringify(project) + " to file " + filePath);
+    }
+  };
+
+  logger.info("writing project " + JSON.stringify(project) + " to file " + filePath);
+  fs.writeFile(filePath, JSON.stringify(project), callback);
+  this.body = project;
+}));
+
+app.use(route.get("/user/:username/projects/:projectid", function*(username, projectid) {
+  var project, callback, filePath;
+
+  filePath = getProjectPath(username, projectid);
+  project = fs.readFileSync(filePath);
+
+  logger.info("Successfully read project " + project + " from file " + filePath);
+  this.body = project;
 }));
 
 app.listen(3000);
