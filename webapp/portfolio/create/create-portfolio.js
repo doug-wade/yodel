@@ -34,7 +34,7 @@ angular.module('create-portfolio', [
 
                 $http.post('/user/' + username + '/portfolio', { createParams: params, file: file }, options).then(
                     function(response) {
-                        $state.go('profile', { username: username });
+                        $state.go('yodel.profile', { username: username });
                     },
                     function(response) {
                         console.log(response);

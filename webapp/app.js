@@ -59,33 +59,59 @@ yodelApp.config([
     '$stateProvider',
     '$urlRouterProvider',
     function($httpProvider, $stateProvider, $urlRouterProvider) {
-        $urlRouterProvider.otherwise('/events');
+        $urlRouterProvider.otherwise('/y/events');
         $stateProvider.
-            state('events', {
+            state('yodel', {
+                url: '/y',
+                abstract: true,
+                templateUrl: '/partials/nav/nav.html',
+                controller: 'NavCtrl'
+            }).
+            state('yodel.events', {
                 url: '/events',
-                templateUrl: '/partials/events-browser/events.html',
-                controller: 'EventsCtrl'
+                views: {
+                    'yodelContent': {
+                        templateUrl: '/partials/events-browser/events.html',
+                        controller: 'EventsCtrl'
+                    }
+                }
             }).
             // TODO redirect a user from /profile to /profile/username (pull the username from the $rootScope)
-            state('profile', {
+            state('yodel.profile', {
                 url: '/profile/:username',
-                templateUrl: '/partials/profile/profile.html',
-                controller: 'ProfileCtrl'
+                views: {
+                    'yodelContent': {
+                        templateUrl: '/partials/profile/profile.html',
+                        controller: 'ProfileCtrl'
+                    }
+                }
             }).
-            state('portfolio', {
+            state('yodel.portfolio', {
                 url: '/profile/:username/portfolio/:portfolio',
-                templateUrl: '/partials/portfolio/portfolio.html',
-                controller: 'PortfolioCtrl'
+                views: {
+                    'yodelContent': {
+                        templateUrl: '/partials/portfolio/portfolio.html',
+                        controller: 'PortfolioCtrl'
+                    }
+                }
             }).
-            state('createPortfolio', {
+            state('yodel.createPortfolio', {
                 url: '/profile/:username/create-portfolio',
-                templateUrl: '/partials/portfolio/create/create-portfolio.html',
-                controller: 'CreatePortfolioCtrl'
+                views: {
+                    'yodelContent': {
+                        templateUrl: '/partials/portfolio/create/create-portfolio.html',
+                        controller: 'CreatePortfolioCtrl'
+                    }
+                }
             }).
-            state('about', {
+            state('yodel.about', {
                 url: '/about',
-                templateUrl: '/partials/about/about.html',
-                controller: 'AboutCtrl'
+                views: {
+                    'yodelContent': {
+                        templateUrl: '/partials/about/about.html',
+                        controller: 'AboutCtrl'
+                    }
+                }
             }).
             state('login', {
                 url: '/login',

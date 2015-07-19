@@ -1,4 +1,9 @@
 <ion-view view-title="Profile" cache-view="false">
+
+    <ion-nav-buttons side="left">
+        <button menu-toggle="left" class="button button-icon icon ion-navicon nav-toggle"></button>
+    </ion-nav-buttons>
+
     <ion-content class="has-header">
         <div class="hero" ng-style="{ 'background-image': getBanner(user) }">
             <div class="content">
@@ -16,7 +21,7 @@
             <h4 class="content padding double-padding-x">Portfolios</h4>
             <div class="list">
                 <p class="double-padding-x" ng-if="!portfolios || portfolios.length === 0">You don't have any portfolios yet.</p>
-                <a collection-repeat="portfolio in portfolios" class="item item-avatar item-icon-right" ui-sref="portfolio({ username: username, portfolio: portfolio.title })">
+                <a collection-repeat="portfolio in portfolios" class="item item-avatar item-icon-right" ui-sref="yodel.portfolio({ username: username, portfolio: portfolio.title })">
                     <img ng-src="{{ 'resource/' + portfolio.imageUrl }}">
                     <h2>{{ portfolio.title }}</h2>
                     <p>{{ portfolio.caption }}</p>
@@ -24,7 +29,7 @@
                 </a>
 
                 <div class="collection-repeat-after-container">
-                    <a ui-sref="createPortfolio({ username: username })" class="item item-avatar item-icon-right">
+                    <a ui-sref="yodel.createPortfolio({ username: username })" class="item item-avatar item-icon-right">
                         <i id="add-portfolio" class="icon item-icon-left ion-plus-circled"></i>
                         <h2>Add a new portfolio</h2>
                         <p>Test this stuff</p>

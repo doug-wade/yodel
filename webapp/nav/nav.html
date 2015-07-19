@@ -1,6 +1,43 @@
-<div class="tabs tabs-icon-top">
-    <a ng-if="username" class="tab-item HighlightTab" ui-sref="profile({ username: username })"><i class="icon ion-person"></i>Profile</a>
-    <a ng-if="!username" class="tab-item HighlightTab" ui-sref="login"><i class="icon ion-person"></i>Login</a>
-    <a class="tab-item HighlightTab" ui-sref="events"><i class="icon ion-android-film"></i>Events</a>
-    <a class="tab-item HighlightTab" ui-sref="about"><i class="icon ion-information-circled"></i>About</a>
-</div>
+<ion-side-menus>
+
+    <!-- main content viewport -->
+    <ion-side-menu-content>
+        <ion-nav-bar class="bar-dark"></ion-nav-bar>
+
+        <ion-nav-buttons side="left">
+            <button class="button button-icon button-clear ion-navicon nav-toggle" ng-click="toggleLeft()">
+            </button>
+        </ion-nav-buttons>
+
+        <ion-nav-view name="yodelContent" animation="slide-left-right"></ion-nav-view>
+    </ion-side-menu-content>·
+
+    <!-- side menu items and navigation -->
+    <ion-side-menu side="left">
+        <ion-header-bar class="bar bar-header bar-stable">
+            <h1 class="title">Options</h1>
+        </ion-header-bar>
+
+        <ion-content class="has-header">
+            <ion-list>
+                <ion-item class="HighlightTab" ng-if="username" menu-close ui-sref="yodel.profile({ username: username })">
+                    <i class="icon ion-person"></i>
+                    Profile
+                </ion-item>
+                <ion-item class="HighlightTab" ng-if="!username" menu-close ui-sref="login">
+                    <i class="icon ion-person"></i>
+                    Login
+                </ion-item>
+                <ion-item class="HighlightTab" menu-close ui-sref="yodel.events">
+                    <i class="icon ion-android-film"></i>
+                    Events
+                </ion-item>
+                <ion-item class="HighlightTab" menu-close ui-sref="yodel.about">
+                    <i class="icon ion-information-circled"></i>
+                    About
+                </ion-item>
+            </ion-list>
+        </ion-content>
+    </ion-side-menu>
+
+</ion-side-menus>
