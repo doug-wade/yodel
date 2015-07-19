@@ -9,6 +9,10 @@ angular.module('nav', [
             $scope = $rootScope;
             $scope.username = value;
         });
+
+        $scope.toggleLeft = function() {
+            $ionicSideMenuDelegate.toggleLeft();
+        };
     }
 ]).directive('HighlightTab', [
     '$location',

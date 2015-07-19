@@ -20,7 +20,7 @@ angular.module('login', [
                         $window.sessionStorage.token = response.data.token;
                         $window.sessionStorage.username = response.data.username;
                         $rootScope.username = response.data.username;
-                        $state.go('profile', { username: response.data.username });
+                        $state.go('yodel.profile', { username: response.data.username });
                     },
                     function(data) {
                         delete $window.sessionStorage.token;

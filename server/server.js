@@ -26,8 +26,9 @@ app.use(bunyan(logger, {
 aws.config.region = config.aws.region;
 var s3UploadStream = s3stream(new aws.S3());
 
-app.use(jwt({ secret: config.jwtAuthSecret }).unless({ path : [
+app.use(jwt({secret: config.jwtAuthSecret}).unless({ path : [
     /^\/$/,
+    /^\/favico\.ico/,
     /^\/css/,
     /^\/images/,
     /^\/js/,

@@ -49,7 +49,6 @@
 /* TODO: clean this up */
 h1 {
     color: #fff;
-    text-shadow: 0 1px 0px #000;
     font-size: 42px;
 }
 
@@ -169,4 +168,25 @@ input.create-portfolio {
 .avatar, hero {
     background: #fff;
     background-size: cover;
+}
+
+.photo-container {
+    height: 500px;
+    margin: 10px;
+}
+.photo-container .photo {
+    height: 400px;
+}
+.photo-container .header {
+    height: 50px;
+    padding: 10px;
+}
+.photo-container .footer {
+    height: 50px;
+}
+
+.button.nav-toggle {
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0 1rem;
 }
