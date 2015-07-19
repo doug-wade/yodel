@@ -1,6 +1,7 @@
-var bunyan, bunyanOptions, logger, separator;
+var bunyan, bunyanOptions, logger, fileName;
 
 bunyan = require("bunyan");
+fileName = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + "-log";
 
 bunyanOptions = {
   name: "yodel",
@@ -11,7 +12,7 @@ bunyanOptions = {
     }, {
       level: "debug",
       type: "rotating-file",
-      path: "build/logger.out",
+      path: "build/ " + fileName + ".log",
       period: "1d",
       count: 3
     }
@@ -20,7 +21,6 @@ bunyanOptions = {
   src: true
 };
 
-separator = " ";
 logger = bunyan.createLogger(bunyanOptions);
 
 module.exports = logger;
