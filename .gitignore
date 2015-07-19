@@ -1,7 +1,10 @@
 build/
-public/
+logs/
 node_modules/
+public/
+yodel88/
+
 *.out
+*.log
 *.iml
 .idea/
-yodel88/

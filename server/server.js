@@ -365,7 +365,4 @@ app.use(route.post("/user/:username/disciplines", function*(username){
     this.body = "'Success'";
 }));
 
-app.use(route.post("/user/:username/project"), function*(username){
-})
-
 app.listen(3000);
