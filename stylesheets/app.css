@@ -156,7 +156,7 @@ label.login {
     top: 16px;
     width: 100%;
 }
-input.create-portfolio {
+input.create-portfolio, input.add-portfolio-item {
     padding-left: 5px;
     width: 100%;
 }
@@ -171,22 +171,31 @@ input.create-portfolio {
 }
 
 .photo-container {
-    height: 500px;
+    height: 425px;
     margin: 10px;
 }
 .photo-container .photo {
-    height: 400px;
+    height: 320px;
 }
-.photo-container .header {
+.photo-container .photo-header {
     height: 50px;
     padding: 10px;
 }
-.photo-container .footer {
+.photo-container .photo-footer {
     height: 50px;
+    margin-top: 5px;
 }
 
-.button.nav-toggle {
+.button.nav-bar-button {
     border-radius: 0;
     box-shadow: none;
     padding: 0 1rem;
+}
+img.photo-image {
+    margin: auto;
+    max-width: 400px;
+    width: 400px;
+}
+.photo-footer .tab-item {
+    max-width: 200px;
 }

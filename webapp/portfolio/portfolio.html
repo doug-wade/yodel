@@ -1,7 +1,7 @@
 <ion-view view-title="{{ portfolio }}" cache-view="false">
 
     <ion-nav-buttons side="left">
-        <button menu-toggle="left" class="button button-icon icon ion-navicon nav-toggle"></button>
+        <button menu-toggle="left" class="button button-icon icon ion-navicon nav-bar-button"></button>
     </ion-nav-buttons>
 
     <ion-content class="has-header">
@@ -9,18 +9,37 @@
             <p><strong>{{portfolio}}</strong> doesn't have any items yet!</p>
         </div>
 
-        <!-- TODO replace with infinite scroll so that not all pictures have to be loaded at once -->
-        <div class="card photo-container item item-text-wrap" collection-repeat="item in portfolioItems">
-            <div class="header">
-                <h2>{{ item.caption }}</h2>
-            </div>
-            <div class="photo row">
-                <img class="col" src="images/logo.png">
-            </div>
-            <div class="item tabs tabs-secondary tabs-icon-left">
-                <a class="tab-item stable-bg assertive"><i class="icon ion-heart"></i>{{ item.likes }}</a>
-                <a class="tab-item stable-bg positive-900"><i class="icon ion-chatbubbles"></i>{{ item.comments }}</a>
-            </div>
+        <div class="padding" ng-if="isOwner">
+            <button
+                type="submit"
+                ng-click="openAddItemModal()"
+                class="button button-full button-energized ink">
+                Add to portfolio!
+            </button>
         </div>
+
+        <ion-list ng-if="portfolioItems && portfolioItems.length > 0">
+            <ion-item collection-repeat="item in portfolioItems">
+                <div class="card photo-container item item-text-wrap">
+                    <div class="photo-header stable-bg">
+                        <h2>{{ item.caption }}</h2>
+                    </div>
+                    <div class="photo">
+                        <img class="photo-image" ng-src="{{ 'resource/' + item.resourceUrl }}">
+                    </div>
+                    <div class="photo-footer item tabs tabs-secondary tabs-icon-left">
+                        <a class="tab-item stable-bg assertive"><i class="icon ion-heart"></i>{{ item.likes }}</a>
+                        <a class="tab-item stable-bg positive-900"><i class="icon ion-chatbubbles"></i>{{ item.comments }}</a>
+                        <a class="tab-item stable-bg assertive" ng-if="isOwner" ng-click="deleteItemFromPortfolio(username, item, portfolio, $index)"><i class="icon ion-trash-b"></i></a>
+                    </div>
+                </div>
+            </ion-item>
+        </ion-list>
+
+        <ion-infinite-scroll
+            ng-if="portfolioHasMoreItems"
+            on-infinite="getPortfolioItems(username, portfolio, portfolioItems, nextToken)">
+        </ion-infinite-scroll>
+
     </ion-content>
 </ion-view>

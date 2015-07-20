@@ -86,12 +86,14 @@ var userDetails = {
 var userPortfolios = {
     'noel': [
         {
+            portfolioId: 1,
             imageUrl: 'noel/spring.jpg',
-            title: 'Spring Collection',
+            title: 'Chaplin Collection',
             date: Date.now(),
             description: 'Flowers, trees, and bees'
         },
         {
+            portfolioId: 2,
             imageUrl: 'noel/winter.jpg',
             title: 'Winter Collection',
             date: Date.now(),
@@ -100,6 +102,7 @@ var userPortfolios = {
     ],
     'ivan': [
         {
+            portfolioId: 3,
             imageUrl: 'ivan/seattle.jpg',
             title: 'Sounds of Seattle',
             date: Date.now(),
@@ -109,20 +112,38 @@ var userPortfolios = {
 };
 var userPortfolioItems = {
     'noel': {
-        'Spring Collection': [
+        'Chaplin Collection': [
             {
-                resourceUrl: 'someUrl',
+                itemId: 1,
+                resourceUrl: 'noel/happy-chaplin.jpg',
                 resourceType: 'picture',
-                caption: 'pink rose',
+                caption: 'Happy Chaplin',
+                likes: 1,
+                comments: 0
+            },
+            {
+                itemId: 2,
+                resourceUrl: 'noel/pointy-chaplin.jpg',
+                resourceType: 'picture',
+                caption: 'Pointy Chaplin',
                 likes: 2,
                 comments: 2
             },
             {
-                resourceUrl: 'someOtherUrl',
+                itemId: 3,
+                resourceUrl: 'noel/sleepy-chaplin.jpg',
                 resourceType: 'picture',
-                caption: 'a raven',
-                likes: 20,
-                comments: 500
+                caption: 'Sleepy Chaplin',
+                likes: 0,
+                comments: 0
+            },
+            {
+                itemId: 4,
+                resourceUrl: 'noel/sneaky-chaplin.jpg',
+                resourceType: 'picture',
+                caption: 'Sneaky Chaplin',
+                likes: 0,
+                comments: 0
             }
         ],
         'Winter Collection': []
@@ -130,7 +151,8 @@ var userPortfolioItems = {
     'ivan': {
         'Sounds of Seattle': [
             {
-                resourceUrl: 'someThirdUrl',
+                itemId: 3,
+                resourceUrl: 'ivan/edibles.jpg',
                 resourceType: 'lyric',
                 caption: 'edibles',
                 likes: 1000000,
@@ -263,13 +285,122 @@ app.use(route.get("/user/:username/portfolio", function*(username) {
     }
 }));
 
-app.use(route.get("/user/:username/portfolio/:portfolio", function*(username, portfolio) {
+app.use(route.get("/user/:username/portfolio/:portfolio/nextToken/:nextToken", function*(username, portfolio, nextToken) {
     // TODO check authorization (access control)
 
-    this.body = [];
+    var offset = +nextToken || 0;
+    var maxItemsToReturn = 2;
+    this.body = {
+        items: []
+    };
     if (userPortfolioItems[username] && userPortfolioItems[username][portfolio]) {
-        this.body = userPortfolioItems[username][portfolio];
+        this.body.items = userPortfolioItems[username][portfolio].slice(offset, offset + maxItemsToReturn);
+        if (offset + maxItemsToReturn < userPortfolioItems[username][portfolio].length) {
+            this.body.nextToken = offset + maxItemsToReturn;
+        }
+
+        console.log(this.body);
     }
+}));
+
+app.use(route.post("/user/:username/portfolio/:portfolio/item", function*(username, portfolio) {
+    // TODO check authorization (access control)
+
+    if (!userPortfolios[username]) {
+        this.body = 'user has no portfolio';
+        return;
+    }
+    if (!userPortfolioItems[username]) {
+        userPortfolioItems[username] = {};
+    }
+    if (!userPortfolioItems[username][portfolio]) {
+        userPortfolioItems[username][portfolio] = [];
+    }
+
+    if (!this.request.is('multipart/*')) {
+        return yield next;
+    }
+
+    var parts = multiparse(this);
+    var part;
+    var addItemParams;
+    var context = {};
+    var uploadKey = username + '/' + (Date.now());
+    var upload = getUploadWriteStream(uploadKey);
+
+    while (part = yield parts) {
+        if (part.length && part[0] === 'createParams') {
+            addItemParams = JSON.parse(part[1]);
+            checkParams('caption').notEmpty();
+
+            if (context.errors) {
+                this.status = 400;
+                this.body = context.errors;
+                return;
+            }
+        } else {
+            part.pipe(upload);
+        }
+    }
+
+    // TODO rely on db to generate unique id
+    var portfolioArr = userPortfolioItems[username][portfolio];
+    var newIndex = portfolioArr[portfolioArr.length-1].itemId + 1;
+
+    // TODO generate resource url and get caption from multipart body
+    var newItem = {
+        itemId: newIndex,
+        resourceUrl: uploadKey,
+        resourceType: 'picture',
+        caption: addItemParams.caption,
+        likes: 0,
+        comments: 0
+    };
+    portfolioArr.push(newItem);
+    this.body = newItem;
+
+    function checkParams(key) {
+        return new validate.Validator(context, key, addItemParams[key], key in addItemParams, addItemParams);
+    }
+
+    function getUploadWriteStream(key) {
+        var root = __dirname + '/../' + config.aws.yodelS3Bucket;
+
+        try {
+            fs.lstatSync(root + '/' + username);
+        } catch (e) {
+            fs.mkdir(root + '/' + username);
+        }
+
+        var stream = fs.createWriteStream(__dirname + '/../' + config.aws.yodelS3Bucket + '/' + key);
+        stream.on('error', function(error) { logger.error(error); });
+        return fs.createWriteStream('./' + config.aws.yodelS3Bucket + '/' + key);
+    }
+
+    // TODO uncomment to enable s3 uploading strategy
+//    function getUploadWriteStream(key) {
+//        var upload = s3UploadStream.upload({ 'Bucket': config.aws.yodelS3Bucket, 'Key': uploadKey });
+//        upload.on('error', function (error) { logger.error(error); });
+//        return upload;
+//    }
+}));
+
+app.use(route['delete']("/user/:username/portfolio/:portfolio/item/:itemId", function*(username, portfolio, itemId) {
+    // TODO check authorization (access control)
+    // TODO check to make sure portfolio exists
+
+    var itemId = +itemId || -1;
+    var index = userPortfolioItems[username][portfolio].findIndex(function(ele) {
+        return ele.itemId === itemId;
+    });
+
+    if (index >= 0) {
+        userPortfolioItems[username][portfolio].splice(index, 1);
+    }
+
+    console.log(itemId, index, userPortfolioItems[username][portfolio]);
+
+    this.body = [];
 }));
 
 app.use(route.post("/user/:username/portfolio", function*(username) {

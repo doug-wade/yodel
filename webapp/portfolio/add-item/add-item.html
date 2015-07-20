@@ -1,0 +1,66 @@
+<!--<div class="padding" ng-if="isOwner && addingItem">-->
+    <!--<button-->
+            <!--type="submit"-->
+            <!--ng-click="cancelAddItemToPortfolio()"-->
+            <!--class="button button-full button-stable ink">-->
+        <!--Cancel-->
+    <!--</button>-->
+<!--</div>-->
+
+<ion-modal-view>
+    <ion-header-bar class="dark-bg">
+        <h1 class="title">Add an item</h1>
+    </ion-header-bar>
+    <ion-content>
+
+        <form name="addItemForm"
+              novalidate=""
+              ng-submit="addItemToPortfolio(addItemForm, addItemParams, file, username, portfolio, portfolioItems)">
+            <div class="card">
+                <div class="item item-text-wrap">
+                    <div class="list card">
+                        <div class="item item-icon-left">
+                            <i class="icon ion-pricetag"></i>
+                            <input class="add-portfolio-item" type="text" placeholder="Enter caption" name="caption" ng-model="addItemParams.caption" required />
+                        </div>
+                        <div class="error-container item-divider"
+                             ng-show="addItemForm.caption.$error && showValidation"
+                             ng-messages="addItemForm.caption.$error"
+                             ng-messages-include="/partials/portfolio/add-item/error-list.html"></div>
+                    </div>
+
+                    <div class="list card">
+                        <div class="item item-icon-left">
+                            <i class="icon ion-upload"></i>
+                            <label class="import-file">
+                                <input class="add-portfolio-item"
+                                       type="file"
+                                       name="file"
+                                       style="display: none;"
+                                       onchange="angular.element(this).scope().fileNameChanged(this)"
+                                       required />
+                                <div ng-if="!$parent.file" class="placeholder">Upload a file...</div>
+                                <div ng-if="$parent.file">{{ file.name }}</div>
+                            </label>
+                        </div>
+                        <div class="error-container item-divider"
+                             ng-show="addItemForm.file.$error && showValidation"
+                             ng-messages="addItemForm.file.$error"
+                             ng-messages-include="/partials/portfolio/add-item/error-list.html"></div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="padding">
+            <button type="submit"
+                    ng-click="addItemToPortfolio(addItemForm, addItemParams, file, username, portfolio, portfolioItems)"
+                    class="button button-full button-energized ink">Create</button>
+        </div>
+
+        <div class="padding">
+            <button ng-click="cancelAddItemModal()" class="button button-full button-dark ink">Cancel</button>
+        </div>
+
+    </ion-content>
+</ion-modal-view>
