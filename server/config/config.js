@@ -7,7 +7,9 @@ var config = {
     },
 
     // TODO load this from a file using a "refresher" strategy; see https://github.com/auth0/node-jsonwebtoken
-    jwtAuthSecret: 'yodel-super-secret'
+    jwtAuthSecret: 'yodel-super-secret',
+
+    jwtTtl: 1440
 };
 
 // TODO load these from the files provided in the config
