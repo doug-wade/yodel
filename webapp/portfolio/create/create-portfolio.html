@@ -1,69 +1,69 @@
 <ion-view view-title="Create a portfolio" cache-view="false">
 
     <ion-nav-buttons side="left">
-        <button menu-toggle="left" class="button button-icon icon ion-navicon nav-toggle"></button>
+        <button menu-toggle="left" class="button button-icon icon ion-navicon nav-bar-button"></button>
     </ion-nav-buttons>
 
     <ion-content class="has-header">
-            <form name="createPortfolioForm" novalidate="" ng-submit="create(createPortfolioForm, createParams, file, username)">
-                <div class="card">
-                    <div class="item item-divider">
-                        Basic portfolio info
+        <form name="createPortfolioForm" novalidate="" ng-submit="create(createPortfolioForm, createParams, file, username)">
+            <div class="card">
+                <div class="item item-divider">
+                    Basic portfolio info
+                </div>
+                <div class="item item-text-wrap">
+                    <div class="list card">
+                        <div class="item item-icon-left">
+                            <i class="icon ion-pricetag"></i>
+                            <input class="create-portfolio" type="text" placeholder="Enter portfolio name" name="title" ng-model="createParams.title" required/>
+                        </div>
+                        <div class="error-container item-divider" ng-show="createPortfolioForm.title.$error && showValidation" ng-messages="createPortfolioForm.title.$error" ng-messages-include="/partials/portfolio/create/error-list.html"></div>
                     </div>
-                    <div class="item item-text-wrap">
-                        <div class="list card">
-                            <div class="item item-icon-left">
-                                <i class="icon ion-pricetag"></i>
-                                <input class="create-portfolio" type="text" placeholder="Enter portfolio name" name="title" ng-model="createParams.title" required/>
-                            </div>
-                            <div class="error-container item-divider" ng-show="createPortfolioForm.title.$error && showValidation" ng-messages="createPortfolioForm.title.$error" ng-messages-include="/partials/portfolio/create/error-list.html"></div>
-                        </div>
 
-                        <div class="list card">
-                            <div class="item item-icon-left">
-                                <i class="icon ion-calendar"></i>
-                                <input class="create-portfolio" type="date" name="date" ng-model="createParams.date" required />
-                            </div>
-                            <div class="error-container item-divider" ng-show="createPortfolioForm.date.$error && showValidation" ng-messages="createPortfolioForm.date.$error" ng-messages-include="/partials/portfolio/create/error-list.html"></div>
+                    <div class="list card">
+                        <div class="item item-icon-left">
+                            <i class="icon ion-calendar"></i>
+                            <input class="create-portfolio" type="date" name="date" ng-model="createParams.date" required />
                         </div>
+                        <div class="error-container item-divider" ng-show="createPortfolioForm.date.$error && showValidation" ng-messages="createPortfolioForm.date.$error" ng-messages-include="/partials/portfolio/create/error-list.html"></div>
                     </div>
                 </div>
+            </div>
 
-                <div class="card">
-                    <div class="item item-divider">
-                        Upload a cover photo!
-                    </div>
-                    <div class="item item-text-wrap">
-                        <div class="list card">
-                            <div class="item item-icon-left">
-                                <i class="icon ion-upload"></i>
-                                <label class="import-file">
-                                    <input class="create-portfolio" type="file" name="file" style="display: none;" onchange="angular.element(this).scope().fileNameChanged(this)" />
-                                    <div ng-if="!$parent.file" class="placeholder">Upload a file...</div>
-                                    <div ng-if="$parent.file">{{ file.name }}</div>
-                                </label>
-                            </div>
-                            <div class="error-container item-divider" ng-show="createPortfolioForm.file.$error && showValidation" ng-messages="createPortfolioForm.file.$error" ng-messages-include="/partials/portfolio/create/error-list.html"></div>
+            <div class="card">
+                <div class="item item-divider">
+                    Upload a cover photo!
+                </div>
+                <div class="item item-text-wrap">
+                    <div class="list card">
+                        <div class="item item-icon-left">
+                            <i class="icon ion-upload"></i>
+                            <label class="import-file">
+                                <input class="create-portfolio" type="file" name="file" style="display: none;" onchange="angular.element(this).scope().fileNameChanged(this)" />
+                                <div ng-if="!$parent.file" class="placeholder">Upload a file...</div>
+                                <div ng-if="$parent.file">{{ file.name }}</div>
+                            </label>
                         </div>
+                        <div class="error-container item-divider" ng-show="createPortfolioForm.file.$error && showValidation" ng-messages="createPortfolioForm.file.$error" ng-messages-include="/partials/portfolio/create/error-list.html"></div>
                     </div>
                 </div>
+            </div>
 
-                <div class="card">
-                    <div class="item item-divider">
-                        Tell everyone more about this portfolio!
-                    </div>
-                    <div class="item item-text-wrap">
-                        <div class="list card">
-                            <div class="item item-icon-left">
-                                <i class="icon ion-document-text"></i>
-                                <input class="create-portfolio" type="text" name="description" placeholder="Enter a description (optional)..." ng-model="createParams.description"/>
-                            </div>
-                            <div class="error-container item-divider" ng-show="createPortfolioForm.description.$error && showValidation" ng-messages="createPortfolioForm.description.$error" ng-messages-include="/partials/portfolio/create/error-list.html"></div>
+            <div class="card">
+                <div class="item item-divider">
+                    Tell everyone more about this portfolio!
+                </div>
+                <div class="item item-text-wrap">
+                    <div class="list card">
+                        <div class="item item-icon-left">
+                            <i class="icon ion-document-text"></i>
+                            <input class="create-portfolio" type="text" name="description" placeholder="Enter a description (optional)..." ng-model="createParams.description"/>
                         </div>
+                        <div class="error-container item-divider" ng-show="createPortfolioForm.description.$error && showValidation" ng-messages="createPortfolioForm.description.$error" ng-messages-include="/partials/portfolio/create/error-list.html"></div>
                     </div>
                 </div>
+            </div>
 
-            </form>
+        </form>
 
         <div class="padding">
             <button type="submit" ng-click="create(createPortfolioForm, createParams, file, username)" class="button button-full button-energized ink">Create</button>
