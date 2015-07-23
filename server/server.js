@@ -259,7 +259,7 @@ app.use(route.post("/signup", function*() {
 
     this.body = {
         username: signup.username,
-        token: jwt.sign(constructProfile(signup), config.jwtAuthSecret, { expiresInMinutes: 60 })
+        token: jwt.sign(constructProfile(signup), config.jwtAuthSecret, { expiresInMinutes: config.jwtTtl })
     };
 
     function isUsernameTaken(/* String */ username) {
@@ -298,18 +298,18 @@ app.use(route.get("/user/:username/portfolio/:portfolio/nextToken/:nextToken", f
         if (offset + maxItemsToReturn < userPortfolioItems[username][portfolio].length) {
             this.body.nextToken = offset + maxItemsToReturn;
         }
-
-        console.log(this.body);
     }
 }));
 
-app.use(route.post("/user/:username/portfolio/:portfolio/item", function*(username, portfolio) {
+app.use(route.post("/user/:username/portfolio/:portfolio/item", function*(username, portfolio, next) {
     // TODO check authorization (access control)
 
     if (!userPortfolios[username]) {
         this.body = 'user has no portfolio';
+        this.status = 400;
         return;
     }
+
     if (!userPortfolioItems[username]) {
         userPortfolioItems[username] = {};
     }
@@ -318,7 +318,9 @@ app.use(route.post("/user/:username/portfolio/:portfolio/item", function*(userna
     }
 
     if (!this.request.is('multipart/*')) {
-        return yield next;
+        this.body = 'must upload file';
+        this.status = 400;
+        return;
     }
 
     var parts = multiparse(this);
@@ -398,8 +400,6 @@ app.use(route['delete']("/user/:username/portfolio/:portfolio/item/:itemId", fun
         userPortfolioItems[username][portfolio].splice(index, 1);
     }
 
-    console.log(itemId, index, userPortfolioItems[username][portfolio]);
-
     this.body = [];
 }));
 
@@ -471,43 +471,17 @@ app.use(route.post("/user/:username/portfolio", function*(username) {
 //    }
 }));
 
-app.use(route.get("/resource/:username/:resourceId", function*(username, resourceId) {
-    // TODO how to determine the proper type
-    this.body = fs.createReadStream(__dirname + '/../' + config.aws.yodelS3Bucket + '/' + username + '/' + resourceId);
-
-    // TODO uncomment to serve from s3
-//    var params = { Bucket: config.aws.yodelS3bucket, Key: username + '/' + resourceId };
-//    this.body = s3.getObject(params).createReadStream();
-}));
-
-//app.use(route.put("/put/:resourceId/:resource", function*(resourceId, resource){
-//   //TODO: read post body not the /:resource string, this is a test
-//   var params = {Key: resourceId, Body: resource};
-//    s3.upload(params, function(err, data) {
-//    if (err) {
-//      this.status = 400;
-//      this.body = "Error uploading data: " + err;
-//    } else {
-//      this.status = 200;
-//      this.body = "Successfully uploaded data to " + s3bucket;
-//    }
-//  });
-//}));
-
-app.use(route.get("/user/:username/disciplines", function*(username){
-    logger.info("getting disciplines for " + username);
+app.use(route.get("/user/:username/disciplines", function*(username) {
     this.body = disciplines;
 }));
 
-app.use(route.post("/user/:username/disciplines", function*(username){
-    logger.info(this.request.body);
-    this.status = 200;
-    /* TODO : Store these disciplines in association with a particular username here */
+app.use(route.post("/user/:username/disciplines", function*(username) {
+    // TODO Store these disciplines in association with a particular username here
     users[username]['disciplines'] = this.body;
     this.body = "'Success'";
 }));
 
-app.use(route.post("/user/:username/projects", function*(username){
+app.use(route.post("/user/:username/projects", function*(username) {
   var project, callback, filePath;
 
   project = this.request.body;

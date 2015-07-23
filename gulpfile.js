@@ -141,6 +141,7 @@ gulp.task("watch", function() {
     gulp.watch(paths.styles, ["styles"]);
     gulp.watch(paths.scripts, ["scripts"]);
     gulp.watch(paths.server, ["server-scripts"]);
+    gulp.watch(paths.serverspecs, ["mocha"]);
     return gulp.watch(paths.views, ["views"]);
 });
 
@@ -149,3 +150,4 @@ gulp.task("webdriver_update", ptor.webdriver_update);
 gulp.task("compile", ["bower", "images", "views", "angular-views", "styles", "scripts", "server-scripts"]);
 gulp.task("default", ["compile", "watch", "server"]);
 gulp.task("test", ["mocha", "karma", "protractor"]);
+gulp.task("unit-test", ["watch", "mocha"]);
