@@ -471,6 +471,15 @@ app.use(route.post("/user/:username/portfolio", function*(username) {
 //    }
 }));
 
+app.use(route.get("/resource/:username/:resourceId", function*(username, resourceId) {
+    // TODO how to determine the proper type
+    this.body = fs.createReadStream(__dirname + '/../' + config.aws.yodelS3Bucket + '/' + username + '/' + resourceId);
+
+    // TODO uncomment to serve from s3
+//    var params = { Bucket: config.aws.yodelS3bucket, Key: username + '/' + resourceId };
+//    this.body = s3.getObject(params).createReadStream();
+}));
+
 app.use(route.get("/user/:username/disciplines", function*(username) {
     this.body = disciplines;
 }));
