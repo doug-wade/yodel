@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ $# -eq 0 ]; then
+        echo "No arguments provided. Please provide a path to a pem file. e.g. './deploy.sh /path/to/pem/file/pemFile.pem'"
+        exit 1
+fi
+
 HOSTNAME=ubuntu@52.24.237.65
 DIR=/home/yodel
 
