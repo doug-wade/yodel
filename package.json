@@ -39,6 +39,7 @@
   "dependencies": {
     "aws-sdk": "2.1.34",
     "bunyan": "^1.1.2",
+    "chai":"^2.0.0",
     "chai-as-promised": "^4.3.0",
     "co": "^3.0.4",
     "co-body": "0.0.1",
