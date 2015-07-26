@@ -1,10 +1,11 @@
 var app, request;
 
-app     = require("../../build/app.js");
-request = require("supertest").agent(app.listen());
+app     = require('../../build/server.js');
+request = require('supertest').agent(app.listen());
 
-describe("GET /", function() {
-  return it("should respond with a view", function(done) {
-    return request.get("/").expect(200, done);
-  });
+describe('GET /', function() {
+    it('should respond with a view', function(done) {
+        // TODO make this test better
+        request.get("/").expect(200, done);
+    });
 });
