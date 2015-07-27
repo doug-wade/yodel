@@ -116,7 +116,6 @@ function getProject(username, projectid) {
 }
 
 function getProjectsForUser(username) {
-  logger.info("Getting project for user: " + username);
   return testData.users[username].projects;
 }
 

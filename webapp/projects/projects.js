@@ -29,8 +29,9 @@ function ProjectsCtrl($scope, $http, $stateParams, $q, $log) {
 
     deferred = $q.defer();
     username = $stateParams.username;
+    project.collaborators = project.collaborators.split(",");
 
-    $http.post('/user/' + username + '/projects').then(deferred.resolve, deferred.reject);
+    $http.post('/user/' + username + '/projects', project).then(deferred.resolve, deferred.reject);
 
     return deferred.promise;
   }
@@ -48,11 +49,9 @@ function ProjectsCtrl($scope, $http, $stateParams, $q, $log) {
     $scope.newProject = {};
 
     addNewProject(toPost).then(function(response) {
-      var oldLen;
-
-      oldLen = $scope.projects.length;
-      $scope.projects = response.data;
-      $log.info("Had " + oldLen + " projects previously; added one, then loaded " + $scope.projects.length + " projects.")
+      var project = response.data;
+      $log.info("Successfully created project " + JSON.stringify(project));
+      $scope.projects.push(project);
     });
 
     $scope.isEditing = false;
