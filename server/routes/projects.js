@@ -1,44 +1,50 @@
+var db     = require('../util/db.js');
+var fs     = require('fs');
 var logger = require('../logger.js');
-var fs = require('fs');
-var path = require('path');
-var uuid = require('node-uuid');
+var path   = require('path');
+var uuid   = require('node-uuid');
 
-function getProjectPath(/* String */ username, /* UUID */ projectid) {
-  return path.join(__dirname, "..", "yodel88", username, projectid);
-}
-
-function* createProject() {
-  var project, callback, filePath;
+function* createProject(username) {
+  var project, username;
+  this.username = this.params.username;
 
   project = this.request.body;
   project.id = uuid.v4();
-  project.username = this.params.username;
 
-  filePath = getProjectPath(this.params.username, project.id);
-  callback = function(err) {
-    if (err) {
-      logger.error("Got error " + err + " writing project " + JSON.stringify(project) + " to file " + filePath);
-    } else {
-      logger.info("successfully wrote project " + JSON.stringify(project) + " to file " + filePath);
-    }
-  };
-
-  logger.info("writing project " + JSON.stringify(project) + " to file " + filePath);
-  fs.writeFile(filePath, JSON.stringify(project), callback);
+  db.addProject(username, project);
   this.body = project;
 };
 
-function* getProject() {
-  var project, callback, filePath;
+function* getProjectForUser(username, projectid) {
+  var project, projectid, username;
+  username = this.params.username;
+  projectid = this.params.projectid;
 
-  filePath = getProjectPath(this.params.username, this.params.projectid);
-  project = fs.readFileSync(filePath);
+  project = db.getProject(username, projectid);
 
-  logger.info("Successfully read project " + project + " from file " + filePath);
   this.body = project;
 };
+
+function* listProjects() {
+  var username;
+  username = this.params.username;
+
+  logger.info("Listing projects for user: " + username);
+  this.body = db.getProjectsForUser(username);
+};
+
+function* deleteProject(username, projectid) {
+  var username, projectid;
+  username = this.params.username;
+  projectid = this.params.projectid;
+
+  this.body = db.getProject(username, projectid);
+  db.deleteProject(username, projectid);
+}
 
 module.exports = {
   createProject: createProject,
-  getProject: getProject
+  getProject: getProjectForUser,
+  listProjects: listProjects,
+  deleteProject: deleteProject
 };

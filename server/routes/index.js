@@ -31,6 +31,8 @@ module.exports = function(router, jwt) {
   router.get("/user/:username/disciplines", disciplines.getUserDisciplines);
   router.post("/user/:username/disciplines", disciplines.setUserDisciplines);
 
+  router.get("/user/:username/projects", projects.listProjects);
   router.post("/user/:username/projects", projects.createProject);
   router.get("/user/:username/projects/:projectid", projects.getProject);
+  router.del("/user/:username/projects/:projectid", projects.deleteProject);
 };
