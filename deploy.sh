@@ -17,17 +17,25 @@ fi
 HOSTNAME=ubuntu@52.24.237.65
 DIR=/home/yodel
 
+echo "ssh-ing to remote host to remove existing yodel app"
+
 ssh -i ${1} ${HOSTNAME} <<ENDSSH
     cd ${DIR}
     rm -rf *
 ENDSSH
 
 # This will generate a warning, ignore it.
-# Actually this will generate a bunch of errors which you can safely ignore 
+# Actually this will generate a bunch of errors which you can safely ignore
+
+echo "Tarring source folders"
 
 tar czf app.tar.gz --exclude="node_modules" --exclude=".git" --exclude "public" --exclude "build" .
 
+echo "SCPing app tarball"
+
 scp -i ${1} app.tar.gz  ${HOSTNAME}:${DIR}
+
+echo "ssh-ing to remote host to install and start yodel"
 
 ssh -i ${1} ${HOSTNAME} <<ENDSSH
     cd ${DIR}
@@ -38,5 +46,6 @@ ssh -i ${1} ${HOSTNAME} <<ENDSSH
     gulp &
 ENDSSH
 
-rm app.tar.gz
+echo "Removing local tarball"
 
+rm app.tar.gz
