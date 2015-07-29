@@ -5,23 +5,27 @@
     </ion-nav-buttons>
 
     <ion-content class="has-header">
-      <div class="content padding double-padding-x">
-          <h4>Projects</h4>
-          <ul class="list">
-            <li ng-repeat="project in projects">
-              <h4>{{ project.name }}</h4>
-              <p>{{ project.description }}</p>
-              <ul class="list">
-                <li ng-repeat="collaborator in project.collaborators">{{ collaborator }}</li>
-              </ul>
-            </li>
-          </ul>
+      <div class="content">
+          <h2>Projects</h2>
+          <div ng-repeat="project in projects" class="project">
+            <h3>{{ project.name }}</h3>
+            <h5>{{ project.subhead }}</h5>
+            <p>{{ project.description }}</p>
+            <ion-list class="list tags">
+              <ion-item ng-repeat="collaborator in project.collaborators">
+                <a href="/#/y/profile/{{ collaborator }}">{{ collaborator }}</a>
+              </ion-item>
+            </ion-list>
+          </div>
           <div ng-show="isEditing">
             <div>
-              <label>Name: 
+              <label>Name:
                 <input type="text" ng-model="newProject.name" ng-minlength="2" placeholder="Name your project"></input>
               </label>
-              <label>Description: 
+              <label>SubHeader:
+                <input type="text" ng-model="newProject.subhead" placeholder="Subhead your project"></input>
+              </label>
+              <label>Description:
                 <input type="text" ng-model="newProject.description" placeholder="Describe your project"></input>
               </label>
               <label>Collaborators:

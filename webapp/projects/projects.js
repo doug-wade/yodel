@@ -29,6 +29,8 @@ function ProjectsCtrl($scope, $http, $stateParams, $q, $log) {
 
     deferred = $q.defer();
     username = $stateParams.username;
+    // Doug 2015/7/28 I added this as a shitty hack since we have a demo on 7/30/2015.  Once we
+    // have a token input form, we should send these as a list of strings and persist that directly.
     project.collaborators = project.collaborators.split(",");
 
     $http.post('/user/' + username + '/projects', project).then(deferred.resolve, deferred.reject);
@@ -42,7 +44,7 @@ function ProjectsCtrl($scope, $http, $stateParams, $q, $log) {
 
   function saveProject() {
     var toPost;
-    
+
     $log.info("saving project...");
 
     toPost = $scope.newProject;
@@ -58,7 +60,6 @@ function ProjectsCtrl($scope, $http, $stateParams, $q, $log) {
   }
 
   function showEditingForm() {
-    $log.info("showing editing form...");
     $scope.isEditing = true;
   }
 
