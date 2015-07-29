@@ -23,7 +23,7 @@ angular.module('signup-info', [
                 $http.post('/user/' + $rootScope.username + "/disciplines", $scope.disciplines).then(
                     function(response) {
                         /* Success */
-                        $state.go('profile');
+                        $state.go('yodel.profile');
                     },
                     function(data) {
                         /* Error */
