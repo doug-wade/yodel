@@ -6,21 +6,21 @@ var uuid   = require('node-uuid');
 
 function* createProject(username) {
   var project, username;
-  this.username = this.params.username;
 
   project = this.request.body;
+  project.username = this.params.username;
   project.id = uuid.v4();
 
   db.addProject(username, project);
   this.body = project;
 };
 
-function* getProjectForUser(username, projectid) {
-  var project, projectid, username;
+function* getProjectForUser(username, projectId) {
+  var project, projectId, username;
   username = this.params.username;
-  projectid = this.params.projectid;
+  projectId = this.params.projectId;
 
-  project = db.getProject(username, projectid);
+  project = db.getProject(username, projectId);
 
   this.body = project;
 };
@@ -33,13 +33,13 @@ function* listProjects() {
   this.body = db.getProjectsForUser(username);
 };
 
-function* deleteProject(username, projectid) {
-  var username, projectid;
+function* deleteProject(username, projectId) {
+  var username, projectId;
   username = this.params.username;
-  projectid = this.params.projectid;
+  projectId = this.params.projectId;
 
-  this.body = db.getProject(username, projectid);
-  db.deleteProject(username, projectid);
+  this.body = db.getProject(username, projectId);
+  db.deleteProject(username, projectId);
 }
 
 module.exports = {
