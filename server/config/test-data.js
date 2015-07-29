@@ -1,13 +1,21 @@
+var projects =
+    [
+        { "name": "Yodel!", "description": "Write an application that allows collaboration between artists, organizations, and patrons.", "id": "d6e58b89-1f18-46c8-9ed6-df7229da5697", "collaborators": ["noel", "ivan"] },
+        { "name": "Three Suites in a suite", "description": "Play Duke Ellington's Three Suites (Peer Gynt, Nutcracker, and Suite Thursday) in a hotel suite.", "id": "da7f821f-e389-4d27-ba86-b66f92fbd9d8", "collaborators": ["noel", "ivan"] }
+    ];
+
 var users = {
     'noel': {
         username: 'noel',
         email: 'noel@yodel.to',
         password: 'testtest',
+        projects: projects
     },
     'ivan': {
         username: 'ivan',
         email: 'ivan@yodel.to',
         password: 'testtest',
+        projects: projects
     }
 };
 

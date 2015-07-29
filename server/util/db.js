@@ -1,4 +1,17 @@
 var testData = require("../config/test-data.js");
+var logger = require("../logger.js")
+
+function getOnlyElement(/* Array */ arr) {
+  if (arr.length === 0) {
+    logger.error("Tried to get element from empty array.");
+    return undefined;
+  }
+  if (arr.length > 1) {
+    logger.error("Got only element from array with more than one element.");
+    return undefined;
+  }
+  return arr[0];
+}
 
 function addUser(/* Object */ userDetails) {
   var newUser = {
@@ -92,6 +105,27 @@ function createPortfolio(
   });
 }
 
+function addProject(username, project) {
+  testData.users[username].projects.push(project);
+}
+
+function getProject(username, projectid) {
+  return getOnlyElement(testData.users[username].projects.filter(function (project) {
+    return project.id === projectid;
+  }));
+}
+
+function getProjectsForUser(username) {
+  logger.info("Getting project for user: " + username);
+  return testData.users[username].projects;
+}
+
+function deleteProject(username, projectid) {
+  testData.users[username].projects = testData.users[username].projects.filter(function(project) {
+    return project.id !== projectid;
+  });
+}
+
 module.exports = {
   addUser: addUser,
   getUser: getUserByUsername,
@@ -100,5 +134,9 @@ module.exports = {
   getPortfolioItems: getPortfolioItems,
   addItemToPortfolio: addItemToPortfolio,
   deleteItemFromPortfolio: deleteItemFromPortfolio,
-  createPortfolio: createPortfolio
+  createPortfolio: createPortfolio,
+  addProject: addProject,
+  getProject: getProject,
+  getProjectsForUser: getProjectsForUser,
+  deleteProject: deleteProject
 };
