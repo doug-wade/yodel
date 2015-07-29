@@ -4,12 +4,16 @@ var logger = require('../logger.js');
 var path   = require('path');
 var uuid   = require('node-uuid');
 
-function* createProject(username) {
+function* createProject() {
   var project, username;
+
+  username = this.params.username;
 
   project = this.request.body;
   project.username = this.params.username;
   project.id = uuid.v4();
+
+  logger.info("User " + username + " is creating project " + JSON.stringify(project));
 
   db.addProject(username, project);
   this.body = project;

@@ -2,7 +2,7 @@
   "name": "yodel",
   "version": "0.0.1",
   "main": "app.js",
-  "license": "MIT",
+  "license": "unlicensed",
   "ignore": [
     "node_modules",
     "public",
