@@ -17,7 +17,8 @@ function addUser(/* Object */ userDetails) {
   var newUser = {
     username: userDetails.username,
     email: userDetails.email,
-    password: userDetails.password
+    password: userDetails.password,
+    projects: []
   };
 
   testData.users[userDetails.username] = newUser;
