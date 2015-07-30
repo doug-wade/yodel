@@ -236,3 +236,22 @@ img.photo-image {
 .photo-footer .tab-item {
     max-width: 200px;
 }
+/* About page */
+.about p {
+    font-size: 2rem;
+    line-height: 2rem;
+    padding-left: 4rem;
+    padding-right: 4rem;
+}
+.about h2 {
+    font-size: 4rem;
+    padding-left: 4rem;
+    padding-top: 2.5rem;
+    padding-bottom: .5rem;
+    font-weight: bold;
+}
+.about .footer {
+    position: absolute;
+    bottom: 0;
+    width 100%;
+}
