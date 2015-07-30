@@ -9,7 +9,7 @@ function* getUserPortfolio() {
   if (portfolios) {
     this.body = portfolios;
   }
-};
+}
 
 function* getPortfolioItems() {
   // TODO check authorization (access control)
@@ -24,7 +24,7 @@ function* getPortfolioItems() {
   if (portfolioItems) {
     this.body = portfolioItems;
   }
-};
+}
 
 function* addItemToPortfolio() {
   // TODO check authorization (access control)
@@ -68,14 +68,14 @@ function* addItemToPortfolio() {
   function checkParams(key) {
     return new validate.Validator(context, key, addItemParams[key], key in addItemParams, addItemParams);
   }
-};
+}
 
 function* deleteItemFromPortfolio() {
   // TODO check authorization (access control)
   // TODO check to make sure portfolio exists
   db.deleteItemFromPortfolio(this.params.username, this.params.portfolio, this.params.itemId);
   this.body = [];
-};
+}
 
 function* createPortfolio() {
   // TODO check authorization (access control)
@@ -114,7 +114,7 @@ function* createPortfolio() {
   function checkParams(key) {
     return new validate.Validator(context, key, createParams[key], key in createParams, createParams);
   }
-};
+}
 
 module.exports = {
   getUserPortfolio: getUserPortfolio,

@@ -1,39 +1,71 @@
-var testData = require("../config/test-data.js");
-var logger = require("../logger.js")
+var testData = require('../config/test-data.js');
+var logger = require('../logger.js');
+var uuid   = require('node-uuid');
+var Loki = require('lokijs');
 
-function getOnlyElement(/* Array */ arr) {
-  if (arr.length === 0) {
-    logger.error("Tried to get element from empty array.");
-    return undefined;
-  }
-  if (arr.length > 1) {
-    logger.error("Got only element from array with more than one element.");
-    return undefined;
-  }
-  return arr[0];
-}
+var databaseFile = 'yodel-db.json';
+var db = new Loki(databaseFile);
+// db.loadDatabase();
+
+var disciplines = db.addCollection('disciplines', {
+  indices: [ 'id' ],
+  clone: true
+});
+var users = db.addCollection('users', {
+  indices: [ 'username' ],
+  clone: true
+});
+
+var userDetails = db.addCollection('userDetails', {
+  indices: [ 'username', 'id' ],
+  clone: true
+});
+var projects = db.addCollection('projects', {
+  indices: [ 'username', 'id' ],
+  clone: true
+});
+var portfolios = db.addCollection('portfolios', {
+  indices: [ 'username', 'id' ],
+  clone: true
+});
+
+// Doug 2015/7/26 TODO: don't reload test data in prod
+users.insert(testData.users.ivan);
+users.insert(testData.users.noel);
 
 function addUser(/* Object */ userDetails) {
+  var userId = uuid.v4();
   var newUser = {
     username: userDetails.username,
+    id: userId,
     email: userDetails.email,
     password: userDetails.password,
     projects: []
   };
 
-  testData.users[userDetails.username] = newUser;
+  logger.info('Created new user: ' + JSON.stringify(newUser));
+  users.insert(newUser);
+
+  logger.info('Persisting database state to ' + databaseFile);
+  db.saveDatabase();
+
+  return newUser;
 }
 
 function getUserByUsername(/* String */ username) {
-  return testData.users[username];
+  return users.by('username', username);
+}
+
+function getUserById(/* UUID */ id) {
+  return users.get(id);
 }
 
 function getUserDetails(/* String */ username) {
-  return testData.userDetails[username];
+  return userDetails.by('username', username);
 }
 
 function getUserPortfolios(/* String */ username) {
-  return testData.userPortfolios[username];
+  return portfolios.by('username', username);
 }
 
 function getPortfolioItems(username, portfolio, offset) {
@@ -42,9 +74,9 @@ function getPortfolioItems(username, portfolio, offset) {
   var portfolioItems = { items: [] };
 
   if (testData.userPortfolioItems[username] && testData.userPortfolioItems[username][portfolio]) {
-    portfolioItems['items'] = testData.userPortfolioItems[username][portfolio].slice(offset, offset + maxItemsToReturn);
+    portfolioItems.items = testData.userPortfolioItems[username][portfolio].slice(offset, offset + maxItemsToReturn);
     if (offset + maxItemsToReturn < testData.userPortfolioItems[username][portfolio].length) {
-      portfolioItems['nextToken'] = offset + maxItemsToReturn;
+      portfolioItems.nextToken = offset + maxItemsToReturn;
     }
   }
 
@@ -60,7 +92,7 @@ function addItemToPortfolio(/* String */ username, /* String */ portfolio, /* St
   }
 
   var portfolioArr = testData.userPortfolioItems[username][portfolio];
-  var newIndex = testData.portfolioArr[portfolioArr.length-1].itemId + 1;
+  var newIndex = testData.portfolioArr[portfolioArr.length - 1].itemId + 1;
 
   var newItem = {
       itemId: newIndex,
@@ -75,7 +107,7 @@ function addItemToPortfolio(/* String */ username, /* String */ portfolio, /* St
 }
 
 function deleteItemFromPortfolio(/* String */ username, /* String */ portfolio, /* Int */ itemId) {
-  var itemId = +itemId || -1;
+  itemId = +itemId || -1;
   var index = -1;
 
   if (testData.userPortfolioItems[username] && testData.userPortfolioItems[username][portfolio]) {
@@ -95,40 +127,36 @@ function createPortfolio(
     /* Date */ createDate,
     /* String */ description,
     /* String */ uploadKey) {
-  if (!testData.userPortfolios[username]) {
-    testData.userPortfolios[username] = [];
-  }
-  testData.userPortfolios[username].push({
+  var portfolio = {
     imageUrl: uploadKey,
     title: portfolioTitle,
     date: createDate,
     description: description
-  });
+  };
+  portfolios.add(portfolio);
 }
 
-function addProject(username, project) {
-  testData.users[username].projects.push(project);
+function addProject(project) {
+  projects.add(project);
 }
 
-function getProject(username, projectid) {
-  return getOnlyElement(testData.users[username].projects.filter(function (project) {
-    return project.id === projectid;
-  }));
+function getProject(projectId) {
+  return projects.get(projectId);
 }
 
 function getProjectsForUser(username) {
-  return testData.users[username].projects;
+  return projects.by('username', username);
 }
 
-function deleteProject(username, projectid) {
-  testData.users[username].projects = testData.users[username].projects.filter(function(project) {
-    return project.id !== projectid;
-  });
+function deleteProject(projectId) {
+  projects.remove(projectId);
 }
 
 module.exports = {
   addUser: addUser,
+  // Doug 2015/7/28 TODO: Switch this to by id.
   getUser: getUserByUsername,
+  getUserById: getUserById,
   getUserDetails: getUserDetails,
   getUserPortfolios: getUserPortfolios,
   getPortfolioItems: getPortfolioItems,

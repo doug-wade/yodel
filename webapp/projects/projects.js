@@ -1,25 +1,9 @@
 function ProjectsCtrl($scope, $http, $stateParams, $q, $log) {
-  function initialize() {
-    var username;
-
-    username = $stateParams.username;
-
-    $scope.isEditing = false;
-    $scope.saveProject = saveProject;
-    $scope.showEditingForm = showEditingForm;
-    $scope.newProject = {};
-
-    getProjects(username).then(function(response) {
-      $scope.projects = response.data;
-      $log.info("Loaded " + $scope.projects.length + " projects.");
-    });
-  }
-
   function getProjects(username) {
     var deferred;
 
     deferred = $q.defer();
-    $http.get('/user/' + username + '/projects').then(deferred.resolve, deferred.reject);
+    $http.get("/user/" + username + "/projects").then(deferred.resolve, deferred.reject);
 
     return deferred.promise;
   }
@@ -33,13 +17,9 @@ function ProjectsCtrl($scope, $http, $stateParams, $q, $log) {
     // have a token input form, we should send these as a list of strings and persist that directly.
     project.collaborators = project.collaborators.split(",");
 
-    $http.post('/user/' + username + '/projects', project).then(deferred.resolve, deferred.reject);
+    $http.post("/user/" + username + "/projects", project).then(deferred.resolve, deferred.reject);
 
     return deferred.promise;
-  }
-
-  function errorHandler(err) {
-    $log.error(err);
   }
 
   function saveProject() {
@@ -63,7 +43,23 @@ function ProjectsCtrl($scope, $http, $stateParams, $q, $log) {
     $scope.isEditing = true;
   }
 
-  initialize();
-};
+  function initialize() {
+    var username;
 
-angular.module('projects', []).controller('ProjectsCtrl', ['$scope', '$http', '$stateParams', '$q', '$log', ProjectsCtrl]);
+    username = $stateParams.username;
+
+    $scope.isEditing = false;
+    $scope.saveProject = saveProject;
+    $scope.showEditingForm = showEditingForm;
+    $scope.newProject = {};
+
+    getProjects(username).then(function(response) {
+      $scope.projects = response.data;
+      $log.info("Loaded " + $scope.projects.length + " projects.");
+    });
+  }
+
+  initialize();
+}
+
+angular.module("projects", []).controller("ProjectsCtrl", ["$scope", "$http", "$stateParams", "$q", "$log", ProjectsCtrl]);

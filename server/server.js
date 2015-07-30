@@ -1,30 +1,27 @@
-var aws        = require("aws-sdk");
-var bodyParser = require("koa-bodyparser");
-var bunyan     = require("koa-bunyan");
-var config     = require("./config/config.js");
-var json       = require("koa-json");
-var jwt        = require("koa-jwt");
-var koa        = require("koa");
-var logger     = require("./logger.js");
-var multiparse = require("co-busboy");
-var parse      = require("co-body");
-var path       = require("path");
-var router     = require("koa-router")();
-var serve      = require("koa-static");
-var session    = require("koa-session");
-var validate   = require("koa-validate");
-var views      = require("co-views");
+var aws        = require('aws-sdk');
+var bodyParser = require('koa-bodyparser');
+var bunyan     = require('koa-bunyan');
+var config     = require('./config/config.js');
+var json       = require('koa-json');
+var jwt        = require('koa-jwt');
+var koa        = require('koa');
+var logger     = require('./logger.js');
+var router     = require('koa-router')();
+var serve      = require('koa-static');
+var session    = require('koa-session');
+var validate   = require('koa-validate');
+var views      = require('co-views');
 
 var app        = module.exports = koa();
 
 app.use(bunyan(logger, {
-  level: "info",
+  level: 'info',
   timeLimit: 250
 }));
 
 aws.config.region = config.aws.region;
 
-app.use(jwt({secret: config.jwtAuthSecret}).unless({ path : [
+app.use(jwt({secret: config.jwtAuthSecret}).unless({ path: [
   /^\/$/,
   /^\/favico\.ico/,
   /^\/css/,
@@ -43,16 +40,12 @@ app.use(session());
 app.use(bodyParser());
 app.use(validate());
 
-var render = views("views/");
+var render = views('views/');
 
-app.use(serve("public/"));
+app.use(serve('public/'));
 
-require("koa-qs")(app);
-
-// ===========================
-// Routes
-// ===========================
-require("./routes")(router, jwt);
+require('koa-qs')(app);
+require('./routes')(router, jwt);
 app.use(router.routes());
 
 app.listen(3000);
