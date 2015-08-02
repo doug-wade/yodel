@@ -1,17 +1,17 @@
-var testData = require('../config/test-data.js');
+var config = require('../config/config.js');
+var db = require('../util/db.js');
 
 function* getUserDisciplines() {
-  this.body = testData.disciplines;
-};
+  this.body = db.getAllDisciplines();
+}
 
 function* setUserDisciplines() {
   // TODO Store these disciplines in association with a particular username here
-  testData.users[this.params.username]['disciplines'] = this.body;
-  this.body = "'Success'";
-};
+  db.updateDisciplinesForUser(this.params.username, this.body);
+  this.body = config.jsonSuccess;
+}
 
 module.exports = {
   getUserDisciplines: getUserDisciplines,
   setUserDisciplines: setUserDisciplines
 };
-

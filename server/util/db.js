@@ -1,45 +1,77 @@
 var testData = require('../config/test-data.js');
+var fs = require('fs');
 var logger = require('../logger.js');
 var uuid   = require('node-uuid');
 var Loki = require('lokijs');
 
-var databaseFile = 'yodel-db.json';
-var db = new Loki(databaseFile);
-// db.loadDatabase();
+var databaseFile, db, disciplines, portfolios, projects, userDetails, users;
 
-var disciplines = db.addCollection('disciplines', {
-  indices: [ 'id' ],
-  clone: true
-});
-var users = db.addCollection('users', {
-  indices: [ 'username' ],
-  clone: true
-});
+function loadSchema() {
+  logger.info('Loading schema...');
+  disciplines = db.addCollection('disciplines', {
+    indices: [ 'id' ],
+    clone: true
+  });
+  portfolios = db.addCollection('portfolios', {
+    indices: [ 'username', 'id' ],
+    clone: true
+  });
+  projects = db.addCollection('projects', {
+    indices: [ 'username', 'id' ],
+    clone: true
+  });
+  userDetails = db.addCollection('userDetails', {
+    indices: [ 'username', 'id' ],
+    clone: true
+  });
+  users = db.addCollection('users', {
+    indices: [ 'username' ],
+    clone: true
+  });
+}
 
-var userDetails = db.addCollection('userDetails', {
-  indices: [ 'username', 'id' ],
-  clone: true
-});
-var projects = db.addCollection('projects', {
-  indices: [ 'username', 'id' ],
-  clone: true
-});
-var portfolios = db.addCollection('portfolios', {
-  indices: [ 'username', 'id' ],
-  clone: true
-});
+function loadTestData() {
+  logger.info('Loading testData...');
+  // Doug 2015/7/26 TODO: don't reload test data in prod
+  users.insert(testData.users.ivan);
+  users.insert(testData.users.noel);
+  users.ensureUniqueIndex('username');
 
-// Doug 2015/7/26 TODO: don't reload test data in prod
-users.insert(testData.users.ivan);
-users.insert(testData.users.noel);
+  userDetails.insert(testData.userDetails.ivan);
+  userDetails.insert(testData.userDetails.noel);
+  userDetails.ensureUniqueIndex('username');
 
-function addUser(/* Object */ userDetails) {
+  testData.projects.forEach(function (project) {
+    projects.insert(project);
+  });
+
+  testData.disciplines.forEach(function (discipline) {
+    disciplines.insert(discipline);
+  });
+
+  db.saveDatabase();
+}
+
+function addDiscipline(discpline) {
+  disciplines.insert(discpline);
+}
+
+function updateDisciplinesForUser(username, disciplinesToAdd) {
+  logger.info('username: ' + username);
+  users.ensureUniqueIndex('username');
+  var toUpdate = users.by('username', username);
+  toUpdate.disciplines = disciplinesToAdd;
+  // Resync the indexes of the collection
+  users.update(toUpdate);
+}
+
+function addUser(/* Object */ details) {
   var userId = uuid.v4();
   var newUser = {
-    username: userDetails.username,
+    username: details.username,
     id: userId,
-    email: userDetails.email,
-    password: userDetails.password,
+    email: details.email,
+    password: details.password,
     projects: []
   };
 
@@ -52,7 +84,14 @@ function addUser(/* Object */ userDetails) {
   return newUser;
 }
 
+function getAllDisciplines() {
+  // TODO: I'm not sure why I keep returning an empty list.
+  // return disciplines.where(function(){ return true; });
+  return testData.disciplines;
+}
+
 function getUserByUsername(/* String */ username) {
+  users.ensureUniqueIndex('username');
   return users.by('username', username);
 }
 
@@ -65,7 +104,7 @@ function getUserDetails(/* String */ username) {
 }
 
 function getUserPortfolios(/* String */ username) {
-  return portfolios.by('username', username);
+  return portfolios.find({ 'username': username });
 }
 
 function getPortfolioItems(username, portfolio, offset) {
@@ -98,7 +137,7 @@ function addItemToPortfolio(/* String */ username, /* String */ portfolio, /* St
       itemId: newIndex,
       resourceUrl: uploadKey,
       resourceType: 'picture',
-      caption: addItemParams.caption,
+      caption: caption,
       likes: 0,
       comments: 0
   };
@@ -111,8 +150,8 @@ function deleteItemFromPortfolio(/* String */ username, /* String */ portfolio, 
   var index = -1;
 
   if (testData.userPortfolioItems[username] && testData.userPortfolioItems[username][portfolio]) {
-    index = testData.userPortfolioItems[username][portfolio].findIndex(function(ele) {
-      return ele.itemId === itemId;
+    index = testData.userPortfolioItems[username][portfolio].findIndex(function(elem) {
+      return elem.itemId === itemId;
     });
   }
 
@@ -137,7 +176,9 @@ function createPortfolio(
 }
 
 function addProject(project) {
-  projects.add(project);
+  logger.info('Inserting project into db', project);
+  projects.insert(project);
+  db.saveDatabase();
 }
 
 function getProject(projectId) {
@@ -145,15 +186,34 @@ function getProject(projectId) {
 }
 
 function getProjectsForUser(username) {
-  return projects.by('username', username);
+  return projects.find({ 'username': username });
 }
 
 function deleteProject(projectId) {
   projects.remove(projectId);
 }
 
+function initialize() {
+  databaseFile = 'build/yodel-db.json';
+  logger.info('Creating database, to be saved to file ' + databaseFile);
+  db = new Loki(databaseFile);
+  fs.access(databaseFile, fs.W_OK, function(err) {
+    if (err) {
+      loadSchema();
+      loadTestData();
+    } else {
+      db.loadDatabase();
+      loadSchema();
+    }
+  });
+}
+
+initialize();
+
 module.exports = {
+  addDiscipline: addDiscipline,
   addUser: addUser,
+  getAllDisciplines: getAllDisciplines,
   // Doug 2015/7/28 TODO: Switch this to by id.
   getUser: getUserByUsername,
   getUserById: getUserById,
@@ -166,5 +226,6 @@ module.exports = {
   addProject: addProject,
   getProject: getProject,
   getProjectsForUser: getProjectsForUser,
-  deleteProject: deleteProject
+  deleteProject: deleteProject,
+  updateDisciplinesForUser: updateDisciplinesForUser
 };

@@ -13,7 +13,7 @@ function* createProject() {
 
   logger.info('User ' + username + ' is creating project ' + JSON.stringify(project));
 
-  db.addProject(username, project);
+  db.addProject(project);
   this.body = project;
 }
 

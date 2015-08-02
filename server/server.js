@@ -40,7 +40,7 @@ app.use(session());
 app.use(bodyParser());
 app.use(validate());
 
-var render = views('views/');
+views('views/');
 
 app.use(serve('public/'));
 
