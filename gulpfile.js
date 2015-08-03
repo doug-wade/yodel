@@ -1,6 +1,9 @@
+var babel      = require('gulp-babel');
 var concat     = require('gulp-concat');
 var del        = require('del');
+var eslint     = require('gulp-eslint');
 var gulp       = require('gulp');
+var gutil      = require('gulp-util');
 var imagemin   = require('gulp-imagemin');
 var install    = require('gulp-install');
 var karma      = require('karma');
@@ -12,12 +15,13 @@ var path       = require('path');
 var pngquant   = require('imagemin-pngquant');
 var protractor = require('gulp-protractor').protractor;
 var ptor       = require('protractor');
-var uglify     = require('gulp-uglify');
+// var uglify     = require('gulp-uglify');
 
 var paths = {
   bower: 'public/vendor',
   bowerjson: './bower.json',
   build: 'build',
+  db: 'yodel88/yodel-db.json',
   e2especs: 'test/e2e/*.scenarios.js',
   karmaconf: path.join(__dirname, 'karma.conf.js'),
   images: './images/**/*.*',
@@ -53,7 +57,21 @@ gulp.task('bower', function() {
 
 gulp.task('clean', function() {
   return del([paths.build, paths.public], function(err, deletedFiles) {
-    return console.log('Cleaned files: ', deletedFiles.join(', '));
+    if (err) {
+      gutil.log(err);
+    } else {
+      gutil.log('Cleaned files: ', deletedFiles.join(', '));
+    }
+  });
+});
+
+gulp.task('clean-db', function() {
+  return del([paths.db], function(err, deletedFiles) {
+    if (err) {
+      gutil.log(err);
+    } else {
+      gutil.log('Cleaned files: ', deletedFiles.join(', '));
+    }
   });
 });
 
@@ -71,6 +89,13 @@ gulp.task('karma', function(done) {
       configFile: paths.karmaconf,
       singleRun: true
     }, done);
+});
+
+gulp.task('lint', function() {
+  gulp.src(paths.server)
+    .pipe(eslint({ useEslintrc: true }))
+    .pipe(eslint.format('stylish'))
+    .pipe(eslint.failAfterError());
 });
 
 gulp.task('mocha', function() {
@@ -98,12 +123,19 @@ gulp.task('server', function() {
   return nodemon({
       script: paths.build + '/server.js',
       nodeArgs: ['--harmony'],
-      ignore: ['./bower_components/**', './node_modules/**', './public/**', './src/**', './test/**', './views/**', './images/**']
+      ignore: ['bower_components/**', 'node_modules/**', 'src/**', 'test/**', 'views/**', 'images/**']
     });
 });
 
-gulp.task('server-scripts', function() {
-  return gulp.src(paths.server).pipe(gulp.dest(paths.build));
+gulp.task('server-scripts', ['lint'], function() {
+  var options = {
+    blacklist: [
+      'regenerator'
+    ]
+  };
+  return gulp.src(paths.server)
+    .pipe(babel(options))
+    .pipe(gulp.dest(paths.build));
 });
 
 gulp.task('scripts', function() {

@@ -4,7 +4,7 @@ var logger = require('../logger.js');
 var uuid   = require('node-uuid');
 var Loki = require('lokijs');
 
-var databaseFile, db, disciplines, portfolios, projects, userDetails, users;
+var databaseFile, db, disciplines, hasRun, portfolios, projects, userDetails, users;
 
 function loadSchema() {
   logger.info('Loading schema...');
@@ -50,17 +50,19 @@ function loadTestData() {
   });
 
   db.saveDatabase();
+
+  var toReturn = disciplines.where(() => { return true;  });
+  logger.info(toReturn);
 }
 
-function addDiscipline(discpline) {
+function addDiscipline(/* Object */ discpline) {
   disciplines.insert(discpline);
 }
 
-function updateDisciplinesForUser(username, disciplinesToAdd) {
+function addDisciplinesForUser(/* String */ username, /* Object[] */ disciplinesToAdd) {
   logger.info('username: ' + username);
-  users.ensureUniqueIndex('username');
   var toUpdate = users.by('username', username);
-  toUpdate.disciplines = disciplinesToAdd;
+  toUpdate.disciplines.concat(disciplinesToAdd);
   // Resync the indexes of the collection
   users.update(toUpdate);
 }
@@ -72,7 +74,7 @@ function addUser(/* Object */ details) {
     id: userId,
     email: details.email,
     password: details.password,
-    projects: []
+    disciplines: []
   };
 
   logger.info('Created new user: ' + JSON.stringify(newUser));
@@ -85,9 +87,11 @@ function addUser(/* Object */ details) {
 }
 
 function getAllDisciplines() {
-  // TODO: I'm not sure why I keep returning an empty list.
-  // return disciplines.where(function(){ return true; });
-  return testData.disciplines;
+  // TODO: Doug 2015/8/2 I'm not sure why I keep returning an empty list when I don't override the
+  // discipline object, but it's bad practice and we should refactor it out.
+  var disciplines = db.getCollection('disciplines');
+  var toReturn = disciplines.where(() => { return true;  });
+  return toReturn;
 }
 
 function getUserByUsername(/* String */ username) {
@@ -107,7 +111,7 @@ function getUserPortfolios(/* String */ username) {
   return portfolios.find({ 'username': username });
 }
 
-function getPortfolioItems(username, portfolio, offset) {
+function getPortfolioItems( /* String */ username, /* Object */ portfolio, /* int */ offset) {
   // TODO rather than returning a next token, can't we just return a generator and yield data to the browser!?!?
   var maxItemsToReturn = 2;
   var portfolioItems = { items: [] };
@@ -177,6 +181,7 @@ function createPortfolio(
 
 function addProject(project) {
   logger.info('Inserting project into db', project);
+  var projects = db.getCollection('projects');
   projects.insert(project);
   db.saveDatabase();
 }
@@ -186,6 +191,7 @@ function getProject(projectId) {
 }
 
 function getProjectsForUser(username) {
+  var projects = db.getCollection('projects');
   return projects.find({ 'username': username });
 }
 
@@ -194,18 +200,23 @@ function deleteProject(projectId) {
 }
 
 function initialize() {
-  databaseFile = 'build/yodel-db.json';
-  logger.info('Creating database, to be saved to file ' + databaseFile);
-  db = new Loki(databaseFile);
-  fs.access(databaseFile, fs.W_OK, function(err) {
-    if (err) {
-      loadSchema();
-      loadTestData();
-    } else {
-      db.loadDatabase();
-      loadSchema();
-    }
-  });
+  if (!hasRun){
+    hasRun = true;
+    databaseFile = 'yodel88/yodel-db.json';
+    logger.info('Creating database, to be saved to file ' + databaseFile);
+    db = new Loki(databaseFile);
+    fs.access(databaseFile, fs.W_OK, function(err) {
+      if (err) {
+        loadSchema();
+        loadTestData();
+      } else {
+        db.loadDatabase();
+        loadSchema();
+      }
+    });
+  } else {
+    logger.info('database already initialized; skipping');
+  }
 }
 
 initialize();
@@ -227,5 +238,5 @@ module.exports = {
   getProject: getProject,
   getProjectsForUser: getProjectsForUser,
   deleteProject: deleteProject,
-  updateDisciplinesForUser: updateDisciplinesForUser
+  addDisciplinesForUser: addDisciplinesForUser
 };

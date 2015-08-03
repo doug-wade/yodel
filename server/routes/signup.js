@@ -1,5 +1,6 @@
 var config = require('../config/config.js');
 var db = require('../util/db.js');
+var logger = require('../logger.js');
 
 function isUsernameTaken(/* String */ username) {
   return db.getUser(username) !== undefined;
@@ -15,13 +16,14 @@ function constructProfile(/* Object */ user) {
 function signup(jwt) {
   return function* () {
     // basic signup validation
-    var signup = this.request.body;
+    var signupBody = this.request.body;
+    logger.info(signupBody);
     this.checkBody('username').notEmpty();
     this.checkBody('email').isEmail();
     this.checkBody('password1').notEmpty().len(6);
-    this.checkBody('password2').notEmpty().eq(signup.password1, 'Passwords must match');
+    this.checkBody('password2').notEmpty().eq(signupBody.password1, 'Passwords must match');
 
-    if (isUsernameTaken(signup.username)) {
+    if (isUsernameTaken(signupBody.username)) {
       if (!this.errors) {
         this.errors = [];
       }
@@ -30,20 +32,21 @@ function signup(jwt) {
     }
 
     if (this.errors) {
+      logger.warn(this.errors);
       this.status = 400;
       this.body = this.errors;
       return;
     }
 
     db.addUser({
-      username: signup.username,
-      email: signup.email,
-      password: signup.password1
+      username: signupBody.username,
+      email: signupBody.email,
+      password: signupBody.password1
     });
 
     this.body = {
-      username: signup.username,
-      token: jwt.sign(constructProfile(signup), config.jwtAuthSecret, { expiresInMinutes: config.jwtTtl })
+      username: signupBody.username,
+      token: jwt.sign(constructProfile(signupBody), config.jwtAuthSecret, { expiresInMinutes: config.jwtTtl })
     };
   };
 }
