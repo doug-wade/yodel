@@ -15,6 +15,7 @@ var path       = require('path');
 var pngquant   = require('imagemin-pngquant');
 var protractor = require('gulp-protractor').protractor;
 var ptor       = require('protractor');
+// There is a complementary comment in the scripts task
 // var uglify     = require('gulp-uglify');
 
 var paths = {
@@ -121,7 +122,7 @@ gulp.task('protractor', ['webdriver_update', 'webdriver_standalone'], function()
 
 gulp.task('server', function() {
   return nodemon({
-      script: paths.build + '/server.js',
+      script: path.join(paths.build, '/server.js'),
       nodeArgs: ['--harmony'],
       ignore: ['bower_components/**', 'node_modules/**', 'src/**', 'test/**', 'views/**', 'images/**']
     });

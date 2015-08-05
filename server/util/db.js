@@ -50,13 +50,10 @@ function loadTestData() {
   });
 
   db.saveDatabase();
-
-  var toReturn = disciplines.where(() => { return true;  });
-  logger.info(toReturn);
 }
 
-function addDiscipline(/* Object */ discpline) {
-  disciplines.insert(discpline);
+function addDiscipline(/* Object */ discipline) {
+  disciplines.insert(discipline);
 }
 
 function addDisciplinesForUser(/* String */ username, /* Object[] */ disciplinesToAdd) {
@@ -65,6 +62,9 @@ function addDisciplinesForUser(/* String */ username, /* Object[] */ disciplines
   toUpdate.disciplines.concat(disciplinesToAdd);
   // Resync the indexes of the collection
   users.update(toUpdate);
+
+  logger.info('Persisting database state to ' + databaseFile);
+  db.saveDatabase();
 }
 
 function addUser(/* Object */ details) {
@@ -183,6 +183,8 @@ function addProject(project) {
   logger.info('Inserting project into db', project);
   var projects = db.getCollection('projects');
   projects.insert(project);
+
+  logger.info('Persisting database state to ' + databaseFile);
   db.saveDatabase();
 }
 
