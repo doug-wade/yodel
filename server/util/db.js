@@ -1,50 +1,125 @@
-var testData = require("../config/test-data.js");
-var logger = require("../logger.js")
+var testData = require('../config/test-data.js');
+var fs = require('fs');
+var logger = require('../logger.js');
+var uuid   = require('node-uuid');
+var Loki = require('lokijs');
 
-function getOnlyElement(/* Array */ arr) {
-  if (arr.length === 0) {
-    logger.error("Tried to get element from empty array.");
-    return undefined;
-  }
-  if (arr.length > 1) {
-    logger.error("Got only element from array with more than one element.");
-    return undefined;
-  }
-  return arr[0];
+var databaseFile, db, disciplines, hasRun, portfolios, projects, userDetails, users;
+
+function loadSchema() {
+  logger.info('Loading schema...');
+  disciplines = db.addCollection('disciplines', {
+    indices: [ 'id' ],
+    clone: true
+  });
+  portfolios = db.addCollection('portfolios', {
+    indices: [ 'username', 'id' ],
+    clone: true
+  });
+  projects = db.addCollection('projects', {
+    indices: [ 'username', 'id' ],
+    clone: true
+  });
+  userDetails = db.addCollection('userDetails', {
+    indices: [ 'username', 'id' ],
+    clone: true
+  });
+  users = db.addCollection('users', {
+    indices: [ 'username' ],
+    clone: true
+  });
 }
 
-function addUser(/* Object */ userDetails) {
+function loadTestData() {
+  logger.info('Loading testData...');
+  // Doug 2015/7/26 TODO: don't reload test data in prod
+  users.insert(testData.users.ivan);
+  users.insert(testData.users.noel);
+  users.ensureUniqueIndex('username');
+
+  userDetails.insert(testData.userDetails.ivan);
+  userDetails.insert(testData.userDetails.noel);
+  userDetails.ensureUniqueIndex('username');
+
+  testData.projects.forEach(function (project) {
+    projects.insert(project);
+  });
+
+  testData.disciplines.forEach(function (discipline) {
+    disciplines.insert(discipline);
+  });
+
+  db.saveDatabase();
+}
+
+function addDiscipline(/* Object */ discipline) {
+  disciplines.insert(discipline);
+}
+
+function addDisciplinesForUser(/* String */ username, /* Object[] */ disciplinesToAdd) {
+  logger.info('username: ' + username);
+  var toUpdate = users.by('username', username);
+  toUpdate.disciplines.concat(disciplinesToAdd);
+  // Resync the indexes of the collection
+  users.update(toUpdate);
+
+  logger.info('Persisting database state to ' + databaseFile);
+  db.saveDatabase();
+}
+
+function addUser(/* Object */ details) {
+  var userId = uuid.v4();
   var newUser = {
-    username: userDetails.username,
-    email: userDetails.email,
-    password: userDetails.password,
-    projects: []
+    username: details.username,
+    id: userId,
+    email: details.email,
+    password: details.password,
+    disciplines: []
   };
 
-  testData.users[userDetails.username] = newUser;
+  logger.info('Created new user: ' + JSON.stringify(newUser));
+  users.insert(newUser);
+
+  logger.info('Persisting database state to ' + databaseFile);
+  db.saveDatabase();
+
+  return newUser;
+}
+
+function getAllDisciplines() {
+  // TODO: Doug 2015/8/2 I'm not sure why I keep returning an empty list when I don't override the
+  // discipline object, but it's bad practice and we should refactor it out.
+  var disciplines = db.getCollection('disciplines');
+  var toReturn = disciplines.where(() => { return true;  });
+  return toReturn;
 }
 
 function getUserByUsername(/* String */ username) {
-  return testData.users[username];
+  users.ensureUniqueIndex('username');
+  return users.by('username', username);
+}
+
+function getUserById(/* UUID */ id) {
+  return users.get(id);
 }
 
 function getUserDetails(/* String */ username) {
-  return testData.userDetails[username];
+  return userDetails.by('username', username);
 }
 
 function getUserPortfolios(/* String */ username) {
-  return testData.userPortfolios[username];
+  return portfolios.find({ 'username': username });
 }
 
-function getPortfolioItems(username, portfolio, offset) {
+function getPortfolioItems( /* String */ username, /* Object */ portfolio, /* int */ offset) {
   // TODO rather than returning a next token, can't we just return a generator and yield data to the browser!?!?
   var maxItemsToReturn = 2;
   var portfolioItems = { items: [] };
 
   if (testData.userPortfolioItems[username] && testData.userPortfolioItems[username][portfolio]) {
-    portfolioItems['items'] = testData.userPortfolioItems[username][portfolio].slice(offset, offset + maxItemsToReturn);
+    portfolioItems.items = testData.userPortfolioItems[username][portfolio].slice(offset, offset + maxItemsToReturn);
     if (offset + maxItemsToReturn < testData.userPortfolioItems[username][portfolio].length) {
-      portfolioItems['nextToken'] = offset + maxItemsToReturn;
+      portfolioItems.nextToken = offset + maxItemsToReturn;
     }
   }
 
@@ -60,13 +135,13 @@ function addItemToPortfolio(/* String */ username, /* String */ portfolio, /* St
   }
 
   var portfolioArr = testData.userPortfolioItems[username][portfolio];
-  var newIndex = testData.portfolioArr[portfolioArr.length-1].itemId + 1;
+  var newIndex = testData.portfolioArr[portfolioArr.length - 1].itemId + 1;
 
   var newItem = {
       itemId: newIndex,
       resourceUrl: uploadKey,
       resourceType: 'picture',
-      caption: addItemParams.caption,
+      caption: caption,
       likes: 0,
       comments: 0
   };
@@ -75,12 +150,12 @@ function addItemToPortfolio(/* String */ username, /* String */ portfolio, /* St
 }
 
 function deleteItemFromPortfolio(/* String */ username, /* String */ portfolio, /* Int */ itemId) {
-  var itemId = +itemId || -1;
+  itemId = +itemId || -1;
   var index = -1;
 
   if (testData.userPortfolioItems[username] && testData.userPortfolioItems[username][portfolio]) {
-    index = testData.userPortfolioItems[username][portfolio].findIndex(function(ele) {
-      return ele.itemId === itemId;
+    index = testData.userPortfolioItems[username][portfolio].findIndex(function(elem) {
+      return elem.itemId === itemId;
     });
   }
 
@@ -95,40 +170,66 @@ function createPortfolio(
     /* Date */ createDate,
     /* String */ description,
     /* String */ uploadKey) {
-  if (!testData.userPortfolios[username]) {
-    testData.userPortfolios[username] = [];
-  }
-  testData.userPortfolios[username].push({
+  var portfolio = {
     imageUrl: uploadKey,
     title: portfolioTitle,
     date: createDate,
     description: description
-  });
+  };
+  portfolios.add(portfolio);
 }
 
-function addProject(username, project) {
-  testData.users[username].projects.push(project);
+function addProject(project) {
+  logger.info('Inserting project into db', project);
+  var projects = db.getCollection('projects');
+  projects.insert(project);
+
+  logger.info('Persisting database state to ' + databaseFile);
+  db.saveDatabase();
 }
 
-function getProject(username, projectid) {
-  return getOnlyElement(testData.users[username].projects.filter(function (project) {
-    return project.id === projectid;
-  }));
+function getProject(projectId) {
+  return projects.get(projectId);
 }
 
 function getProjectsForUser(username) {
-  return testData.users[username].projects;
+  var projects = db.getCollection('projects');
+  return projects.find({ 'username': username });
 }
 
-function deleteProject(username, projectid) {
-  testData.users[username].projects = testData.users[username].projects.filter(function(project) {
-    return project.id !== projectid;
-  });
+function deleteProject(projectId) {
+  projects.remove(projectId);
 }
+
+function initialize() {
+  if (!hasRun){
+    hasRun = true;
+    databaseFile = 'yodel88/yodel-db.json';
+    logger.info('Creating database, to be saved to file ' + databaseFile);
+    db = new Loki(databaseFile);
+    fs.access(databaseFile, fs.W_OK, function(err) {
+      if (err) {
+        loadSchema();
+        loadTestData();
+      } else {
+        db.loadDatabase();
+        loadSchema();
+      }
+    });
+  } else {
+    logger.info('database already initialized; skipping');
+  }
+}
+
+initialize();
 
 module.exports = {
+  addDiscipline: addDiscipline,
   addUser: addUser,
+  getAllDisciplines: getAllDisciplines,
+  // Doug 2015/7/28 TODO: Switch this to by id.
   getUser: getUserByUsername,
+  getUserById: getUserById,
   getUserDetails: getUserDetails,
   getUserPortfolios: getUserPortfolios,
   getPortfolioItems: getPortfolioItems,
@@ -138,5 +239,6 @@ module.exports = {
   addProject: addProject,
   getProject: getProject,
   getProjectsForUser: getProjectsForUser,
-  deleteProject: deleteProject
+  deleteProject: deleteProject,
+  addDisciplinesForUser: addDisciplinesForUser
 };

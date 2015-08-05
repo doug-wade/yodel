@@ -5,7 +5,8 @@ angular.module('signup', [
     '$state',
     '$window',
     '$rootScope',
-    function($http, $scope, $state, $window, $rootScope) {
+    '$log',
+    function($http, $scope, $state, $window, $rootScope, $log) {
         function initialize() {
             $scope.signUp = signUp;
             $scope.showValidation = false;
@@ -15,6 +16,7 @@ angular.module('signup', [
         function signUp(form, inputs) {
             if (form && form.$valid) {
                 initialize();
+                $log.info(inputs);
                 $http.post('/signup', inputs).then(
                     function(response) {
                         $window.sessionStorage.token = response.data.token;

@@ -1,4 +1,4 @@
-var yodelApp = angular.module("yodel", [
+var yodelApp = angular.module('yodel', [
     'about',
     'events',
     'ionic',

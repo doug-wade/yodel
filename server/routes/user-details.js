@@ -9,7 +9,7 @@ function* getUser() {
   if (userDetails) {
     this.body = userDetails;
   }
-};
+}
 
 module.exports = {
   getUser: getUser

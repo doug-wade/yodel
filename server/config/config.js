@@ -6,6 +6,8 @@ var config = {
         secretKey: 'path/to/file'
     },
 
+    jsonSuccess: { 'status': 200, 'message': 'success' },
+
     // TODO load this from a file using a "refresher" strategy; see https://github.com/auth0/node-jsonwebtoken
     jwtAuthSecret: 'yodel-super-secret',
 

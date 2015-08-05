@@ -23,9 +23,9 @@ function login(jwt) {
       return;
     }
 
-    var login = this.request.body;
-    var user = db.getUser(login.username);
-    if (isInvalidPassword(user, login.password)) {
+    var loginAttempt = this.request.body;
+    var user = db.getUser(loginAttempt.username);
+    if (isInvalidPassword(user, loginAttempt.password)) {
       this.status = 401;
       this.body = 'Unauthorized';
       return;
