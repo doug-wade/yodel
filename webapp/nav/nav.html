@@ -28,6 +28,10 @@
                     <i class="icon ion-person"></i>
                     Login
                 </ion-item>
+                <ion-item class="HighlightTab" ng-if="!username" menu-close ui-sref="signup">
+                    <i class="icon ion-person-add"></i>
+                    Signup
+                </ion-item>
                 <ion-item class="HighlightTab" menu-close ui-sref="yodel.projects({ username: username })">
                     <i class="icon ion-android-color-palette"></i>
                     Projects
