@@ -9,18 +9,7 @@ function* getUserDisciplines() {
 }
 
 function* setUserDisciplines() {
-	logger.info('ISAJDIASJDIASJDIASJDIASJDI' + 
-		'AJSDOIJADSIOJASDIOJASDIOJASDIOJASOIDJASI' +
-		'ODJAIOSDJOIASDJOIASDJOIASDJOIASDJOIASDJIO' +
-		'ASJDOIASJDOIASJDOIASJDOIASJDIOASDJOIASDJI' +
-		'OASJDOISADJOIASDJAOISDJASIJDIOASJDOIAJDSI' +
-		'OJDIAOSJDIASJDAIOSJDOASIJDAOISJDIOASJDOIA' +
-		'SDJOIDJSOAIDJIOAJDOIDJSAOI');
-
-	logger.info(JSON.stringify(this));
-	logger.info(JSON.stringify(this.body));
-	logger.info('HELLO!!!');
-  //db.addDisciplinesForUser(this.params.username, this.body);
+  db.addDisciplinesForUser(this.params.username, this.body);
   this.body = config.jsonSuccess;
 }
 

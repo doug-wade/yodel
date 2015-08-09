@@ -5,13 +5,14 @@ angular.module('signup-info', [
     '$state',
     '$window',
     '$rootScope',
-    function($http, $scope, $state, $window, $rootScope) {
+    '$log',
+    function($http, $scope, $state, $window, $rootScope, $log) {
         
         function initialize(){
             $scope.postDisciplines = postDisciplines;
             $scope.currentStep = "disciplines";
             $scope.step = 1;
-            $scope.customDiscipline;
+            $scope.customDiscipline = {};
             getDisciplines();
         };
         
@@ -23,11 +24,9 @@ angular.module('signup-info', [
                 var request = {};
                 request['disciplines'] = $scope.disciplines;
                 request['customDisciplines'] = $scope.customDiscipline;
+                $log.info("Disciplines Request: " + request);
 
-                console.log("REQUEST BRAH : ");
-                console.log(request);
-
-                $http.post('/user/' + $rootScope.username + "/disciplines", $scope.disciplines).then(
+                $http.post('/user/' + $rootScope.username + "/disciplines", request).then(
                     function(response) {
                         /* Success */
                         $state.go('yodel.profile');
