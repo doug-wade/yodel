@@ -7,7 +7,7 @@ angular.module('signup-info', [
     '$rootScope',
     '$log',
     function($http, $scope, $state, $window, $rootScope, $log) {
-        
+
         function initialize(){
             $scope.postDisciplines = postDisciplines;
             $scope.currentStep = "disciplines";
@@ -15,15 +15,16 @@ angular.module('signup-info', [
             $scope.customDiscipline = {};
             getDisciplines();
         };
-        
+
         function postDisciplines(){
             if($scope.step === 1){
                 //TODO: Check to make sure that at least 1 disipline is selected
                 $scope.step = 2;
             }else{
                 var request = {};
-                request['disciplines'] = $scope.disciplines;
-                request['customDisciplines'] = $scope.customDiscipline;
+                request.disciplines = $scope.disciplines;
+                request.customDisciplines = $scope.customDiscipline;
+
                 $log.info("Disciplines Request: " + request);
 
                 $http.post('/user/' + $rootScope.username + "/disciplines", request).then(
@@ -36,7 +37,7 @@ angular.module('signup-info', [
                     });
             }
         };
-        
+
         function getDisciplines(){
             console.log("Getting disciplines");
             $http.get('/user/' + $rootScope.username + "/disciplines").then(
@@ -53,7 +54,7 @@ angular.module('signup-info', [
                     /* Notification */
                 });
         };
-        
+
         initialize();
     }
 ]);

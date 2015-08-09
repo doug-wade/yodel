@@ -9,7 +9,9 @@ function* getUserDisciplines() {
 }
 
 function* setUserDisciplines() {
-  db.addDisciplinesForUser(this.params.username, this.body);
+	logger.info('username: ' + this.params.username);
+	logger.info('request: ' + JSON.stringify(this.request.body));
+  db.addDisciplinesForUser(this.params.username, this.request.body);
   this.body = config.jsonSuccess;
 }
 
