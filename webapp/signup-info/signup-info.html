@@ -12,8 +12,14 @@
                                         {{ item.text }}
                                 </ion-toggle>
                             </div>
-                        </div>                                 
+                        </div>                                
                     </div>
+                    <div class="card ion-item">
+                        <label class="item item-input">
+                          <i class="icon ion-ios-nutrition placeholder-icon"></i>
+                          <input ng-model="customDiscipline" type="search" placeholder="Custom Discipline">
+                        </label>
+                    </div> 
                 <div class="card">
                     <button type="submit" ng-click="postDisciplines()" class="button button-bar button-energized ink activated">Next</button>
                 </div>

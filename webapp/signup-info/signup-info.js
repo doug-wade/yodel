@@ -10,8 +10,8 @@ angular.module('signup-info', [
         function initialize(){
             $scope.postDisciplines = postDisciplines;
             $scope.currentStep = "disciplines";
-            $scope.alert = console.log('foobar');
             $scope.step = 1;
+            $scope.customDiscipline;
             getDisciplines();
         };
         
@@ -20,6 +20,13 @@ angular.module('signup-info', [
                 //TODO: Check to make sure that at least 1 disipline is selected
                 $scope.step = 2;
             }else{
+                var request = {};
+                request['disciplines'] = $scope.disciplines;
+                request['customDisciplines'] = $scope.customDiscipline;
+
+                console.log("REQUEST BRAH : ");
+                console.log(request);
+
                 $http.post('/user/' + $rootScope.username + "/disciplines", $scope.disciplines).then(
                     function(response) {
                         /* Success */
