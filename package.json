@@ -76,6 +76,7 @@
     "node-uuid": "^1.4.3",
     "qs": "^4.0.0",
     "s3-upload-stream": "1.0.7",
+    "scrypt": "^4.0.7",
     "then-jade": "2.2.1"
   },
   "engines": {

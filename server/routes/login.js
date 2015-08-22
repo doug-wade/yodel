@@ -1,8 +1,13 @@
 var config = require('../config/config.js');
 var db = require('../util/db.js');
+var {scrypt, scryptParameters} = config.configureScrypt(require('scrypt'));
 
 function isInvalidPassword(/* Object */ user, /* String */ password) {
-  return user === undefined || user.password !== password;
+  if (!user) {
+    return false;
+  }
+
+  return scrypt.verify(password, scryptParameters);
 }
 
 function constructProfile(/* Object */ user) {

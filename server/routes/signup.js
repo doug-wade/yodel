@@ -1,6 +1,7 @@
 var config = require('../config/config.js');
 var db = require('../util/db.js');
 var logger = require('../logger.js');
+var {scrypt, scryptParameters} = config.configureScrypt(require('scrypt'));
 
 function isUsernameTaken(/* String */ username) {
   return db.getUser(username) !== undefined;
@@ -16,7 +17,9 @@ function constructProfile(/* Object */ user) {
 function signup(jwt) {
   return function* () {
     // basic signup validation
-    var signupBody = this.request.body;
+    var signupBody, hash;
+
+    signupBody = this.request.body;
     logger.info(signupBody);
     this.checkBody('username').notEmpty();
     this.checkBody('email').isEmail();
@@ -38,10 +41,12 @@ function signup(jwt) {
       return;
     }
 
+    hash = scrypt.hash(new Buffer(signupBody.password1), scryptParameters);
+
     db.addUser({
       username: signupBody.username,
       email: signupBody.email,
-      password: signupBody.password1
+      password: hash
     });
 
     this.body = {
