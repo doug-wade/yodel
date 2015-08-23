@@ -2,6 +2,7 @@ var aws        = require('aws-sdk');
 var bodyParser = require('koa-bodyparser');
 var bunyan     = require('koa-bunyan');
 var config     = require('./config/config.js');
+var gzip       = require('koa-gzip');
 var json       = require('koa-json');
 var jwt        = require('koa-jwt');
 var koa        = require('koa');
@@ -39,6 +40,7 @@ app.use(json());
 app.use(session());
 app.use(bodyParser());
 app.use(validate());
+app.use(gzip());
 
 views('views/');
 

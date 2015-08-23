@@ -62,6 +62,7 @@
     "koa": "^0.19.0",
     "koa-bodyparser": "^1.0.1",
     "koa-bunyan": "^0.0.2",
+    "koa-gzip": "^0.1.0",
     "koa-json": "1.1.1",
     "koa-jwt": "^1.1.0",
     "koa-logger": "^1.2.0",
