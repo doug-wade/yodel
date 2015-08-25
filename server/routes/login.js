@@ -1,8 +1,25 @@
 var config = require('../config/config.js');
 var db = require('../util/db.js');
+var logger = require('../logger.js');
+var bcrypt = require('bcrypt');
+var q = require('q');
 
 function isInvalidPassword(/* Object */ user, /* String */ password) {
-  return user === undefined || user.password !== password;
+  var deferred = q.defer();
+
+  logger.info('validating password...');
+  if (!user) {
+    return deferred.resolve(false);
+  }
+
+  bcrypt.compare(password, user.password, function (err, res) {
+    if (err) {
+      deferred.reject(err);
+    }
+    deferred.resolve(res);
+  });
+
+  return deferred.promise;
 }
 
 function constructProfile(/* Object */ user) {
@@ -14,6 +31,7 @@ function constructProfile(/* Object */ user) {
 
 function login(jwt) {
   return function* () {
+    var loginAttempt, token, user;
     // basic login validation
     this.checkBody('username').notEmpty();
     this.checkBody('password').notEmpty();
@@ -23,18 +41,30 @@ function login(jwt) {
       return;
     }
 
-    var loginAttempt = this.request.body;
-    var user = db.getUser(loginAttempt.username);
-    if (isInvalidPassword(user, loginAttempt.password)) {
+    loginAttempt = this.request.body;
+    user = db.getUser(loginAttempt.username);
+    logger.info('checking password for user', user);
+    var isValidPassword = yield isInvalidPassword(user, loginAttempt.password);
+    if (!isValidPassword) {
       this.status = 401;
       this.body = 'Unauthorized';
       return;
     }
 
-    this.body = {
+    try {
+      token = jwt.sign(constructProfile(user), config.jwtAuthSecret, { expiresInMinutes: config.jwtTtl });
+    } catch (e) {
+      logger.error(e);
+    }
+
+    var body = {
       username: user.username,
-      token: jwt.sign(constructProfile(user), config.jwtAuthSecret, { expiresInMinutes: config.jwtTtl })
+      token: token
     };
+
+    logger.info(body);
+
+    this.body = body;
   };
 }
 

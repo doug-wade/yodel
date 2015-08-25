@@ -1,6 +1,8 @@
 var config = require('../config/config.js');
 var db = require('../util/db.js');
 var logger = require('../logger.js');
+var bcrypt = require('bcrypt');
+var q = require('q');
 
 function isUsernameTaken(/* String */ username) {
   return db.getUser(username) !== undefined;
@@ -13,10 +15,28 @@ function constructProfile(/* Object */ user) {
   };
 }
 
+function generateHashAndSalt(password) {
+  var deferred = q.defer();
+  bcrypt.genSalt(config.bcryptRounds, function (saltErr, salt) {
+    if (saltErr) {
+      deferred.reject(saltErr);
+    }
+    bcrypt.hash(password, salt, function(hashErr, hash) {
+      if (hashErr) {
+        deferred.reject(hashErr);
+      }
+      deferred.resolve(hash);
+    });
+  });
+  return deferred.promise;
+}
+
 function signup(jwt) {
   return function* () {
     // basic signup validation
-    var signupBody = this.request.body;
+    var signupBody, hash;
+
+    signupBody = this.request.body;
     logger.info(signupBody);
     this.checkBody('username').notEmpty();
     this.checkBody('email').isEmail();
@@ -38,10 +58,12 @@ function signup(jwt) {
       return;
     }
 
+    hash = yield generateHashAndSalt(signupBody.password1);
+
     db.addUser({
       username: signupBody.username,
       email: signupBody.email,
-      password: signupBody.password1
+      password: hash
     });
 
     this.body = {

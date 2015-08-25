@@ -1,3 +1,4 @@
+var encoding = 'utf8';
 var config = {
     aws: {
         yodelS3Bucket: 'yodel88',
@@ -5,6 +6,11 @@ var config = {
         accessKey: 'path/to/file',
         secretKey: 'path/to/file'
     },
+
+    // On a 2 GHz processor, expect ~5 hashes a second
+    bcryptRounds: 11,
+
+    encoding: encoding,
 
     jsonSuccess: { 'status': 200, 'message': 'success' },
 

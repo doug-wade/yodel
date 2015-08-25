@@ -25,6 +25,7 @@ echo "ssh-ing to remote host to remove existing yodel app"
 # TODO: Don't blow away the logs...
 # TODO: Why do we have to use sudo to run our toolchain? And also, really, you're assuming n is installed?!?
 ssh -i ${1} ${HOSTNAME} <<ENDSSH
+    npm install -g node-gyp
     cd ${DIR}
     rm -rf ${FOLDER}
 
