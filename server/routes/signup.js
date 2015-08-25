@@ -1,7 +1,8 @@
 var config = require('../config/config.js');
 var db = require('../util/db.js');
 var logger = require('../logger.js');
-var {scrypt, scryptParameters} = config.configureScrypt(require('scrypt'));
+var bcrypt = require('bcrypt');
+var q = require('q');
 
 function isUsernameTaken(/* String */ username) {
   return db.getUser(username) !== undefined;
@@ -12,6 +13,22 @@ function constructProfile(/* Object */ user) {
     username: user.username,
     email: user.email
   };
+}
+
+function generateHashAndSalt(password) {
+  var deferred = q.defer();
+  bcrypt.genSalt(config.bcryptRounds, function (saltErr, salt) {
+    if (saltErr) {
+      deferred.reject(saltErr);
+    }
+    bcrypt.hash(password, salt, function(hashErr, hash) {
+      if (hashErr) {
+        deferred.reject(hashErr);
+      }
+      deferred.resolve(hash);
+    });
+  });
+  return deferred.promise;
 }
 
 function signup(jwt) {
@@ -41,7 +58,7 @@ function signup(jwt) {
       return;
     }
 
-    hash = scrypt.hash(new Buffer(signupBody.password1), scryptParameters);
+    hash = yield generateHashAndSalt(signupBody.password1);
 
     db.addUser({
       username: signupBody.username,

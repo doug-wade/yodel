@@ -7,6 +7,9 @@ var config = {
         secretKey: 'path/to/file'
     },
 
+    // On a 2 GHz processor, expect ~5 hashes a second
+    bcryptRounds: 11,
+
     encoding: encoding,
 
     jsonSuccess: { 'status': 200, 'message': 'success' },
@@ -14,17 +17,7 @@ var config = {
     // TODO load this from a file using a "refresher" strategy; see https://github.com/auth0/node-jsonwebtoken
     jwtAuthSecret: 'yodel-super-secret',
 
-    jwtTtl: 1440,
-
-    configureScrypt: function (scrypt) {
-      // Scrypt config
-      var scryptParameters = scrypt.params(0.1);
-      scrypt.hash.config.outputEncoding = encoding;
-      scrypt.hash.config.keyEncoding = encoding;
-      scrypt.verify.config.keyEncoding = encoding;
-
-      return {scrypt: scrypt, scryptParameters: scryptParameters};
-    }
+    jwtTtl: 1440
 };
 
 // TODO load these from the files provided in the config

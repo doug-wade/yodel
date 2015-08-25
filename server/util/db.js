@@ -4,11 +4,16 @@ var logger = require('../logger.js');
 var uuid   = require('node-uuid');
 var Loki = require('lokijs');
 
-var databaseFile, db, disciplines, hasRun, portfolios, projects, userDetails, users;
+var databaseFile, db, hasRun, portfolios, projects, schema, userDetails;
+
+schema = {
+  disciplines: 'disciplines',
+  users: 'users'
+};
 
 function loadSchema() {
   logger.info('Loading schema...');
-  disciplines = db.addCollection('disciplines', {
+  db.addCollection('disciplines', {
     indices: [ 'id' ],
     clone: true
   });
@@ -24,7 +29,7 @@ function loadSchema() {
     indices: [ 'username', 'id' ],
     clone: true
   });
-  users = db.addCollection('users', {
+  db.addCollection('users', {
     indices: [ 'username' ],
     clone: true
   });
@@ -33,6 +38,7 @@ function loadSchema() {
 function loadTestData() {
   logger.info('Loading testData...');
   // Doug 2015/7/26 TODO: don't reload test data in prod
+  var users = db.getCollection('users');
   users.insert(testData.users.ivan);
   users.insert(testData.users.noel);
   users.ensureUniqueIndex('username');
@@ -46,6 +52,7 @@ function loadTestData() {
   });
 
   testData.disciplines.forEach(function (discipline) {
+    var disciplines = db.getCollection(schema.disciplines);
     disciplines.insert(discipline);
   });
 
@@ -53,12 +60,16 @@ function loadTestData() {
 }
 
 function addDiscipline(/* Object */ discipline) {
+  var disciplines = db.getCollection(schema.disciplines);
   disciplines.insert(discipline);
 }
 
 function addDisciplinesForUser(/* String */ username, /* Object[] */ disciplinesToAdd) {
+  var toUpdate, users;
+
   logger.info('username: ' + username);
-  var toUpdate = users.by('username', username);
+  users = db.getCollection(schema.users);
+  toUpdate = users.by('username', username);
   toUpdate.disciplines.concat(disciplinesToAdd);
   // Resync the indexes of the collection
   users.update(toUpdate);
@@ -68,14 +79,16 @@ function addDisciplinesForUser(/* String */ username, /* Object[] */ disciplines
 }
 
 function addUser(/* Object */ details) {
-  var userId = uuid.v4();
-  var newUser = {
+  var newUser, userId;
+  userId = uuid.v4();
+  newUser = {
     username: details.username,
     id: userId,
     email: details.email,
     password: details.password,
     disciplines: []
   };
+  var users = db.getCollection(schema.users);
 
   logger.info('Created new user: ' + JSON.stringify(newUser));
   users.insert(newUser);
@@ -89,17 +102,25 @@ function addUser(/* Object */ details) {
 function getAllDisciplines() {
   // TODO: Doug 2015/8/2 I'm not sure why I keep returning an empty list when I don't override the
   // discipline object, but it's bad practice and we should refactor it out.
-  var disciplines = db.getCollection('disciplines');
+  var disciplines = db.getCollection(schema.disciplines);
   var toReturn = disciplines.where(() => { return true;  });
   return toReturn;
 }
 
 function getUserByUsername(/* String */ username) {
-  users.ensureUniqueIndex('username');
-  return users.by('username', username);
+  var user, users;
+  users = db.getCollection(schema.users);
+  try {
+    user = users.find({ username: username })[0];
+    logger.info('user logged in: ', user);
+    return user;
+  } catch (e) {
+    logger.error(e);
+  }
 }
 
 function getUserById(/* UUID */ id) {
+  var users = db.getCollection(schema.users);
   return users.get(id);
 }
 
