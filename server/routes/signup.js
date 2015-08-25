@@ -1,8 +1,8 @@
-var config = require('../config/config.js');
-var db = require('../util/db.js');
-var logger = require('../logger.js');
 var bcrypt = require('bcrypt');
-var q = require('q');
+var config = require('../config/config.js');
+var db     = require('../util/db.js');
+var logger = require('../logger.js');
+var q      = require('q');
 
 function isUsernameTaken(/* String */ username) {
   return db.getUser(username) !== undefined;
@@ -37,7 +37,6 @@ function signup(jwt) {
     var signupBody, hash;
 
     signupBody = this.request.body;
-    logger.info(signupBody);
     this.checkBody('username').notEmpty();
     this.checkBody('email').isEmail();
     this.checkBody('password1').notEmpty().len(6);

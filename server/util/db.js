@@ -4,10 +4,12 @@ var logger = require('../logger.js');
 var uuid   = require('node-uuid');
 var Loki = require('lokijs');
 
-var databaseFile, db, hasRun, portfolios, projects, schema, userDetails;
+var databaseFile, db, hasRun, schema, userDetails;
 
 schema = {
   disciplines: 'disciplines',
+  portfolios: 'portfolios',
+  projects: 'projects',
   users: 'users'
 };
 
@@ -17,11 +19,11 @@ function loadSchema() {
     indices: [ 'id' ],
     clone: true
   });
-  portfolios = db.addCollection('portfolios', {
+  db.addCollection('portfolios', {
     indices: [ 'username', 'id' ],
     clone: true
   });
-  projects = db.addCollection('projects', {
+  db.addCollection('projects', {
     indices: [ 'username', 'id' ],
     clone: true
   });
@@ -47,6 +49,7 @@ function loadTestData() {
   userDetails.insert(testData.userDetails.noel);
   userDetails.ensureUniqueIndex('username');
 
+  var projects = db.getCollection(schema.projects);
   testData.projects.forEach(function (project) {
     projects.insert(project);
   });
@@ -59,9 +62,16 @@ function loadTestData() {
   db.saveDatabase();
 }
 
-function addDiscipline(/* Object */ discipline) {
+function addDisciplines(/* Object[] */ disciplinesToAdd) {
   var disciplines = db.getCollection(schema.disciplines);
-  disciplines.insert(discipline);
+  logger.info(disciplinesToAdd);
+  disciplinesToAdd.forEach(function(discipline) {
+    logger.info('Adding discipline to db: ', discipline);
+    disciplines.insert(discipline);
+  });
+
+  logger.info('Persisting database state to ' + databaseFile);
+  db.saveDatabase();
 }
 
 function addDisciplinesForUser(/* String */ username, /* Object[] */ disciplinesToAdd) {
@@ -69,7 +79,8 @@ function addDisciplinesForUser(/* String */ username, /* Object[] */ disciplines
 
   logger.info('username: ' + username);
   users = db.getCollection(schema.users);
-  toUpdate = users.by('username', username);
+  toUpdate = users.find({ username: username })[0];
+
   toUpdate.disciplines.concat(disciplinesToAdd);
   // Resync the indexes of the collection
   users.update(toUpdate);
@@ -100,8 +111,6 @@ function addUser(/* Object */ details) {
 }
 
 function getAllDisciplines() {
-  // TODO: Doug 2015/8/2 I'm not sure why I keep returning an empty list when I don't override the
-  // discipline object, but it's bad practice and we should refactor it out.
   var disciplines = db.getCollection(schema.disciplines);
   var toReturn = disciplines.where(() => { return true;  });
   return toReturn;
@@ -129,6 +138,7 @@ function getUserDetails(/* String */ username) {
 }
 
 function getUserPortfolios(/* String */ username) {
+  var portfolios = db.getCollection(schema.portfolios);
   return portfolios.find({ 'username': username });
 }
 
@@ -191,6 +201,7 @@ function createPortfolio(
     /* Date */ createDate,
     /* String */ description,
     /* String */ uploadKey) {
+  var portfolios = db.getCollection(schema.portfolios);
   var portfolio = {
     imageUrl: uploadKey,
     title: portfolioTitle,
@@ -210,15 +221,17 @@ function addProject(project) {
 }
 
 function getProject(projectId) {
+  var projects = db.getCollection(schema.projects);
   return projects.get(projectId);
 }
 
 function getProjectsForUser(username) {
-  var projects = db.getCollection('projects');
+  var projects = db.getCollection(schema.projects);
   return projects.find({ 'username': username });
 }
 
 function deleteProject(projectId) {
+  var projects = db.getCollection(schema.projects);
   projects.remove(projectId);
 }
 
@@ -245,7 +258,7 @@ function initialize() {
 initialize();
 
 module.exports = {
-  addDiscipline: addDiscipline,
+  addDisciplines: addDisciplines,
   addUser: addUser,
   getAllDisciplines: getAllDisciplines,
   // Doug 2015/7/28 TODO: Switch this to by id.

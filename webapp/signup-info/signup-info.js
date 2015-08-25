@@ -1,60 +1,74 @@
+function SignupInfoCtrl($http, $scope, $state, $window, $rootScope, $log, $q) {
+  function postDisciplines(){
+    if ($scope.step === 1) {
+      $scope.step = 2;
+      // doug.wade 2015/08/25 TODO: This is super bizarre.
+      return $q.defer().reject('Changing step...');
+    }
+
+    var customDeferred = $q.defer();
+    var userDeferred = $q.defer();
+    var userRequest = { disciplines: $scope.disciplines };
+
+    if ($scope.customDiscipline.text) {
+      var customRequest = $scope.customDiscipline;
+      customRequest.checked = false;
+      userRequest.disciplines.push(customRequest);
+      $log.info('Sending disciplines: ', customRequest);
+
+      $http.post('/discipline', customRequest)
+        .then(function(response) {
+          customDeferred.resolve(response);
+        }, function (error) {
+          customDeferred.reject(error);
+        }
+      );
+    }
+
+    $http.post('/user/' + $rootScope.username + '/disciplines', userRequest)
+      .then(function(response) {
+        userDeferred.resolve(response);
+      }, function(error) {
+        userDeferred.resolve(error);
+      });
+
+    return $q.all(customDeferred.promise, userDeferred.promise).then(function(response) {
+      $log.info(response);
+      $state.go('yodel.profile');
+    }).promise;
+  }
+
+  function getDisciplines(){
+    $log.info('Getting disciplines');
+
+    $http.get('/discipline')
+      .then(function(success){
+        $log.info(success);
+        $scope.disciplines = success.data;
+      }, function(error){
+        $log.error(error);
+      });
+  }
+
+  function initialize(){
+      $scope.postDisciplines = postDisciplines;
+      $scope.currentStep = 'disciplines';
+      $scope.step = 1;
+      $scope.customDiscipline = {};
+      getDisciplines();
+  }
+
+  initialize();
+}
+
 angular.module('signup-info', [
 ]).controller('SignupInfoCtrl', [
-    '$http',
-    '$scope',
-    '$state',
-    '$window',
-    '$rootScope',
-    '$log',
-    function($http, $scope, $state, $window, $rootScope, $log) {
-
-        function initialize(){
-            $scope.postDisciplines = postDisciplines;
-            $scope.currentStep = "disciplines";
-            $scope.step = 1;
-            $scope.customDiscipline = {};
-            getDisciplines();
-        };
-
-        function postDisciplines(){
-            if($scope.step === 1){
-                //TODO: Check to make sure that at least 1 disipline is selected
-                $scope.step = 2;
-            }else{
-                var request = {};
-                request.disciplines = $scope.disciplines;
-                request.customDisciplines = $scope.customDiscipline;
-
-                $log.info("Disciplines Request: " + request);
-
-                $http.post('/user/' + $rootScope.username + "/disciplines", request).then(
-                    function(response) {
-                        /* Success */
-                        $state.go('yodel.profile');
-                    },
-                    function(data) {
-                        /* Error */
-                    });
-            }
-        };
-
-        function getDisciplines(){
-            console.log("Getting disciplines");
-            $http.get('/user/' + $rootScope.username + "/disciplines").then(
-                function(success){
-                    /* Sucess */
-                    $scope.disciplines = success.data;
-                    console.log(success);
-                    console.log($scope.disciplines);
-                },
-                function(error){
-                    /* Error */
-                },
-                function(notify){
-                    /* Notification */
-                });
-        };
-
-        initialize();
-    }
+  '$http',
+  '$scope',
+  '$state',
+  '$window',
+  '$rootScope',
+  '$log',
+  '$q',
+  SignupInfoCtrl
 ]);

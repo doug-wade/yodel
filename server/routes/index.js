@@ -26,8 +26,8 @@ module.exports = function(router, jwt) {
     this.body = blob.getDownloadReadStream(this.params.username, this.params.resourceId);
   });
 
-  // TODO what does getting all disciplines have to do with the user?
-  router.get('/user/:username/disciplines', disciplines.getUserDisciplines);
+  router.get('/discipline', disciplines.getUserDisciplines);
+  router.post('/discipline', disciplines.addDisciplines);
   router.post('/user/:username/disciplines', disciplines.setUserDisciplines);
 
   router.get('/user/:username/projects', projects.listProjects);
