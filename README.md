@@ -14,7 +14,9 @@ If you want to continuously run the tests while developing, you may also want:
     npm install
     gulp
 
-then navigate to localhost:3000 in your favorite browser
+then navigate to localhost:3000 in your favorite browser.  If you want to follow the logs, you'll likely want to format them from their current json format into a more human-readable format.  To do that, use the [Bunyan](https://www.npmjs.com/package/bunyan) cli:
+    npm install -g bunyan
+    gulp | bunyan
 
 # Running the tests
 

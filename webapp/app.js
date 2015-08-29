@@ -2,15 +2,16 @@ var yodelApp = angular.module('yodel', [
     'about',
     'events',
     'ionic',
-    'ui.router',
     'login',
+    'nav',
+    'ngTagsInput',
+    'ngMessages',
+    'portfolio',
     'profile',
     'projects',
-    'portfolio',
-    'nav',
-    'ngMessages',
     'signup',
-    'signup-info'
+    'signup-info',
+    'ui.router'
 ]);
 
 yodelApp.run(

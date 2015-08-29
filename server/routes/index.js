@@ -15,6 +15,7 @@ module.exports = function(router, jwt) {
   router.post('/login', login.login(jwt));
   router.post('/signup', signup.signup(jwt));
 
+  router.get('/user', userDetails.getAllUsers);
   router.get('/user/:username', userDetails.getUser);
   router.get('/user/:username/portfolio', portfolios.getUserPortfolio);
   router.get('/user/:username/portfolio/:portfolio/nextToken/:nextToken', portfolios.getPortfolioItems);

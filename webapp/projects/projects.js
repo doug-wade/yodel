@@ -13,9 +13,8 @@ function ProjectsCtrl($scope, $http, $stateParams, $q, $log) {
 
     deferred = $q.defer();
     username = $stateParams.username;
-    // Doug 2015/7/28 I added this as a shitty hack since we have a demo on 7/30/2015.  Once we
-    // have a token input form, we should send these as a list of strings and persist that directly.
-    project.collaborators = project.collaborators.split(',');
+    // Strip the token-input specific data structure
+    project.collaborators = project.collaborators.map((elem) => elem.text);
 
     $http.post('/user/' + username + '/projects', project).then(deferred.resolve, deferred.reject);
 
@@ -39,6 +38,13 @@ function ProjectsCtrl($scope, $http, $stateParams, $q, $log) {
     $scope.isEditing = false;
   }
 
+  function getUsers() {
+    $http.get('/user').then(function (response) {
+      $log.info('Got users: ', response);
+      $scope.possibleCollaborators = response.data.map((datum) => datum.username);
+    });
+  }
+
   function showEditingForm() {
     $scope.isEditing = true;
   }
@@ -51,12 +57,17 @@ function ProjectsCtrl($scope, $http, $stateParams, $q, $log) {
     $scope.isEditing = false;
     $scope.saveProject = saveProject;
     $scope.showEditingForm = showEditingForm;
+    $scope.getCollaborators = (query) => {
+      return $scope.possibleCollaborators.filter((collab) => { return collab.indexOf(query) >= 0; });
+    };
     $scope.newProject = {};
 
     getProjects(username).then(function(response) {
       $scope.projects = response.data;
       $log.info('Loaded ' + $scope.projects.length + ' projects.');
     });
+
+    getUsers();
   }
 
   initialize();

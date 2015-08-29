@@ -133,6 +133,11 @@ function getAllDisciplines() {
   return toReturn;
 }
 
+function getAllUsers() {
+  var users = db.getCollection('users');
+  return users.where(() => { return true; });
+}
+
 function getUserByUsername(/* String */ username) {
   var user, users;
   users = db.getCollection(schema.users);
@@ -288,6 +293,7 @@ module.exports = {
   addDisciplines: addDisciplines,
   addUser: addUser,
   getAllDisciplines: getAllDisciplines,
+  getAllUsers: getAllUsers,
   // Doug 2015/7/28 TODO: Switch this to by id.
   getUser: getUserByUsername,
   getUserById: getUserById,

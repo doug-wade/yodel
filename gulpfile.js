@@ -147,6 +147,7 @@ gulp.task('scripts', function() {
       'webapp/app.js'
     ])
     .pipe(concat('all.js'))
+    .pipe(babel())
 //    .pipe(uglify())
     .pipe(gulp.dest(path.join(paths.public, 'scripts')))
     .pipe(livereload());
