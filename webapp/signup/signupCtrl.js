@@ -1,18 +1,20 @@
-function LoginCtrl($http, $rootScope, $scope, $state, $window, $log) {
-    function login(form, inputs) {
+function SignupCtrl($http, $scope, $state, $window, $rootScope, $log) {
+    function signUp(form, inputs) {
         if (form && form.$valid) {
             initialize();
-            $http.post('/login', inputs).then(
+            $log.info(inputs);
+            $http.post('/signup', inputs).then(
                 function(response) {
                     $window.sessionStorage.token = response.data.token;
                     $window.sessionStorage.username = response.data.username;
                     $rootScope.username = response.data.username;
-                    $state.go('yodel.profile', { username: response.data.username });
+                    //$state.go('profile', { username: response.data.username });
+                    $state.go('signup-info');
                 },
                 function(data) {
                     delete $window.sessionStorage.token;
                     $scope.showValidation = true;
-                    $log.info('logged in: ', data);
+                    $log.info('logged in ', data);
                 });
         } else if (form && form.$invalid) {
             $scope.showValidation = true;
@@ -20,13 +22,13 @@ function LoginCtrl($http, $rootScope, $scope, $state, $window, $log) {
     }
 
     function initialize() {
-        $scope.login = login;
+        $scope.signUp = signUp;
         $scope.showValidation = false;
-        $scope.loginParams = {};
+        $scope.signupParams = {};
     }
 
     initialize();
 }
 
-angular.module('login', []).controller('LoginCtrl', ['$http', '$rootScope', '$scope', '$state', '$window', '$log',
-  LoginCtrl]);
+angular.module('signup').controller('SignupCtrl', [ '$http', '$scope', '$state', '$window', '$rootScope', '$log',
+  SignupCtrl]);

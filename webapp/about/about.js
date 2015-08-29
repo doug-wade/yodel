@@ -1,7 +1,5 @@
-angular.module('about', [
-]).controller('AboutCtrl', [
-    '$scope',
-    function($scope) {
-        $scope.year = new Date().getFullYear();
-    }
-]);
+function AboutCtrl($scope) {
+    $scope.year = new Date().getFullYear();
+}
+
+angular.module('about', []).controller('AboutCtrl', ['$scope', AboutCtrl]);

@@ -70,14 +70,5 @@ function SignupInfoCtrl($http, $scope, $state, $window, $rootScope, $log, $q) {
   initialize();
 }
 
-angular.module('signup-info', [
-]).controller('SignupInfoCtrl', [
-  '$http',
-  '$scope',
-  '$state',
-  '$window',
-  '$rootScope',
-  '$log',
-  '$q',
-  SignupInfoCtrl
-]);
+angular.module('signup-info', []).controller('SignupInfoCtrl', ['$http', '$scope', '$state', '$window', '$rootScope',
+  '$log', '$q', SignupInfoCtrl]);
