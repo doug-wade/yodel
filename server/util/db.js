@@ -14,6 +14,15 @@ schema = {
   userDetails: 'userDetails'
 };
 
+function existsAndIncludes(/* String */ toCheck, /* String */ includes) {
+  if (!toCheck) {
+    return false;
+  } else if (toCheck.toLowerCase().includes(includes.toLowerCase())) {
+    return true;
+  }
+  return false;
+}
+
 function loadSchema() {
   logger.info('Loading schema...');
   db.addCollection(schema.disciplines, {
@@ -106,6 +115,16 @@ function addUser(/* Object */ details) {
   db.saveDatabase();
 
   return newUser;
+}
+
+function searchUsers(/* String */ query) {
+  var users = db.getCollection('users');
+
+  logger.info('querying users for: ' + query);
+
+  // TODO: Search users by user details
+  return users.where((user) => existsAndIncludes(user.username, query))
+    .map((user) => { return { 'username': user.username, 'email': user.email }; });
 }
 
 function getAllDisciplines() {
@@ -234,6 +253,15 @@ function deleteProject(projectId) {
   projects.remove(projectId);
 }
 
+function searchProjects(query) {
+  var projects = db.getCollection('projects');
+  return projects.where((project) =>
+    existsAndIncludes(project.subhead, query)
+    || existsAndIncludes(project.name, query)
+    || existsAndIncludes(project.description, query)
+  );
+}
+
 function initialize() {
   if (!hasRun){
     hasRun = true;
@@ -273,5 +301,7 @@ module.exports = {
   getProject: getProject,
   getProjectsForUser: getProjectsForUser,
   deleteProject: deleteProject,
-  addDisciplinesForUser: addDisciplinesForUser
+  addDisciplinesForUser: addDisciplinesForUser,
+  searchUsers: searchUsers,
+  searchProjects: searchProjects
 };
