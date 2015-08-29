@@ -7,6 +7,6 @@ angular.module('events', [
         $scope.myActiveSlide = 1;
         $scope.toggleLeft = function() {
           $ionicSideMenuDelegate.toggleLeft();
-        }
+        };
     }
 ]);

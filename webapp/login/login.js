@@ -5,13 +5,8 @@ angular.module('login', [
     '$scope',
     '$state',
     '$window',
-    function($http, $rootScope, $scope, $state, $window) {
-        function initialize() {
-            $scope.login = login;
-            $scope.showValidation = false;
-            $scope.loginParams = {};
-        }
-
+    '$log',
+    function($http, $rootScope, $scope, $state, $window, $log) {
         function login(form, inputs) {
             if (form && form.$valid) {
                 initialize();
@@ -25,10 +20,17 @@ angular.module('login', [
                     function(data) {
                         delete $window.sessionStorage.token;
                         $scope.showValidation = true;
+                        $log.info('logged in: ', data);
                     });
             } else if (form && form.$invalid) {
                 $scope.showValidation = true;
             }
+        }
+
+        function initialize() {
+            $scope.login = login;
+            $scope.showValidation = false;
+            $scope.loginParams = {};
         }
 
         initialize();

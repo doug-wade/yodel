@@ -17,10 +17,10 @@ yodelApp.run(
     function($ionicPlatform) {
         $ionicPlatform.ready(function() {
             if (window.cordova && window.cordova.plugins.Keyboard) {
-                cordova.pluging.Keyboard.hideKeyboardAccessBar(true);
+                window.cordova.pluging.Keyboard.hideKeyboardAccessBar(true);
             }
             if (window.StatusBar) {
-                StatusBar.styleDefault();
+                window.StatusBar.styleDefault();
             }
         });
     }

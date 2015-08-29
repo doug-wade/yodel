@@ -4,34 +4,35 @@ var logger = require('../logger.js');
 var uuid   = require('node-uuid');
 var Loki = require('lokijs');
 
-var databaseFile, db, hasRun, schema, userDetails;
+var databaseFile, db, hasRun, schema;
 
 schema = {
   disciplines: 'disciplines',
   portfolios: 'portfolios',
   projects: 'projects',
-  users: 'users'
+  users: 'users',
+  userDetails: 'userDetails'
 };
 
 function loadSchema() {
   logger.info('Loading schema...');
-  db.addCollection('disciplines', {
+  db.addCollection(schema.disciplines, {
     indices: [ 'id' ],
     clone: true
   });
-  db.addCollection('portfolios', {
+  db.addCollection(schema.portfolios, {
     indices: [ 'username', 'id' ],
     clone: true
   });
-  db.addCollection('projects', {
+  db.addCollection(schema.projects, {
     indices: [ 'username', 'id' ],
     clone: true
   });
-  userDetails = db.addCollection('userDetails', {
+  db.addCollection(schema.userDetails, {
     indices: [ 'username', 'id' ],
     clone: true
   });
-  db.addCollection('users', {
+  db.addCollection(schema.users, {
     indices: [ 'username' ],
     clone: true
   });
@@ -40,11 +41,12 @@ function loadSchema() {
 function loadTestData() {
   logger.info('Loading testData...');
   // Doug 2015/7/26 TODO: don't reload test data in prod
-  var users = db.getCollection('users');
+  var users = db.getCollection(schema.users);
   users.insert(testData.users.ivan);
   users.insert(testData.users.noel);
   users.ensureUniqueIndex('username');
 
+  var userDetails = db.getCollection(schema.userDetails);
   userDetails.insert(testData.userDetails.ivan);
   userDetails.insert(testData.userDetails.noel);
   userDetails.ensureUniqueIndex('username');
@@ -134,7 +136,8 @@ function getUserById(/* UUID */ id) {
 }
 
 function getUserDetails(/* String */ username) {
-  return userDetails.by('username', username);
+  var userDetails = db.getCollection(schema.userDetails);
+  return userDetails.find({ 'username': username });
 }
 
 function getUserPortfolios(/* String */ username) {

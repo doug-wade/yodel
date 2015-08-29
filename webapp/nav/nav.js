@@ -3,7 +3,8 @@ angular.module('nav', [
 ]).controller('NavCtrl', [
     '$rootScope',
     '$scope',
-    function($rootScope, $scope) {
+    '$ionicSideMenuDelegate',
+    function($rootScope, $scope, $ionicSideMenuDelegate) {
         // TODO this is a hack; can we use a directive so that we don't need to watch the rootScope?
         $rootScope.$watch('username', function(value) {
             $scope = $rootScope;

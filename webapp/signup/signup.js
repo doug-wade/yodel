@@ -7,12 +7,6 @@ angular.module('signup', [
     '$rootScope',
     '$log',
     function($http, $scope, $state, $window, $rootScope, $log) {
-        function initialize() {
-            $scope.signUp = signUp;
-            $scope.showValidation = false;
-            $scope.signupParams = {};
-        }
-
         function signUp(form, inputs) {
             if (form && form.$valid) {
                 initialize();
@@ -28,10 +22,17 @@ angular.module('signup', [
                     function(data) {
                         delete $window.sessionStorage.token;
                         $scope.showValidation = true;
+                        $log.info('logged in ', data);
                     });
             } else if (form && form.$invalid) {
                 $scope.showValidation = true;
             }
+        }
+
+        function initialize() {
+            $scope.signUp = signUp;
+            $scope.showValidation = false;
+            $scope.signupParams = {};
         }
 
         initialize();

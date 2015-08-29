@@ -92,12 +92,21 @@ gulp.task('karma', function(done) {
     }, done);
 });
 
-gulp.task('lint', function() {
+gulp.task('lint-server', function() {
   gulp.src(paths.server)
     .pipe(eslint({ useEslintrc: true }))
     .pipe(eslint.format('stylish'))
     .pipe(eslint.failAfterError());
 });
+
+gulp.task('lint-webapp', function() {
+  gulp.src(paths.scripts)
+    .pipe(eslint({ useEslintrc: true }))
+    .pipe(eslint.format('stylish'))
+    .pipe(eslint.failAfterError());
+});
+
+gulp.task('lint', ['lint-webapp', 'lint-server']);
 
 gulp.task('mocha', function() {
   return gulp.src(paths.serverspecs)
