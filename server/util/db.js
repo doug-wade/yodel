@@ -17,24 +17,19 @@ schema = {
 function loadSchema() {
   logger.info('Loading schema...');
   db.addCollection(schema.disciplines, {
-    indices: [ 'id' ],
-    clone: true
+    indices: [ 'id' ]
   });
   db.addCollection(schema.portfolios, {
-    indices: [ 'username', 'id' ],
-    clone: true
+    indices: [ 'username', 'id' ]
   });
   db.addCollection(schema.projects, {
-    indices: [ 'username', 'id' ],
-    clone: true
+    indices: [ 'username', 'id' ]
   });
   db.addCollection(schema.userDetails, {
-    indices: [ 'username', 'id' ],
-    clone: true
+    indices: [ 'username', 'id' ]
   });
   db.addCollection(schema.users, {
-    indices: [ 'username' ],
-    clone: true
+    indices: [ 'username' ]
   });
 }
 
@@ -79,11 +74,12 @@ function addDisciplines(/* Object[] */ disciplinesToAdd) {
 function addDisciplinesForUser(/* String */ username, /* Object[] */ disciplinesToAdd) {
   var toUpdate, users;
 
-  logger.info('username: ' + username);
+  logger.info('Adding disciplines for user ' + username, disciplinesToAdd);
   users = db.getCollection(schema.users);
   toUpdate = users.find({ username: username })[0];
 
-  toUpdate.disciplines.concat(disciplinesToAdd);
+  toUpdate.disciplines = toUpdate.disciplines.concat(disciplinesToAdd);
+  logger.info('Updating user ', toUpdate);
   // Resync the indexes of the collection
   users.update(toUpdate);
 

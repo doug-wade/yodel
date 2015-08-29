@@ -5,7 +5,7 @@ var logger = require('../logger.js');
 function* addDisciplines() {
   var disciplines = this.request.body;
   logger.info('Adding disciplines: ', disciplines);
-  db.addDisciplines(disciplines);
+  db.addDisciplines(disciplines.disciplines);
   this.body = config.jsonSuccess;
 }
 

@@ -1,21 +1,30 @@
 function SignupInfoCtrl($http, $scope, $state, $window, $rootScope, $log, $q) {
-  function postDisciplines(){
+  function postDisciplines() {
+    var checkedDisciplines, customDeferred, customRequest, newDiscipline, userDeferred, userRequest;
     if ($scope.step === 1) {
       $scope.step = 2;
       // doug.wade 2015/08/25 TODO: This is super bizarre.
       return $q.defer().reject('Changing step...');
     }
 
-    var customDeferred = $q.defer();
-    var userDeferred = $q.defer();
-    var userRequest = { disciplines: $scope.disciplines };
+    customDeferred = $q.defer();
+    userDeferred = $q.defer();
+    userRequest = { disciplines: [] };
+    checkedDisciplines = [];
+    $scope.disciplines.forEach(function(discipline) {
+      if (discipline.checked) {
+        checkedDisciplines.push(discipline);
+      }
+    });
+    userRequest.disciplines = userRequest.disciplines.concat(checkedDisciplines);
 
     if ($scope.customDiscipline.text) {
-      var customRequest = $scope.customDiscipline;
-      customRequest.checked = false;
-      userRequest.disciplines.push(customRequest);
-      $log.info('Sending disciplines: ', customRequest);
+      newDiscipline = $scope.customDiscipline;
+      newDiscipline.checked = false;
+      userRequest.disciplines.push(newDiscipline);
+      $log.info('Sending disciplines: ', userRequest);
 
+      customRequest = { disciplines: [ newDiscipline ] };
       $http.post('/discipline', customRequest)
         .then(function(response) {
           customDeferred.resolve(response);
