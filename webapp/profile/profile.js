@@ -48,11 +48,4 @@ function ProfileCtrl($http, $q, $scope, $rootScope) {
   initialize();
 }
 
-angular.module('profile', [
-]).controller('ProfileCtrl', [
-  '$http',
-  '$q',
-  '$scope',
-  '$rootScope',
-  ProfileCtrl
-]);
+angular.module('profile', []).controller('ProfileCtrl', [ '$http', '$q', '$scope', '$rootScope', ProfileCtrl ]);
