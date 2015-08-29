@@ -11,30 +11,13 @@ var livereload = require('gulp-livereload');
 var mocha      = require('gulp-mocha-co');
 var ngHtml2Js  = require('gulp-ng-html2js');
 var nodemon    = require('gulp-nodemon');
+var paths      = require('./config/paths');
 var path       = require('path');
 var pngquant   = require('imagemin-pngquant');
 var protractor = require('gulp-protractor').protractor;
 var ptor       = require('protractor');
 // There is a complementary comment in the scripts task
 // var uglify     = require('gulp-uglify');
-
-var paths = {
-  bower: 'public/vendor',
-  bowerjson: './bower.json',
-  build: 'build',
-  db: 'yodel88/yodel-db.json',
-  e2especs: 'test/e2e/*.scenarios.js',
-  karmaconf: path.join(__dirname, 'karma.conf.js'),
-  images: './images/**/*.*',
-  packagejson: './package.json',
-  partials: 'webapp/**/*.html',
-  public: 'public',
-  scripts: 'webapp/**/*.js',
-  server: 'server/**/*.js',
-  serverspecs: 'test/server/*.spec.js',
-  styles: './stylesheets/**/*.css',
-  views: 'views/*.html'
-};
 
 gulp.task('angular-views', function() {
   return gulp.src([
@@ -74,6 +57,16 @@ gulp.task('clean-db', function() {
       gutil.log('Cleaned files: ', deletedFiles.join(', '));
     }
   });
+});
+
+gulp.task('copy-config', [ 'copy-test-data' ], function() {
+  return gulp.src(path.join(paths.config, 'config.js'))
+    .pipe(gulp.dest(paths.build));
+});
+
+gulp.task('copy-test-data', function() {
+  return gulp.src(path.join(paths.config, 'test-data.js'))
+    .pipe(gulp.dest(paths.build));
 });
 
 gulp.task('images', function() {
@@ -123,7 +116,7 @@ gulp.task('npm', function() {
 gulp.task('protractor', ['webdriver_update', 'webdriver_standalone'], function() {
   return gulp.src(paths.e2especs)
     .pipe(protractor({
-      configFile: 'protractor.conf.js'
+      configFile: path.join(paths.config, 'protractor.js')
     })).on('error', function(e) {
       throw e;
     });
@@ -185,12 +178,14 @@ gulp.task('watch', function() {
   gulp.watch(paths.scripts, ['scripts']);
   gulp.watch(paths.server, ['server-scripts']);
   gulp.watch(paths.serverspecs, ['mocha']);
+  gulp.watch(path.join(paths.config, 'test-data.js'), ['copy-test-data']);
+  gulp.watch(path.join(paths.config, 'config.js'), ['copy-config']);
   return gulp.watch(paths.views, ['views']);
 });
 
 gulp.task('webdriver_standalone', ptor.webdriver_standalone);
 gulp.task('webdriver_update', ptor.webdriver_update);
-gulp.task('compile', ['bower', 'images', 'views', 'angular-views', 'styles', 'scripts', 'server-scripts']);
+gulp.task('compile', ['bower', 'images', 'views', 'angular-views', 'styles', 'scripts', 'server-scripts', 'copy-config', 'copy-test-data']);
 gulp.task('default', ['compile', 'watch', 'server']);
 gulp.task('test', ['mocha', 'karma', 'protractor']);
 gulp.task('unit-test', ['watch', 'mocha']);

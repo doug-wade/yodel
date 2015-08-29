@@ -1,5 +1,5 @@
 var bcrypt = require('bcrypt');
-var config = require('../config/config.js');
+var config = require('../config.js');
 var db     = require('../util/db.js');
 var logger = require('../logger.js');
 var q      = require('q');

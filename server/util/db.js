@@ -1,4 +1,4 @@
-var testData = require('../config/test-data.js');
+var testData = require('../test-data.js');
 var fs = require('fs');
 var logger = require('../logger.js');
 var uuid   = require('node-uuid');

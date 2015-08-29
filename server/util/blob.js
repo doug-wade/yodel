@@ -2,7 +2,7 @@ var fs = require('fs');
 var path = require('path');
 var aws = require('aws-sdk');
 var s3stream   = require('s3-upload-stream');
-var config = require('../config/config.js');
+var config = require('../config.js');
 var logger = require('../logger.js');
 
 var s3UploadStream = s3stream(new aws.S3());
@@ -44,4 +44,4 @@ function getS3ReadStream(username, resourceId) {
 module.exports = {
   getUploadWriteStream: getFSUploadWriteStream,
   getDownloadReadStream: getFSReadStream
-}
+};
