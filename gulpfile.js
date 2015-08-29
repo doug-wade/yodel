@@ -1,5 +1,6 @@
 var babel      = require('gulp-babel');
 var concat     = require('gulp-concat');
+var david      = require('gulp-david');
 var del        = require('del');
 var eslint     = require('gulp-eslint');
 var gulp       = require('gulp');
@@ -37,6 +38,12 @@ gulp.task('bower', function() {
       paths.bowerjson
     ])
     .pipe(install());
+});
+
+gulp.task('checkDependencies', function() {
+  return gulp.src('package.json')
+    .pipe(david())
+    .pipe(david.reporter);
 });
 
 gulp.task('clean', function() {

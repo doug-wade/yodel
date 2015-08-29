@@ -33,6 +33,15 @@ Note that to end the mocha and test tasks, you have to manually interrupt the se
 2.) Search box
 3.) Fix Portfolios
 4.) Fix multipart uploads
+5.) HTTP2/SPDY support
+6.) Collaborators needed for project
+7.) Update test data for ivan and noel so I can log in
+8.) Attend events
+9.) Projects -> Events
+10.) Event Calendar
+11.) User types
+12.) Find project by need
+13.) Uglify Javascript in production
 
 ### Note for Node.js
 The gulp mocha target uses generators, which require the --harmony flag on Node.js.  So, to invoke the mocha task or the test task, gulp must be invoked using node, e.g.
