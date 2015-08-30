@@ -12,8 +12,15 @@
             <h5>{{ project.subhead }}</h5>
             <p>{{ project.description }}</p>
             <ion-list class="list tags">
+              <h4>Current collaborators:</h4>
               <ion-item ng-repeat="collaborator in project.collaborators">
                 <a href="/#/y/profile/{{ collaborator }}">{{ collaborator }}</a>
+              </ion-item>
+            </ion-list>
+            <ion-list class="list tags">
+              <h4>Needs collaborators:</h4>
+              <ion-item ng-repeat="discipline in project.disciplines">
+                <span>{{ discipline.text }}</span>
               </ion-item>
             </ion-list>
           </div>
@@ -31,6 +38,11 @@
               <label>Collaborators:
                 <tags-input ng-model="newProject.collaborators" add-on-paste="true">
                   <auto-complete source="getCollaborators($query)"></auto-complete>
+                </tags-input>
+              </label>
+              <label>Collaborators Needed:
+                <tags-input ng-model="newProject.disciplines" add-on-paste="true">
+                  <auto-complete source="getDisciplines($query)"></auto-complete>
                 </tags-input>
               </label>
             </div>

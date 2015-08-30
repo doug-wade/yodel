@@ -45,6 +45,13 @@ function ProjectsCtrl($scope, $http, $stateParams, $q, $log) {
     });
   }
 
+  function getDisciplines() {
+    $http.get('/discipline').then(function (response) {
+      $log.info('Got disciplines: ', response);
+      $scope.possibleDisciplines = response.data.map((datum) => datum.text);
+    });
+  }
+
   function showEditingForm() {
     $scope.isEditing = true;
   }
@@ -60,6 +67,9 @@ function ProjectsCtrl($scope, $http, $stateParams, $q, $log) {
     $scope.getCollaborators = (query) => {
       return $scope.possibleCollaborators.filter((collab) => { return collab.indexOf(query) >= 0; });
     };
+    $scope.getDisciplines = (query) => {
+      return $scope.possibleDisciplines.filter((collab) => { return collab.indexOf(query) >= 0; });
+    };
     $scope.newProject = {};
 
     getProjects(username).then(function(response) {
@@ -68,6 +78,7 @@ function ProjectsCtrl($scope, $http, $stateParams, $q, $log) {
     });
 
     getUsers();
+    getDisciplines();
   }
 
   initialize();
