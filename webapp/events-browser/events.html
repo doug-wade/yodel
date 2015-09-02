@@ -3,9 +3,12 @@
     <ion-nav-buttons side="left">
         <button menu-toggle="left" class="button button-icon icon ion-navicon nav-bar-button"></button>
     </ion-nav-buttons>
+    <ion-side-menu>
+    </ion-side-menu>
 
     <ion-content class="has-header">
-        <p>Events happen here</p>
+        <slick>
+          <div ng-repeat="event in events" event info="event"></div>
+        </slick>
     </ion-content>
-
 </ion-view>

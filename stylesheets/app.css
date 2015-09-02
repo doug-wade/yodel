@@ -255,3 +255,19 @@ img.photo-image {
     bottom: 0;
     width 100%;
 }
+button.slick-next, button.slick-prev {
+  /* TODO: Add mixins for standard color palette */
+  color: #ED693C;
+  background: #ED693C;
+  position: relative;
+}
+
+button.slick-prev:hover,
+button.slick-prev:focus,
+button.slick-next:hover,
+button.slick-next:focus
+{
+    color: #ED693C;
+    outline: none;
+    background: #ED693C;
+}
