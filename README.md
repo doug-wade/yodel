@@ -48,6 +48,9 @@ Note that to end the mocha and test tasks, you have to manually interrupt the se
 17.) Event "more details" rollover
 18.) Buy tickets
 
+# Staged for release:
+1.) Collaborators needed for project
+
 ### Note for Node.js
 The gulp mocha target uses generators, which require the --harmony flag on Node.js.  So, to invoke the mocha task or the test task, gulp must be invoked using node, e.g.
 
