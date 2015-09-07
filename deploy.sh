@@ -58,7 +58,7 @@ ssh -i ${1} ${HOSTNAME} <<ENDSSH
     bower install
 
     echo "Compiling webapp"
-    gulp compile
+    gulp compile-prod
     kill $(ps aux | grep 'node' | awk '{print $2}')
 
     echo "Starting server"

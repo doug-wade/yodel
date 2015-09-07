@@ -20,6 +20,6 @@ module.exports = {
   scripts: 'webapp/**/*.js',
   server: 'server/**/*.js',
   serverspecs: 'test/server/*.spec.js',
-  styles: path.join(root, 'stylesheets/**/*.css'),
+  styles: path.join(root, 'stylesheets/**/*.styl'),
   views: 'views/*.html'
 };

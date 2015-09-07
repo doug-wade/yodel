@@ -2,30 +2,50 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <title>Yodel</title>
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width"/>
-    <link rel="stylesheet" type="text/css" href="/vendor/ionic/css/ionic.min.css"/>
-    <link rel="stylesheet" type="text/css" href="/vendor/ionic-material/dist/ionic.material.min.css" />
-    <link rel="stylesheet" type="text/css" href="/vendor/ng-tags-input/ng-tags-input.css" />
-    <link rel="stylesheet" type="text/css" href="/css/app.css"/>
-    <link rel="stylesheet" type="text/css" href="/vendor/slick-carousel/slick/slick.css" />
-    <link rel="stylesheet" type="text/css" href="/vendor/slick-carousel/slick/slick-theme.css" />
-    <script src="/vendor/jquery/dist/jquery.js"></script>
-    <script src="/vendor/ionic/js/ionic.bundle.js"></script>
-    <script src="/vendor/ionic-material/dist/ionic.material.min.js"></script>
-    <script src="/vendor/angular-messages/angular-messages.min.js"></script>
-    <script src="/vendor/ng-tags-input/ng-tags-input.js"></script>
-    <script src="/vendor/slick-carousel/slick/slick.js"></script>
-    <script src="vendor/angular-slick/dist/slick.js"></script>
-    <!-- TODO include cordova.js -->
-    <script src="/scripts/all.js"></script>
-    <script src="/scripts/angular-views.min.js"></script>
+  <meta charset="utf-8" />
+  <title>Yodel</title>
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width"/>
+<% if (isProd) { %>
+  <link rel="stylesheet" type="text/css" href="/vendor/ionic/css/ionic.min.css"/>
+  <link rel="stylesheet" type="text/css" href="/vendor/ionic-material/dist/ionic.material.min.css" />
+  <link rel="stylesheet" type="text/css" href="/vendor/ng-tags-input/ng-tags-input.min.css" />
+  <link rel="stylesheet" type="text/css" href="/css/app.min.css"/>
+<% } else { %>
+  <link rel="stylesheet" type="text/css" href="/vendor/ionic/css/ionic.css"/>
+  <link rel="stylesheet" type="text/css" href="/vendor/ionic-material/dist/ionic.material.css" />
+  <link rel="stylesheet" type="text/css" href="/vendor/ng-tags-input/ng-tags-input.css" />
+  <link rel="stylesheet" type="text/css" href="/css/app.css"/>
+<% } %>
+  <link rel="stylesheet" type="text/css" href="/vendor/slick-carousel/slick/slick.css" />
+  <link rel="stylesheet" type="text/css" href="/vendor/slick-carousel/slick/slick-theme.css" />
+<% if (isProd) { %>
+  <script src="/vendor/jquery/dist/jquery.min.js"></script>
+  <script src="/vendor/ionic/js/ionic.bundle.min.js"></script>
+  <script src="/vendor/ionic-material/dist/ionic.material.min.js"></script>
+  <script src="/vendor/angular-messages/angular-messages.min.js"></script>
+  <script src="/vendor/ng-tags-input/ng-tags-input.min.js"></script>
+  <script src="/vendor/slick-carousel/slick/slick.min.js"></script>
+  <script src="/vendor/angular-slick/dist/slick.min.js"></script>
+<% // TODO include cordova.min.js %>
+  <script src="/scripts/all.min.js"></script>
+  <script src="/scripts/angular-views.min.js"></script>
+<% } else { %>
+  <script src="/vendor/jquery/dist/jquery.js"></script>
+  <script src="/vendor/ionic/js/ionic.bundle.js"></script>
+  <script src="/vendor/ionic-material/dist/ionic.material.js"></script>
+  <script src="/vendor/angular-messages/angular-messages.js"></script>
+  <script src="/vendor/ng-tags-input/ng-tags-input.js"></script>
+  <script src="/vendor/slick-carousel/slick/slick.js"></script>
+  <script src="/vendor/angular-slick/dist/slick.js"></script>
+<% // TODO include cordova.min.js %>
+  <script src="/scripts/all.js"></script>
+  <script src="/scripts/angular-views.js"></script>
+<% } %>
 </head>
 
 <body ng-app="yodel">
-    <ion-nav-bar animation="no-animation" class="bar-energized" ng-include="'/partials/nav/nav.html'" role="navigation"></ion-nav-bar>
-    <ion-nav-view animation="no-animation" ui-view></ion-nav-view>
+  <ion-nav-bar animation="no-animation" class="bar-energized" ng-include="'/partials/nav/nav.html'" role="navigation"></ion-nav-bar>
+  <ion-nav-view animation="no-animation" ui-view></ion-nav-view>
 </body>
 
 </html>

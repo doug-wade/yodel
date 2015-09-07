@@ -15,18 +15,18 @@ var yodelApp = angular.module('yodel', [
     'ui.router'
 ]);
 
-yodelApp.run(
-    function($ionicPlatform) {
-        $ionicPlatform.ready(function() {
-            if (window.cordova && window.cordova.plugins.Keyboard) {
-                window.cordova.pluging.Keyboard.hideKeyboardAccessBar(true);
-            }
-            if (window.StatusBar) {
-                window.StatusBar.styleDefault();
-            }
-        });
+function appRun($ionicPlatform, $window) {
+  $ionicPlatform.ready(function() {
+    if ($window.cordova && $window.cordova.plugins.Keyboard) {
+      $window.cordova.pluging.Keyboard.hideKeyboardAccessBar(true);
     }
-);
+    if ($window.StatusBar) {
+      $window.StatusBar.styleDefault();
+    }
+  });
+}
+
+yodelApp.run(['$ionicPlatform', '$window', appRun]);
 
 yodelApp.factory('jwtAuthInterceptor', [
     '$injector',

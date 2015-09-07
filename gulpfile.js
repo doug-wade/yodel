@@ -1,36 +1,61 @@
-var babel      = require('gulp-babel');
-var concat     = require('gulp-concat');
-var david      = require('gulp-david');
-var del        = require('del');
-var eslint     = require('gulp-eslint');
-var gulp       = require('gulp');
-var gutil      = require('gulp-util');
-var imagemin   = require('gulp-imagemin');
-var install    = require('gulp-install');
-var karma      = require('karma');
-var livereload = require('gulp-livereload');
-var mocha      = require('gulp-mocha-co');
-var ngHtml2Js  = require('gulp-ng-html2js');
-var nodemon    = require('gulp-nodemon');
-var paths      = require('./config/paths');
-var path       = require('path');
-var pngquant   = require('imagemin-pngquant');
-var protractor = require('gulp-protractor').protractor;
-var ptor       = require('protractor');
-// There is a complementary comment in the scripts task
-// var uglify     = require('gulp-uglify');
+var babel        = require('gulp-babel');
+var concat       = require('gulp-concat');
+var consolidate  = require('gulp-consolidate');
+var david        = require('gulp-david');
+var del          = require('del');
+var eslint       = require('gulp-eslint');
+var gulp         = require('gulp');
+var gulpif       = require('gulp-if');
+var gutil        = require('gulp-util');
+var imagemin     = require('gulp-imagemin');
+var install      = require('gulp-install');
+var karma        = require('karma');
+var livereload   = require('gulp-livereload');
+var minifyCss    = require('gulp-minify-css');
+var minifyHtml   = require('gulp-minify-html');
+var mocha        = require('gulp-mocha-co');
+var ngHtml2Js    = require('gulp-ng-html2js');
+var nodemon      = require('gulp-nodemon');
+var paths        = require('./config/paths');
+var path         = require('path');
+var pngquant     = require('imagemin-pngquant');
+var protractor   = require('gulp-protractor').protractor;
+var ptor         = require('protractor');
+var sourcemaps   = require('gulp-sourcemaps');
+var stylus       = require('gulp-stylus');
+var uglify       = require('gulp-uglify');
+
+var isProd = false;
+var isWatch = false;
+
+gulp.task('set-prod', function() {
+  isProd = true;
+  isWatch = false;
+});
+
+gulp.task('set-watch', function() {
+  isProd = false;
+  isWatch = true;
+});
 
 gulp.task('angular-views', function() {
   return gulp.src([
       paths.partials
     ])
+    // options per: https://www.npmjs.com/package/gulp-ng-html2js
+    .pipe(gulpif(isProd, minifyHtml({
+      empty: true,
+      spare: true,
+      quotes: true
+    })))
     .pipe(ngHtml2Js({
       moduleName: 'yodel',
       prefix: '/partials/'
     }))
-    .pipe(concat('angular-views.min.js'))
+    .pipe(concat(isProd ? 'angular-views.min.js' : 'angular-views.js'))
+    .pipe(gulpif(isProd, uglify()))
     .pipe(gulp.dest(path.join(paths.public, 'scripts')))
-    .pipe(livereload());
+    .pipe(gulpif(isWatch, livereload()));
 });
 
 gulp.task('bower', function() {
@@ -77,12 +102,14 @@ gulp.task('copy-test-data', function() {
 });
 
 gulp.task('images', function() {
-  return gulp.src(paths.images).pipe(imagemin({
+  return gulp.src(paths.images)
+    // Image minification for just 4 images takes 34 seconds; only do it in prod.
+    .pipe(gulpif(isProd, imagemin({
       optimizationLevel: 5,
       use: [pngquant()]
-    }))
+    })))
     .pipe(gulp.dest(path.join(paths.public, 'images')))
-    .pipe(livereload());
+    .pipe(gulpif(isWatch, livereload()));
 });
 
 gulp.task('karma', function(done) {
@@ -153,27 +180,47 @@ gulp.task('scripts', function() {
       'webapp/**/!(app)*.js',
       'webapp/app.js'
     ])
-    .pipe(concat('all.js'))
+    .pipe(gulpif(!isProd, sourcemaps.init()))
     .pipe(babel())
-//    .pipe(uglify())
+    .pipe(concat(isProd ? 'all.min.js' : 'all.js'))
+    .pipe(gulpif(isProd, uglify()))
+    .pipe(gulpif(!isProd, sourcemaps.write('.')))
     .pipe(gulp.dest(path.join(paths.public, 'scripts')))
-    .pipe(livereload());
+    .pipe(gulpif(isWatch, livereload()));
 });
 
 gulp.task('styles', function() {
   return gulp.src([
       paths.styles
     ])
+    .pipe(stylus())
+    .pipe(sourcemaps.init())
+    .pipe(concat('app.css'))
+    .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(path.join(paths.public, '/css')))
-    .pipe(livereload());
+    .pipe(gulpif(isWatch, livereload()));
+});
+
+gulp.task('styles-prod', function() {
+  return gulp.src([
+      paths.styles
+    ])
+    .pipe(stylus())
+    .pipe(concat('app.min.css'))
+    .pipe(minifyCss())
+    .pipe(gulp.dest(path.join(paths.public, '/css')));
 });
 
 gulp.task('views', function() {
   return gulp.src([
-      paths.views]
-    )
+      paths.views
+    ])
+    .pipe(consolidate('lodash', {
+      isProd: isProd
+    }))
+    .pipe(gulpif(isProd, minifyHtml()))
     .pipe(gulp.dest(paths.public))
-    .pipe(livereload());
+    .pipe(gulpif(isWatch, livereload()));
 });
 
 gulp.task('watch', function() {
@@ -193,7 +240,9 @@ gulp.task('watch', function() {
 
 gulp.task('webdriver_standalone', ptor.webdriver_standalone);
 gulp.task('webdriver_update', ptor.webdriver_update);
+gulp.task('debug-prod', ['set-prod', 'views', 'angular-views', 'styles-prod', 'scripts', 'server-scripts', 'copy-config', 'copy-test-data']);
 gulp.task('compile', ['bower', 'images', 'views', 'angular-views', 'styles', 'scripts', 'server-scripts', 'copy-config', 'copy-test-data']);
-gulp.task('default', ['compile', 'watch', 'server']);
+gulp.task('compile-prod', ['set-prod', 'images', 'views', 'angular-views', 'styles-prod', 'scripts', 'server-scripts', 'copy-config', 'copy-test-data']);
+gulp.task('default', ['set-watch', 'compile', 'watch', 'server']);
 gulp.task('test', ['mocha', 'karma', 'protractor']);
 gulp.task('unit-test', ['watch', 'mocha']);
