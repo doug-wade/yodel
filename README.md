@@ -29,19 +29,24 @@ then navigate to localhost:3000 in your favorite browser.  If you want to follow
 Note that to end the mocha and test tasks, you have to manually interrupt the selenium standalone process  (ctrl + c)
 
 # TODOs:
-1.) Events carousel
-2.) Search box
+1.) Search box
+2.) Contact us - Google docs integration
 3.) Fix Portfolios
 4.) Fix multipart uploads
-5.) HTTP2/SPDY support
-6.) Collaborators needed for project
-7.) Update test data for ivan and noel so I can log in
-8.) Attend events
-9.) Projects -> Events
-10.) Event Calendar
-11.) User types
-12.) Find project by need
-13.) Uglify Javascript in production
+5.) Add image to project
+6.) Update test data for ivan and noel so I can log in
+7.) Attend events
+8.) Projects -> Events
+9.) Event Calendar
+10.) User types
+11.) HTTP2/SPDY support
+12.) Sign-up organization
+13.) Sign-up patron
+14.) Event compact view
+15.) Event button candybar
+16.) Restyle sidebar
+17.) Event "more details" rollover
+18.) Buy tickets
 
 ### Note for Node.js
 The gulp mocha target uses generators, which require the --harmony flag on Node.js.  So, to invoke the mocha task or the test task, gulp must be invoked using node, e.g.
