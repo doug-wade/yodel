@@ -11,7 +11,6 @@ var yodelApp = angular.module('yodel', [
     'projects',
     'signup',
     'signup-info',
-    'slick',
     'ui.router'
 ]);
 

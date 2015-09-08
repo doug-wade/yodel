@@ -1,6 +1,7 @@
 <div>
-  <h3> {{ eventInfo.name }} </h3>
-  <div>{{ eventInfo.formattedStartDate }} - {{ eventInfo.formattedEndDate }}</div>
-  <div>{{ eventInfo.location.name }}</div>
-  <img style="height: 600px;" src="{{ eventInfo.img }}" />
+  <img class="event-image" src="{{ eventInfo.img }}" />
+  <h2 class="event-banner">
+    <span>{{ eventInfo.name }}</span><br />
+    <span>{{ eventInfo.formattedStartDate }} - {{ eventInfo.formattedEndDate }} | {{ eventInfo.location.name }}</span>
+  </h2>
 </div>

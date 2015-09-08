@@ -1,0 +1,58 @@
+@import colors
+@import typography
+
+.event-image
+  position absolute
+  top 50%
+  min-height 100%
+  height 100%
+  display block
+  left 50%
+  -webkit-transform translate(-50%, -50%)
+
+h2.event-banner
+  position absolute
+  top 80%
+  left 0
+  width 100%
+
+  span
+    color yodel-white
+    background-color yodel-purple
+    font-size font-large
+    font-family yodel-font-family
+    font-weight bold
+    letter-spacing -1px
+    padding 10px
+
+event-button()
+  position absolute
+  vertical-align top
+  width 12%
+  height 60px
+  padding 0
+  font-size font-large
+  color yodel-white
+  text-align center
+  text-shadow 0 1px 2px rgba(0, 0, 0, 0.25)
+  background yodel-orange-red
+  top 50%
+  right 0%
+  border 0
+  border-bottom 2px solid #e2b607
+  cursor pointer
+  -webkit-box-shadow inset 0 -2px yodel-yellow
+  box-shadow inset 0 -2px yodel-yellow
+
+.next-event-button
+  event-button()
+  right 0
+
+.prev-event-button
+  event-button()
+  left 0
+
+.next-event-button:active
+  outline none
+  -webkit-box-shadow none
+  box-shadow none
