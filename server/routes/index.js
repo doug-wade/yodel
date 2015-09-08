@@ -1,4 +1,5 @@
 var blob = require('../util/blob.js');
+var contactUs = require('./contact-us.js');
 var disciplines = require('./disciplines.js');
 var login = require('./login.js');
 var portfolios = require('./portfolios.js');
@@ -38,4 +39,6 @@ module.exports = function(router, jwt) {
   router.del('/user/:username/projects/:projectid', projects.deleteProject);
 
   router.get('/search/:query', search.search);
+
+  router.post('/contact-us', contactUs.createContact);
 };

@@ -1,5 +1,12 @@
 @import colors
+@import common
 @import typography
+
+event-button()
+  flat-button()
+  width 12%
+  background yodel-orange-red
+  position absolute
 
 .event-image
   position absolute
@@ -24,25 +31,6 @@ h2.event-banner
     font-weight bold
     letter-spacing -1px
     padding 10px
-
-event-button()
-  position absolute
-  vertical-align top
-  width 12%
-  height 60px
-  padding 0
-  font-size font-large
-  color yodel-white
-  text-align center
-  text-shadow 0 1px 2px rgba(0, 0, 0, 0.25)
-  background yodel-orange-red
-  top 50%
-  right 0%
-  border 0
-  border-bottom 2px solid #e2b607
-  cursor pointer
-  -webkit-box-shadow inset 0 -2px yodel-yellow
-  box-shadow inset 0 -2px yodel-yellow
 
 .next-event-button
   event-button()

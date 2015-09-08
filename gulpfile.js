@@ -193,8 +193,8 @@ gulp.task('styles', function() {
   return gulp.src([
       paths.styles
     ])
-    .pipe(stylus())
     .pipe(sourcemaps.init())
+    .pipe(stylus())
     .pipe(concat('app.css'))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(path.join(paths.public, '/css')))

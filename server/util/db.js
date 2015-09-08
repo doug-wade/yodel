@@ -7,6 +7,7 @@ var Loki = require('lokijs');
 var databaseFile, db, hasRun, schema;
 
 schema = {
+  contacts: 'contacts',
   disciplines: 'disciplines',
   portfolios: 'portfolios',
   projects: 'projects',
@@ -40,6 +41,7 @@ function loadSchema() {
   db.addCollection(schema.users, {
     indices: [ 'username' ]
   });
+  db.addCollection(schema.contacts);
 }
 
 function loadTestData() {
@@ -267,6 +269,15 @@ function searchProjects(query) {
   );
 }
 
+function createContact(contact) {
+  var contacts = db.getCollection(schema.contacts);
+  logger.info('Creating new contact: ', contact);
+  contacts.insert(contact);
+
+  logger.info('Persisting database state to ' + databaseFile);
+  db.saveDatabase();
+}
+
 function initialize() {
   if (!hasRun){
     hasRun = true;
@@ -292,6 +303,7 @@ initialize();
 module.exports = {
   addDisciplines: addDisciplines,
   addUser: addUser,
+  createContact: createContact,
   getAllDisciplines: getAllDisciplines,
   getAllUsers: getAllUsers,
   // Doug 2015/7/28 TODO: Switch this to by id.

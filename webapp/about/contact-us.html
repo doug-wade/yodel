@@ -1,0 +1,22 @@
+<div class="contact-us">
+  <h2>Contact Us</h2>
+  <label>Name
+    <input class="name" type="text" ng-model="name"></input>
+  </label>
+  <label>Email
+    <input class="email" type="email" ng-model="email"></input>
+  </label>
+  <label>I'm a
+    <span class="type" ng-repeat="type in types">
+      <label class="type-name"> {{ type.name }}
+        <input type="radio" ng-model="$parent.type" value="{{ type.value }}"></input>
+      </label>
+    </span>
+  </label>
+  <label>Message
+    <input class="message" type="text" ng-model="desc"></input>
+  </label>
+  <label>
+    <input class="submit" type="submit" ng-click="submit()"></input>
+  <label>
+</div>
