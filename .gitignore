@@ -1,4 +1,5 @@
 build/
+images/
 logs/
 node_modules/
 public/
