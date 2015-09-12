@@ -29,6 +29,7 @@ then navigate to localhost:3000 in your favorite browser.  If you want to follow
 Note that to end the mocha and test tasks, you have to manually interrupt the selenium standalone process  (ctrl + c)
 
 # TODOs:
+0.) Don't blow away the logs or db on deploy
 1.) Search box
 2.) Contact us - Google docs integration
 3.) Fix Portfolios

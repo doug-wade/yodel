@@ -23,6 +23,7 @@ FOLDER=yodel
 echo "ssh-ing to remote host to remove existing yodel app"
 
 # TODO: Don't blow away the logs...
+# TODO: Don't blow away the db
 # TODO: Why do we have to use sudo to run our toolchain? And also, really, you're assuming n is installed?!?
 ssh -i ${1} ${HOSTNAME} <<ENDSSH
     sudo npm install -g node-gyp
@@ -54,8 +55,8 @@ ssh -i ${1} ${HOSTNAME} <<ENDSSH
     cd ${FOLDER}
 
     echo "Installing dependencies on remote server; please be patient"
-    npm install
-    bower install
+    npm install --production
+    bower install --production
 
     echo "Compiling webapp"
     gulp compile-prod
