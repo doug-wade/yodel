@@ -11,7 +11,8 @@ var yodelApp = angular.module('yodel', [
     'projects',
     'signup',
     'signup-info',
-    'ui.router'
+    'ui.router',
+    'ui.select'
 ]);
 
 function appRun($ionicPlatform, $window) {

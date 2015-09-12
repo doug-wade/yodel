@@ -2,15 +2,20 @@
 
     <!-- main content viewport -->
     <ion-side-menu-content>
-        <ion-nav-bar class="yodel-bar"></ion-nav-bar>
+        <ion-nav-bar class="yodel-bar">
+        </ion-nav-bar>
 
         <ion-nav-buttons side="left">
             <button class="button button-icon button-clear ion-navicon nav-bar-button" ng-click="toggleLeft()">
             </button>
         </ion-nav-buttons>
 
-        <ion-nav-view name="yodelContent" animation="slide-left-right"></ion-nav-view>
-    </ion-side-menu-content>·
+        <ion-nav-view name="yodelContent" animation="slide-left-right">
+          <ion-view>
+          </ion-view>
+        </ion-nav-view>
+
+    </ion-side-menu-content>
 
     <!-- side menu items and navigation -->
     <ion-side-menu side="left">
@@ -19,6 +24,7 @@
         </ion-header-bar>
 
         <ion-content class="has-header">
+            <search-box class="search-box"></search-box>
             <ion-list>
                 <ion-item class="HighlightTab" ng-if="username" menu-close ui-sref="yodel.profile({ username: username })">
                     <i class="icon ion-person"></i>

@@ -1,0 +1,13 @@
+<ui-select theme="bootstrap" ng-model="result.selected" class="search-box" on-select="chooseQueryOption($item, $model)">
+  <ui-select-match placeholder="Search">{{$select.selected.matchedText}}</ui-select-match>
+  <ui-select-choices
+    repeat="result in results track by $index"
+    refresh="refreshResults($select.search)"
+    refresh-delay="0">
+      <span>{{result.label}}</span>
+      <small>
+        type: {{result.type}}
+        match: {{result.matchedProperty + ': ' + result.matchedText}}
+      </small>
+  </ui-select-choices>
+</ui-select>
