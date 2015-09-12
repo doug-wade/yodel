@@ -10,6 +10,8 @@ If you want to continuously run the tests while developing, you may also want:
 * [protractor](http://angular.github.io/protractor/#/) (npm install -g protractor)
 * [mocha](http://mochajs.org/) (npm install -g mocha)
 
+The server and the logs expect a sibling directory, yodel-persitent, to exist and contain a child directory name logs (to prevent the logs, db &c from being deleted during deployments), so you may need to create one.
+
 # Starting the server
     npm install
     gulp
@@ -29,25 +31,24 @@ then navigate to localhost:3000 in your favorite browser.  If you want to follow
 Note that to end the mocha and test tasks, you have to manually interrupt the selenium standalone process  (ctrl + c)
 
 # TODOs:
-0.) Don't blow away the logs or db on deploy
-1.) Search box
-2.) Contact us - Google docs integration
-3.) Fix Portfolios
-4.) Fix multipart uploads
-5.) Add image to project
-6.) Update test data for ivan and noel so I can log in
-7.) Attend events
-8.) Projects -> Events
-9.) Event Calendar
-10.) User types
-11.) HTTP2/SPDY support
-12.) Sign-up organization
-13.) Sign-up patron
-14.) Event compact view
-15.) Event button candybar
-16.) Restyle sidebar
-17.) Event "more details" rollover
-18.) Buy tickets
+1.) Contact us - Google docs integration
+2.) Fix Portfolios
+3.) Fix multipart uploads
+4.) Add image to project
+5.) Update test data for ivan and noel so I can log in
+6.) Attend events
+7.) Projects -> Events
+8.) Event Calendar
+9.) User types
+10.) HTTP2/SPDY support
+11.) Sign-up organization
+12.) Sign-up patron
+13.) Event compact view
+14.) Event button candybar
+15.) Restyle sidebar
+16.) Event "more details" rollover
+17.) Buy tickets
+18.) Project page
 
 # Staged for release:
 1.) Collaborators needed for project

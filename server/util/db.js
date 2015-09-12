@@ -3,6 +3,7 @@ var fs = require('fs');
 var logger = require('../logger.js');
 var uuid   = require('node-uuid');
 var Loki = require('lokijs');
+var paths = require('../paths.js');
 
 var databaseFile, db, hasRun, schema;
 
@@ -281,7 +282,7 @@ function createContact(contact) {
 function initialize() {
   if (!hasRun){
     hasRun = true;
-    databaseFile = 'yodel88/yodel-db.json';
+    databaseFile = paths.db;
     logger.info('Creating database, to be saved to file ' + databaseFile);
     db = new Loki(databaseFile);
     fs.access(databaseFile, fs.W_OK, function(err) {

@@ -19,26 +19,28 @@ HOSTNAME=ubuntu@52.24.237.65
 DIR=/home/ubuntu
 FOLDER=yodel
 
+echo "compiling local instance for deployment"
+gulp clean
+gulp compile-prod
+
 # TODO: Run the tests and fail the deploy if they don't pass.
 echo "ssh-ing to remote host to remove existing yodel app"
 
-# TODO: Don't blow away the logs...
-# TODO: Don't blow away the db
 # TODO: Why do we have to use sudo to run our toolchain? And also, really, you're assuming n is installed?!?
 ssh -i ${1} ${HOSTNAME} <<ENDSSH
     sudo npm install -g node-gyp
     cd ${DIR}
-    rm -rf ${FOLDER}
+    rm -rf ${DIR}
+    mkdir -p ./yodel-persistent/logs
 
     command -v node >/dev/null 2>&1 || sudo n io latest
     command -v bower >/dev/null 2>&1 || sudo npm install -g bower
-    command -v gulp >/dev/null 2>&1 || sudo npm install -g gulp
     command -v forever >/dev/null 2>&1 || sudo npm install -g forever
 ENDSSH
 
 echo "Tarring source folders"
 gulp clean
-tar czf ../app.tar.gz --exclude=".git" --exclude="logs" --exclude="node_modules" .
+tar czf ../app.tar.gz bower.json package.json build public README.md .bowerrc
 
 echo "SCPing app tarball"
 scp -i ${1} ../app.tar.gz  ${HOSTNAME}:${DIR}
@@ -58,11 +60,8 @@ ssh -i ${1} ${HOSTNAME} <<ENDSSH
     npm install --production
     bower install --production
 
-    echo "Compiling webapp"
-    gulp compile-prod
-    kill $(ps aux | grep 'node' | awk '{print $2}')
-
     echo "Starting server"
+    kill $(ps aux | grep 'node' | awk '{print $2}')
     forever start ./build/server.js
 ENDSSH
 

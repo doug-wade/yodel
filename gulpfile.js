@@ -1,4 +1,5 @@
 var babel        = require('gulp-babel');
+var bower        = require('gulp-bower');
 var concat       = require('gulp-concat');
 var consolidate  = require('gulp-consolidate');
 var david        = require('gulp-david');
@@ -8,7 +9,6 @@ var gulp         = require('gulp');
 var gulpif       = require('gulp-if');
 var gutil        = require('gulp-util');
 var imagemin     = require('gulp-imagemin');
-var install      = require('gulp-install');
 var karma        = require('karma');
 var livereload   = require('gulp-livereload');
 var minifyCss    = require('gulp-minify-css');
@@ -59,10 +59,8 @@ gulp.task('angular-views', function() {
 });
 
 gulp.task('bower', function() {
-  return gulp.src([
-      paths.bowerjson
-    ])
-    .pipe(install());
+  return bower()
+    .pipe(gulp.dest(paths.bower));
 });
 
 gulp.task('checkDependencies', function() {
@@ -92,7 +90,7 @@ gulp.task('clean-db', function() {
 });
 
 gulp.task('copy-config', [ 'copy-test-data' ], function() {
-  return gulp.src(path.join(paths.config, 'config.js'))
+  return gulp.src([path.join(paths.config, 'config.js'), path.join(paths.config, 'paths.js')])
     .pipe(gulp.dest(paths.build));
 });
 
@@ -140,11 +138,6 @@ gulp.task('mocha', function() {
     .pipe(mocha({
         reporter: 'nyan'
     }));
-});
-
-gulp.task('npm', function() {
-  return gulp.src([paths.packagejson])
-    .pipe(install());
 });
 
 gulp.task('protractor', ['webdriver_update', 'webdriver_standalone'], function() {

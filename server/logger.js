@@ -1,7 +1,9 @@
-var bunyan, bunyanOptions, logger, fileName, fs;
+var bunyan, bunyanOptions, logger, fileName, fs, path, paths;
 
 bunyan = require('bunyan');
+paths = require('./paths.js');
 fs = require('fs');
+path = require('path');
 
 if(!fs.existsSync('logs')){
   fs.mkdirSync('logs', '0766', function(err){
@@ -23,7 +25,7 @@ bunyanOptions = {
     }, {
       level: 'debug',
       type: 'rotating-file',
-      path: 'logs/' + fileName + '.log',
+      path: path.join(paths.logs, fileName + '.log'),
       period: '1d',
       count: 3
     }

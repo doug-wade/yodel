@@ -2,6 +2,7 @@ var path = require('path');
 var process = require('process');
 
 var root = process.cwd();
+var persistentOutput = path.normalize('../yodel-persistent');
 var config = path.join(root, 'config');
 
 module.exports = {
@@ -9,9 +10,10 @@ module.exports = {
   bowerjson: path.join(root, 'bower.json'),
   build: path.join(root, 'build'),
   config: config,
-  db: 'yodel88/yodel-db.json',
+  db: path.join(persistentOutput, 'yodel-db.json'),
   e2especs: 'test/e2e/*.scenarios.js',
   karmaconf: path.join(config, 'karma.js'),
+  logs: path.join(persistentOutput, 'logs'),
   images: path.join(root, 'images/**/*.*'),
   packagejson: path.join(root, 'package.json'),
   partials: 'webapp/**/*.html',
