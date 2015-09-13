@@ -2,7 +2,7 @@ function SearchBox($http, $state, $log) {
   return {
     restrict: 'E',
     templateUrl: '/partials/nav/search-box.html',
-    controller: ($scope) => {
+    controller: ['$scope', ($scope) => {
       $log.info('Search box scope', $scope);
       $scope.result = {};
       $scope.query = '';
@@ -20,17 +20,15 @@ function SearchBox($http, $state, $log) {
       $scope.chooseQueryOption = (item, model) => {
         $log.info('chose query item', item);
         if (item.type === 'user') {
-          $log.info('going to user profile...');
           $state.go('yodel.profile', {username: item.label });
         } else if (item.type === 'project') {
-          $log.info('going to project page...');
           $state.go('yodel.project', item.label);
         } else {
           $log.info('chose query model', model);
           $log.error('chose unsupported query result type: ' + item.type);
         }
       };
-    }
+    }]
   };
 }
 

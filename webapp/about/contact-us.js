@@ -2,7 +2,7 @@ function ContactUs($log, $http) {
   return {
     restrict: 'E',
     templateUrl: '/partials/about/contact-us.html',
-    controller: function($scope) {
+    controller: ['$scope', function($scope) {
       $scope.types = [
         {
           name: 'Creative',
@@ -17,6 +17,7 @@ function ContactUs($log, $http) {
       ];
 
       $scope.submit = function() {
+        $scope.submitted = true;
         var contactForm = {
           name: $scope.name,
           type: $scope.type,
@@ -32,7 +33,7 @@ function ContactUs($log, $http) {
           }
         });
       };
-    }
+    }]
   };
 }
 
