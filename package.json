@@ -1,6 +1,6 @@
 {
   "name": "yodel",
-  "version": "0.1.1",
+  "version": "0.2.1",
   "repository": "https://bitbucket.org/n1337/yodel",
   "main": "app.js",
   "license": "UNLICENSED",

@@ -15,7 +15,7 @@ command -v node >/dev/null 2>&1 || n io latest
 command -v bower >/dev/null 2>&1 || npm install -g bower
 command -v gulp >/dev/null 2>&1 || npm install -g gulp
 
-HOSTNAME=ubuntu@52.24.237.65
+HOSTNAME=ubuntu@52.11.138.95
 DIR=/home/ubuntu
 FOLDER=yodel
 
@@ -28,9 +28,23 @@ echo "ssh-ing to remote host to remove existing yodel app"
 
 # TODO: Why do we have to use sudo to run our toolchain? And also, really, you're assuming n is installed?!?
 ssh -i ${1} ${HOSTNAME} <<ENDSSH
+    # Install nodejs
+    curl --silent --location https://deb.nodesource.com/setup_0.12 | sudo bash -
+    sudo apt-get install nodejs
+
+    # Install latest version of node
+    sudo npm install -g n
+    sudo n latest
+
+    # Install build tool chain
+    sudo apt-get install git
+    sudo npm install -g bower
+    sudo npm install -g forever
+    sudo apt-get install build-essential
     sudo npm install -g node-gyp
+
     cd ${DIR}
-    rm -rf ${DIR}
+    rm -rf ${FOLDER}
     mkdir -p ./yodel-persistent/logs
 
     command -v node >/dev/null 2>&1 || sudo n io latest
@@ -39,7 +53,6 @@ ssh -i ${1} ${HOSTNAME} <<ENDSSH
 ENDSSH
 
 echo "Tarring source folders"
-gulp clean
 tar czf ../app.tar.gz bower.json package.json build public README.md .bowerrc
 
 echo "SCPing app tarball"
