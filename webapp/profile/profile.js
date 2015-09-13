@@ -1,4 +1,4 @@
-function ProfileCtrl($http, $q, $scope, $rootScope) {
+function ProfileCtrl($http, $q, $scope, $rootScope, FEATURE) {
   function getBanner(user) {
     if (user.banner) {
       return 'url("resource/' + user.banner + '")';
@@ -33,6 +33,7 @@ function ProfileCtrl($http, $q, $scope, $rootScope) {
     $scope.username = $rootScope.username;
     $scope.getBanner = getBanner;
     $scope.getAvatar = getAvatar;
+    $scope.addPortfolio = FEATURE.isEnabled(FEATURE.ADD_PORTFOLIO);
 
     getUserDetails($rootScope.username)
       .then(function(response) {
@@ -48,4 +49,4 @@ function ProfileCtrl($http, $q, $scope, $rootScope) {
   initialize();
 }
 
-angular.module('profile', []).controller('ProfileCtrl', [ '$http', '$q', '$scope', '$rootScope', ProfileCtrl ]);
+angular.module('profile', []).controller('ProfileCtrl', [ '$http', '$q', '$scope', '$rootScope', 'FEATURE', ProfileCtrl ]);

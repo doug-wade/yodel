@@ -147,6 +147,17 @@ yodelApp.config([
     }
 ]);
 
+// To add a new feature, give it a random 8 digit id.
+// Math.floor(Math.random() * (100000000))
+yodelApp.constant('FEATURE', {
+  isEnabled(featureId) {
+    let enabled = [];
+    return enabled.indexOf(featureId) >= 0;
+  },
+  'ADD_PORTFOLIO': 47415668,
+  'MULTIPART_UPLOAD': 19763530
+});
+
 yodelApp.run([
     '$rootScope',
     '$window',

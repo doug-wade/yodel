@@ -28,7 +28,7 @@
                     <i class="icon ion-arrow-right-c muted"></i>
                 </a>
 
-                <div class="collection-repeat-after-container">
+                <div ng-if="addPortfolio" class="collection-repeat-after-container">
                     <a ui-sref="yodel.createPortfolio({ username: username })" class="item item-avatar item-icon-right">
                         <i id="add-portfolio" class="icon item-icon-left ion-plus-circled"></i>
                         <h2>Add a new portfolio</h2>

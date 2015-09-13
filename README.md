@@ -56,6 +56,32 @@ It's important to run a `sudo n latest` before conducting release testing, since
     forever stop ./build/server.js
     ./deploy.sh /path/to/creds.pem
 
+# Contributing
+
+Currently, all style rules are enforced by our linter, [eslint](http://eslint.org/).  You can check its config, in .eslintrc, for style details, but if it builds, it's stylistically correct.  Features should be unit and end-to-end tested according to the Boy Scout Rule, which means that the second time we touch them (the first time we change the feature after it's launched in prod) should include tests.  Features that aren't fully ready to run in prod may be merged into master as part of a iterative design process, but should be feature blocked by putting it behind a feature flag.  Feature flags can be used in the markup by using an `ng-if`, or by checking `FEATURE.isEnabled(feature)`:
+
+View:
+
+    <div class="my-feature" ng-if="isFeatureEnabled">
+      <my-feature ng-repeat="myFeature in myFeatures" info="myFeature"></my-feature>
+    </div>
+
+View controller:
+
+    function ViewCtrl($scope, $http, FEATURE) {
+      $scope.isFeatureEnabled = FEATURE.isEnabled(FEATURE.MY_FEATURE);
+      if (FEATURE.isEnabled(FEATURE.MY_FEATURE)) {
+        $http.get('/my/feature', function(response) { $scope.myFeatures = response.data });
+      }
+    }
+
+Feature config:
+
+    yodelApp.constant('FEATURE', {
+      ...
+      'MY_FEATURE': 12345678 // Random 8 digit number
+    }
+
 # TODOs:
 1.) Contact us - Google docs integration
 2.) Fix Portfolios
