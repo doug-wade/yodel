@@ -14,6 +14,7 @@
   },
   'rules': {
     'no-multi-spaces': 0,
-    'quotes': [2, 'single', 'avoid-escape']
+    'quotes': [2, 'single', 'avoid-escape'],
+    'no-process-exit': 0
   }
 }

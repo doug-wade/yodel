@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+HOSTNAME=ubuntu@52.11.138.95
+DIR=/home/ubuntu
+COMPRESSED=yodel-db.tar.gz
+TODAY=`date +%Y-%m-%d`
+
+if [ "$1" == "-h" ]; then
+    echo "Run this file with the absolute path to the yodel ec2 pem file. Ex: ./deploy.sh /path/to/pem/file/pemFile.pem"
+    exit 0
+fi
+
+if [ $# -eq 0 ]; then
+    echo "No arguments provided. Please provide a path to a pem file. e.g. './deploy.sh /path/to/pem/file/pemFile.pem'"
+    exit 1
+fi
+
+ssh -i ${1} ${HOSTNAME} <<ENDSSH
+    cd ${DIR}
+    tar -cvzf ${COMPRESSED} yodel-persistent/yodel-db.json
+ENDSSH
+
+scp -i ${1} ${HOSTNAME}:${DIR}/yodel-db.tar.gz ../yodel-persistent/backups/${TODAY}-yodel-db-prod.tar.gz
+
+ssh -i ${1} ${HOSTNAME} <<ENDSSH
+    cd ${DIR}
+    rm ${COMPRESSED}
+ENDSSH

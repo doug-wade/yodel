@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # This is a very light deployment script, a fully featured one should be written in the future
 if [ "$1" == "-h" ]; then

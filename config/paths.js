@@ -2,7 +2,7 @@ var path = require('path');
 var process = require('process');
 
 var root = process.cwd();
-var persistentOutput = path.normalize('../yodel-persistent');
+var persistentOutput = path.resolve(path.join(root, '..', '/yodel-persistent'));
 var config = path.join(root, 'config');
 
 module.exports = {
@@ -17,6 +17,7 @@ module.exports = {
   images: path.join(root, 'images/**/*.*'),
   packagejson: path.join(root, 'package.json'),
   partials: 'webapp/**/*.html',
+  persistent: persistentOutput,
   public: path.join(root, 'public'),
   root: root,
   scripts: 'webapp/**/*.js',
