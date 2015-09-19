@@ -3,4 +3,23 @@ font-large = 36px
 font-medium = 24px
 font-small = 18px
 
-yodel-font-family = 'Helvetica, Sans-Serif'
+@font-face
+  font-family josefin
+  font-weight 300
+  src url('https://fonts.googleapis.com/css?family=Josefin+Sans:300')
+
+yodel-font-family = open-sans, sans-serif
+yodel-header-font-family = 'Josefin Sans', sans-serif
+
+.h1
+  font-family yodel-header-font-family
+  font-size font-xlarge
+
+.h2
+  font-family yodel-header-font-family
+  font-size font-large
+
+.h3
+  font-family yodel-font-family
+  font-size font-medium
+  font-weight 700

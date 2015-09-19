@@ -1,50 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head profile="http://www.w3.org/2005/10/profile">
+    <meta charset="utf-8" />
+    <title>Yodel</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width"/>
+    <link rel="icon" type="image/png" href="/images/favicon.png">
+    <link href='https://fonts.googleapis.com/css?family=Josefin+Sans:300,400,700,400italic' rel='stylesheet' type='text/css'>
+  <% if (isProd) { %>
+    <link rel="stylesheet" type="text/css" href="/vendor/ionic/css/ionic.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/vendor/ionic-material/dist/ionic.material.min.css" />
+    <link rel="stylesheet" type="text/css" href="/vendor/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/vendor/ng-tags-input/ng-tags-input.min.css" />
+    <link rel="stylesheet" type="text/css" href="/vendor/ui-select/dist/select.min.css" />
+    <link rel="stylesheet" type="text/css" href="/css/app.min.css"/>
+  <% } else { %>
+    <link rel="stylesheet" type="text/css" href="/vendor/ionic/css/ionic.css"/>
+    <link rel="stylesheet" type="text/css" href="/vendor/ionic-material/dist/ionic.material.css" />
+    <link rel="stylesheet" type="text/css" href="/vendor/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="/vendor/ng-tags-input/ng-tags-input.css" />
+    <link rel="stylesheet" type="text/css" href="/vendor/ui-select/dist/select.css" />
+    <link rel="stylesheet" type="text/css" href="/css/app.css"/>
+  <% } %>
+  </head>
 
-<head profile="http://www.w3.org/2005/10/profile">
-  <meta charset="utf-8" />
-  <title>Yodel</title>
-  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width"/>
-  <link rel="icon" type="image/png" href="/images/favicon.png">
-<% if (isProd) { %>
-  <link rel="stylesheet" type="text/css" href="/vendor/ionic/css/ionic.min.css"/>
-  <link rel="stylesheet" type="text/css" href="/vendor/ionic-material/dist/ionic.material.min.css" />
-  <link rel="stylesheet" type="text/css" href="/vendor/bootstrap/dist/css/bootstrap.min.css" />
-  <link rel="stylesheet" type="text/css" href="/vendor/ng-tags-input/ng-tags-input.min.css" />
-  <link rel="stylesheet" type="text/css" href="/vendor/ui-select/dist/select.min.css" />
-  <link rel="stylesheet" type="text/css" href="/css/app.min.css"/>
-<% } else { %>
-  <link rel="stylesheet" type="text/css" href="/vendor/ionic/css/ionic.css"/>
-  <link rel="stylesheet" type="text/css" href="/vendor/ionic-material/dist/ionic.material.css" />
-  <link rel="stylesheet" type="text/css" href="/vendor/bootstrap/dist/css/bootstrap.css" />
-  <link rel="stylesheet" type="text/css" href="/vendor/ng-tags-input/ng-tags-input.css" />
-  <link rel="stylesheet" type="text/css" href="/vendor/ui-select/dist/select.css" />
-  <link rel="stylesheet" type="text/css" href="/css/app.css"/>
-<% } %>
-<% if (isProd) { %>
-  <script src="/vendor/ionic/js/ionic.bundle.min.js"></script>
-  <script src="/vendor/ionic-material/dist/ionic.material.min.js"></script>
-  <script src="/vendor/angular-messages/angular-messages.min.js"></script>
-  <script src="/vendor/ng-tags-input/ng-tags-input.min.js"></script>
-  <script src="/vendor/ui-select/dist/select.min.js"></script>
-<% // TODO include cordova.min.js %>
-  <script src="/scripts/all.min.js"></script>
-  <script src="/scripts/angular-views.min.js"></script>
-<% } else { %>
-  <script src="/vendor/ionic/js/ionic.bundle.js"></script>
-  <script src="/vendor/ionic-material/dist/ionic.material.js"></script>
-  <script src="/vendor/angular-messages/angular-messages.js"></script>
-  <script src="/vendor/ng-tags-input/ng-tags-input.js"></script>
-  <script src="/vendor/ui-select/dist/select.js"></script>
-<% // TODO include cordova.min.js %>
-  <script src="/scripts/all.js"></script>
-  <script src="/scripts/angular-views.js"></script>
-<% } %>
-</head>
+  <body ng-app="yodel">
+    <ion-nav-bar animation="no-animation" class="bar-energized" ng-include="'/partials/nav/nav.html'" role="navigation"></ion-nav-bar>
+    <ion-nav-view animation="no-animation" ui-view></ion-nav-view>
 
-<body ng-app="yodel">
-  <ion-nav-bar animation="no-animation" class="bar-energized" ng-include="'/partials/nav/nav.html'" role="navigation"></ion-nav-bar>
-  <ion-nav-view animation="no-animation" ui-view></ion-nav-view>
-</body>
-
+  <% if (isProd) { %>
+    <script src="/vendor/ionic/js/ionic.bundle.min.js"></script>
+    <script src="/vendor/ionic-material/dist/ionic.material.min.js"></script>
+    <script src="/vendor/angular-messages/angular-messages.min.js"></script>
+    <script src="/vendor/ng-tags-input/ng-tags-input.min.js"></script>
+    <script src="/vendor/ui-select/dist/select.min.js"></script>
+  <% // TODO include cordova.min.js %>
+    <script src="/scripts/all.min.js"></script>
+    <script src="/scripts/angular-views.min.js"></script>
+  <% } else { %>
+    <script src="/vendor/ionic/js/ionic.bundle.js"></script>
+    <script src="/vendor/ionic-material/dist/ionic.material.js"></script>
+    <script src="/vendor/angular-messages/angular-messages.js"></script>
+    <script src="/vendor/ng-tags-input/ng-tags-input.js"></script>
+    <script src="/vendor/ui-select/dist/select.js"></script>
+  <% // TODO include cordova.min.js %>
+    <script src="/scripts/all.js"></script>
+    <script src="/scripts/angular-views.js"></script>
+  <% } %>
+  </body>
 </html>
