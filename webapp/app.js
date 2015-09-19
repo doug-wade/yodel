@@ -2,6 +2,7 @@ var yodelApp = angular.module('yodel', [
     'about',
     'events',
     'ionic',
+    'layout',
     'login',
     'nav',
     'ngTagsInput',

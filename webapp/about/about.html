@@ -1,16 +1,5 @@
 <ion-view view-title="About Yodel" align-title="left">
-  <ion-nav-buttons side="left">
-    <button menu-toggle="left" class="button button-icon icon ion-navicon nav-bar-button"></button>
-  </ion-nav-buttons>
-  <div class="bar bar-header item-input-inset">
-    <label class="item-input-wrapper">
-      <i class="icon ion-ios-search placeholder-icon"></i>
-      <input type="search" placeholder="Search">
-    </label>
-    <button class="button button-clear">
-      Cancel
-    </button>
-  </div>
+  <!--<yodel-header />-->
 
   <ion-content class="has-header about">
     <h1 class="h2">About us</h1>
@@ -26,7 +15,36 @@
       or to provide your input into our creative process.
     </p>
     <div class="section">
-      <h2 class="h2">FAQ<h2>
+      <h2 class="h2 header">WHY SIGN UP?</h2>
+      <h3 class="h3 subheader">THERE ARE A FEW REASONS...</h>
+      <div class="col">
+        <div class="row">
+          <img class="reason-image" src="/images/architecture.png"/>
+        </div>
+        <div class="row">
+          <img class="reason-image" src="/images/cafe-table.png"/>
+        </div>
+        <div class="row">
+          <img class="reason-image" src="/images/crowd-scene.png"/>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <h2 class="h2 header">WHAT IS YODEL, YOU ASK?</h2>
+      <div class="what-subheader">
+        <h3 style="display: inline-block" class="h3 subheader">Yodel is a system of creative networking.</h3>
+        <img src="/images/yodel-logo.png"/>
+      </div>
+      <p>
+        It bridges the gaps between art, business, & community by providing a Comprehensive Artistic Network. Yodel's tripartite
+        system connects Creatives, Patrons, & Organizations using one dynamic platform. This platforms enhances creative collaboration,
+        event attendance, & show booking—bypassing the barriers preventing engagement. Never has it been so easy to cover all your
+        creative bases in one place. Yodel strives to reinspire the creative spirit, reconnect to community, & revolutionize the
+        logistics of creative interaction. With Yodel, you CAN.
+      </p>
+    </div>
+    <div class="section">
+      <h2 class="h2 header">FAQ<h2>
       <div class="row">
         <div class="col">
           <div class="question">
@@ -84,6 +102,6 @@
     <div class="section">
       <contact-us></contact-us>
     </div>
-    <p class="footer">©{{ year }} Yodel, Inc.</p>
+    <yodel-footer></yodel-footer>
   </ion-content>
 </ion-view>
