@@ -279,6 +279,12 @@ function createContact(contact) {
   db.saveDatabase();
 }
 
+function getContacts() {
+  var contacts = db.getCollection(schema.contacts);
+  logger.info('Getting all contacts');
+  return contacts.where(() => true);
+}
+
 function initialize() {
   if (!hasRun){
     hasRun = true;
@@ -305,6 +311,7 @@ module.exports = {
   addDisciplines: addDisciplines,
   addUser: addUser,
   createContact: createContact,
+  getContacts: getContacts,
   getAllDisciplines: getAllDisciplines,
   getAllUsers: getAllUsers,
   // Doug 2015/7/28 TODO: Switch this to by id.

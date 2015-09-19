@@ -1,0 +1,8 @@
+#!/usr/bin/env node
+var db = require('../build/util/db');
+
+console.log('Posting database contacts to Google docs');
+var contacts = db.getContacts();
+contacts.forEach(function(contact) {
+  console.log(contact);
+});

@@ -1,6 +1,6 @@
 <div class="contact-us">
   <h2 class="h2 header">Contact Us</h2>
-  <div ng-if="!submitted">
+  <div ng-if="!submitted" ng-hide="submitting">
     <label>
       <input class="name" type="text" ng-model="contactForm.name" placeholder="Name"></input>
     </label>
@@ -20,6 +20,9 @@
     <label>
       <input class="submit" type="submit" ng-click="submit()"></input>
     <label>
+  </div>
+  <div ng-if="submitting">
+    <p>Submitting...</p>
   </div>
   <div ng-if="submitted">
     <p>Thanks for your feedback!  We'll contact you shortly.</p>

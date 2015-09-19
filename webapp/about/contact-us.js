@@ -20,6 +20,7 @@ function ContactUs($log, $http) {
       $scope.submit = function() {
         $scope.submitted = true;
         var contactForm = $scope.contactForm;
+        $scope.submitting = true;
 
         $log.info('Posting contact-us form: ', contactForm);
 
@@ -27,6 +28,8 @@ function ContactUs($log, $http) {
           if (err) {
             $log.error(err);
           }
+          $scope.submitted = true;
+          $scope.submitting = false;
         });
       };
     }]
