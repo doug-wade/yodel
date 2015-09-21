@@ -8,6 +8,10 @@ var logger = require('../logger.js');
 var s3UploadStream = s3stream(new aws.S3());
 var fsBucketRoot = path.join(__dirname, '..', '..', config.aws.yodelS3Bucket);
 
+// TODO: Likely, this is unnecessary, and we should directly upload images from users to S3:
+// http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingHTTPPOST.html
+// http://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-authentication-HTTPPOST.html
+// http://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-post-example.html
 function getFSUploadWriteStream(key) {
   try {
     fs.lstatSync(fsBucketRoot + '/' + username);
