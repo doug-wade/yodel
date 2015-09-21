@@ -1,21 +1,21 @@
 <div class="contact-us">
   <h2 class="h2 header">Contact Us</h2>
   <div ng-if="!submitted">
-    <label>Name
-      <input class="name" type="text" ng-model="name"></input>
+    <label>
+      <input class="name" type="text" ng-model="contactForm.name" placeholder="Name"></input>
     </label>
-    <label>Email
-      <input class="email" type="email" ng-model="email"></input>
+    <label>
+      <input class="email" type="email" ng-model="contactForm.email" placeholder="Email"></input>
     </label>
     <label>I'm a
       <span class="type" ng-repeat="type in types">
-        <label class="type-name"> {{ type.name }}
-          <input type="radio" ng-model="$parent.type" value="{{ type.value }}"></input>
+        <label>
+          <input type="checkbox" checklist-model="contactForm.types" checklist-value="type.value">  {{type.name}}
         </label>
       </span>
     </label>
-    <label>Message
-      <textarea class="message" ng-model="desc"></textarea>
+    <label>
+      <textarea class="message" ng-model="contactForm.desc" placeholder="Message"></textarea>
     </label>
     <label>
       <input class="submit" type="submit" ng-click="submit()"></input>

@@ -80,15 +80,18 @@
     color white
 
 .contact-us
-  input.name
-    width 75%
+  input[type=text], input[type=email], textarea
+    background-color yodel-light-grey
+    border 1px solid yodel-dark-grey
+    width 85%
     display inline
     margin-left 1rem
+    +placeholder()
+      color yodel-medium-grey
+      font-size font-small
 
-  input.email
-    width 75%
-    display inline
-    margin-left 1rem
+  input[type=text]:hover, input[type=text]:focus, input[type=email]:hover, input[type=email]:focus, textarea:hover, textarea:focus
+    background-color yodel-white
 
   .type
     padding-left 1rem
@@ -105,6 +108,9 @@
     label
       display inline
 
+  p
+    text-align center
+
   label.type-name
     font-size font-small
 
@@ -112,4 +118,5 @@
     flat-button()
     width 15rem
     position relative
-    background yodel-pink
+    background yodel-black
+    color yodel-white

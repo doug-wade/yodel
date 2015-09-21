@@ -1,5 +1,6 @@
 var yodelApp = angular.module('yodel', [
     'about',
+    'checklist-model',
     'events',
     'ionic',
     'layout',

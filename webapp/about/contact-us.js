@@ -15,15 +15,11 @@ function ContactUs($log, $http) {
           value: 'patron'
         }
       ];
+      $scope.contactForm = {};
 
       $scope.submit = function() {
         $scope.submitted = true;
-        var contactForm = {
-          name: $scope.name,
-          type: $scope.type,
-          email: $scope.email,
-          desc: $scope.desc
-        };
+        var contactForm = $scope.contactForm;
 
         $log.info('Posting contact-us form: ', contactForm);
 
