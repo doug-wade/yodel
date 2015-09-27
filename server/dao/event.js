@@ -12,7 +12,8 @@ module.exports = function(db) {
       event.created = new Date().getTime();
 
       var params = {
-        TableName: schema.event.tablename
+        TableName: schema.event.tablename,
+        Item: event
       };
 
       db.put(params, function(err, data) {

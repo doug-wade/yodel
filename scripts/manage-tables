@@ -1,0 +1,145 @@
+#!/usr/bin/env node
+var argv = require('minimist')(process.argv.slice(2));
+var aws = require('aws-sdk');
+var config = require('../build/config');
+var logger = require('../build/logger');
+var schema = require('../config/schema');
+
+if (argv.h || argv.help) {
+  [
+    'This script manages tables in a DynamoDB instance.  We recommend you pipe the logs through bunyan using the short format.',
+    'Options:',
+    '  -h -help Show this help message.',
+    '  -d -drop Drop the tables (before creating them).',
+    '  -c -create Create the tables.'
+  ].forEach((line) => console.log(line));
+  process.exit(0);
+}
+
+var freeUnits = 10;
+
+var tables = [{
+    TableName: schema.contact.tablename,
+    KeySchema: [
+        { AttributeName: schema.contact.hashKey, KeyType: 'HASH'},
+        { AttributeName: schema.contact.rangeKey, KeyType: 'RANGE' }
+    ],
+    AttributeDefinitions: [
+        { AttributeName: 'contactId', AttributeType: 'S'},
+        { AttributeName: 'created', AttributeType: 'N' }
+    ],
+    ProvisionedThroughput: {
+        ReadCapacityUnits: freeUnits,
+        WriteCapacityUnits: freeUnits
+    }
+}, {
+    TableName: schema.discipline.tablename,
+    KeySchema: [
+        { AttributeName: 'disciplineId', KeyType: 'HASH'},
+        { AttributeName: 'created', KeyType: 'RANGE' }
+    ],
+    AttributeDefinitions: [
+        { AttributeName: 'disciplineId', AttributeType: 'S'},
+        { AttributeName: 'created', AttributeType: 'N' }
+    ],
+    ProvisionedThroughput: {
+        ReadCapacityUnits: freeUnits,
+        WriteCapacityUnits: freeUnits
+    }
+}, {
+    TableName: schema.event.tablename,
+    KeySchema: [
+        { AttributeName: 'eventId', KeyType: 'HASH'},
+        { AttributeName: 'created', KeyType: 'RANGE' }
+    ],
+    AttributeDefinitions: [
+        { AttributeName: 'eventId', AttributeType: 'S'},
+        { AttributeName: 'created', AttributeType: 'N' }
+    ],
+    ProvisionedThroughput: {
+        ReadCapacityUnits: freeUnits,
+        WriteCapacityUnits: freeUnits
+    }
+}, {
+    TableName: schema.portfolio.tablename,
+    KeySchema: [
+        { AttributeName: 'userId', KeyType: 'HASH'},
+        { AttributeName: 'portfolioId', KeyType: 'RANGE' }
+    ],
+    AttributeDefinitions: [
+        { AttributeName: 'userId', AttributeType: 'S'},
+        { AttributeName: 'portfolioId', AttributeType: 'S' }
+    ],
+    ProvisionedThroughput: {
+        ReadCapacityUnits: freeUnits,
+        WriteCapacityUnits: freeUnits
+    }
+}, {
+    TableName: schema.project.tablename,
+    KeySchema: [
+        { AttributeName: 'userId', KeyType: 'HASH'},
+        { AttributeName: 'projectId', KeyType: 'RANGE' }
+    ],
+    AttributeDefinitions: [
+        { AttributeName: 'userId', AttributeType: 'S'},
+        { AttributeName: 'projectId', AttributeType: 'S' }
+    ],
+    ProvisionedThroughput: {
+        ReadCapacityUnits: freeUnits,
+        WriteCapacityUnits: freeUnits
+    }
+}, {
+    TableName: schema.user.tablename,
+    KeySchema: [
+        { AttributeName: 'username', KeyType: 'HASH'},
+        { AttributeName: 'email', KeyType: 'RANGE' }
+    ],
+    AttributeDefinitions: [
+        { AttributeName: 'username', AttributeType: 'S'},
+        { AttributeName: 'email', AttributeType: 'S' }
+    ],
+    ProvisionedThroughput: {
+        ReadCapacityUnits: freeUnits,
+        WriteCapacityUnits: freeUnits
+    }
+}];
+
+aws.config.update({
+  region: config.aws.region,
+  endpoint: config.aws.endpoint
+});
+
+var db = new aws.DynamoDB();
+
+function deleteTableCallback(err, data) {
+    if (err) {
+        logger.error('Unable to delete table due to error ', err);
+    } else {
+        logger.info('Deleted table ', data);
+    }
+}
+
+if (argv.d || argv.drop) {
+  logger.info('Dropping tables...');
+  tables.forEach((toDrop) => {
+    logger.info(toDrop);
+    var params = {
+        TableName: toDrop.TableName
+    };
+
+    db.deleteTable(params, deleteTableCallback);
+  });
+}
+
+if (argv.c || argv.create) {
+  logger.info('Creating tables...');
+  tables.forEach(function(toCreate) {
+    db.createTable(toCreate, function(err, data) {
+        if (err) {
+            logger.error('Unable to create table with error ', err);
+        } else {
+            logger.info('Created table ', data);
+        }
+    });
+  });
+}

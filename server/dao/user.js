@@ -40,7 +40,7 @@ module.exports = function(db) {
       created = new Date().getTime();
       newUser = {
         username: details.username,
-        id: userId,
+        userId: userId,
         email: details.email,
         password: details.password,
         disciplines: [],
@@ -54,15 +54,16 @@ module.exports = function(db) {
       };
 
       var deferred = q.defer();
-      db.put(params, function(err, data) {
+      db.put(params, function(err) {
          if (err) {
            logger.error('Failed to add user ', newUser, ' with error ', err);
            deferred.reject(err);
          } else {
            logger.info('Created new project ', newUser);
-           deferred.resolve(data);
+           deferred.resolve(newUser);
          }
       });
+
       return deferred.promise;
     },
 

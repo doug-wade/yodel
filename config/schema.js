@@ -10,13 +10,13 @@ module.exports = {
   event: {
     tablename: 'Event'
   },
+  portfolio: {
+    tablename: 'Portfolio'
+  },
   project: {
     tablename: 'Project'
   },
   user: {
     tablename: 'User'
-  },
-  userDetails: {
-    tablename: 'UserDetails'
   }
 };

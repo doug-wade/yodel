@@ -23,8 +23,8 @@ var events = [
     'name': "Ma Rainey's Black Bottom",
     'description': 'The third play in the Pittsburgh Cycle',
     'img': '/images/MaRainey.jpg',
-    'startDate': new Date('2015-08-25'),
-    'endDate': new Date('2015-09-21'),
+    'startDate': new Date('2015-08-25').getTime(),
+    'endDate': new Date('2015-09-21').getTime(),
     'location': {
       'name': 'Cornish Playhouse at Seattle Center',
       'lat': 47,
@@ -35,8 +35,8 @@ var events = [
     'name': "Joe Turner's Come and Gone",
     'description': 'The second play in the Pittsburgh Cycle',
     'img': '/images/joe_turner.jpg',
-    'startDate': new Date('2015-09-01'),
-    'endDate': new Date('2015-10-21'),
+    'startDate': new Date('2015-09-01').getTime(),
+    'endDate': new Date('2015-10-21').getTime(),
     'location': {
       'name': 'Broadway West Theatre Co',
       'lat': 47,

@@ -238,6 +238,7 @@ gulp.task('webdriver_standalone', ptor.webdriver_standalone);
 gulp.task('webdriver_update', ptor.webdriver_update);
 gulp.task('compile', ['bower', 'images', 'views', 'angular-views', 'styles', 'scripts', 'server-scripts', 'copy-config', 'copy-paths']);
 gulp.task('compile-prod', ['set-prod', 'images', 'views', 'angular-views', 'styles-prod', 'scripts', 'server-scripts', 'copy-config', 'copy-paths']);
+gulp.task('debug-prod', ['set-prod', 'copy-config']);
 gulp.task('default', ['set-watch', 'compile', 'watch', 'server']);
 gulp.task('test', ['mocha', 'karma', 'protractor']);
 gulp.task('unit-test', ['watch', 'mocha']);
