@@ -142,11 +142,82 @@ var disciplines =
         { 'text': 'Photographer', 'checked': false, 'types': [{'text': 'War', 'checked': false}, {'text': 'Guerrila', 'checked': false}] }
     ];
 
+var events = [
+  {
+    'name': "Ma Rainey's Black Bottom",
+    'description': 'The third play in the Pittsburgh Cycle',
+    'img': '/images/MaRainey.jpg',
+    'startDate': new Date('2015-08-25'),
+    'endDate': new Date('2015-09-21'),
+    'location': {
+      'name': 'Cornish Playhouse at Seattle Center',
+      'lat': 47,
+      'lon': -122
+    }
+  },
+  {
+    'name': "Joe Turner's Come and Gone",
+    'description': 'The second play in the Pittsburgh Cycle',
+    'img': '/images/joe_turner.jpg',
+    'startDate': new Date('2015-09-01'),
+    'endDate': new Date('2015-10-21'),
+    'location': {
+      'name': 'Broadway West Theatre Co',
+      'lat': 47,
+      'lon': -122
+    }
+  }
+];
+
+var contacts = [
+  { name: 'Noel Sardana', email: 'noel@yodel.to', types: ['organization'], desc: "Hi, I'm Ivan.  I am interested in using Yodel to find patrons for my very important organization.  Hug 'n' drugs, Vanya"},
+  { name: 'Ivan Melyakov', email: 'ivan@yodel.to', types: ['patron', 'creative'], desc: "Hi, I'm Noel.  I am interested in using Yodel to participate in the Arts as a patron and creative.  Hugs 'n' drugs, Noel"}
+];
+
+function loadTestData(db, schema) {
+  var usersCollection = db.getCollection(schema.users);
+  users.forEach(function(user) {
+    usersCollection.insert(user);
+  });
+  usersCollection.ensureUniqueIndex('username');
+
+  var userDetailsCollection = db.getCollection(schema.userDetails);
+  userDetails.forEach(function(user) {
+    userDetailsCollection.insert(user);
+  });
+  userDetailsCollection.ensureUniqueIndex('username');
+
+  var projectsCollection = db.getCollection(schema.projects);
+  projects.forEach(function (project) {
+    projectsCollection.insert(project);
+  });
+
+  var disciplinesCollection = db.getCollection(schema.disciplines);
+  disciplines.forEach(function (discipline) {
+    disciplinesCollection.insert(discipline);
+  });
+
+  var eventsCollection = db.getCollection(schema.events);
+  events.forEach(function(testEvent) {
+    eventsCollection.insert(testEvent);
+  });
+
+  var contactsCollection = db.getCollection(schema.contacts);
+  contacts.forEach(function(contact) {
+    contactsCollection.insert(contact);
+  });
+
+  db.saveDatabase();
+}
+
 module.exports = {
     users: users,
     userDetails: userDetails,
     userPortfolios: userPortfolios,
     userPortfolioItems: userPortfolioItems,
     disciplines: disciplines,
-    projects: projects
+    events: events,
+    contacts: contacts,
+    projects: projects,
+    loadTestData: loadTestData
 };

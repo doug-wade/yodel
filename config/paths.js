@@ -1,28 +1,27 @@
 var path = require('path');
-var process = require('process');
 
-var root = process.cwd();
-var persistentOutput = path.resolve(path.join(root, '..', '/yodel-persistent'));
-var config = path.join(root, 'config');
+var projectRoot = path.resolve(path.join(__dirname, '..'));
+var persistentOutput = path.resolve(path.join(projectRoot, '..', '/yodel-persistent'));
+var config = path.join(projectRoot, 'config');
 
 module.exports = {
   bower: 'public/vendor',
-  bowerjson: path.join(root, 'bower.json'),
-  build: path.join(root, 'build'),
+  bowerjson: path.join(projectRoot, 'bower.json'),
+  build: path.join(projectRoot, 'build'),
   config: config,
   db: path.join(persistentOutput, 'yodel-db.json'),
   e2especs: 'test/e2e/*.scenarios.js',
   karmaconf: path.join(config, 'karma.js'),
   logs: path.join(persistentOutput, 'logs'),
-  images: path.join(root, 'images/**/*.*'),
-  packagejson: path.join(root, 'package.json'),
+  images: path.join(projectRoot, 'images/**/*.*'),
+  packagejson: path.join(projectRoot, 'package.json'),
   partials: 'webapp/**/*.html',
   persistent: persistentOutput,
-  public: path.join(root, 'public'),
-  root: root,
+  public: path.join(projectRoot, 'public'),
+  root: projectRoot,
   scripts: 'webapp/**/*.js',
   server: 'server/**/*.js',
   serverspecs: 'test/server/*.spec.js',
-  styles: path.join(root, 'stylesheets/**/*.styl'),
+  styles: path.join(projectRoot, 'stylesheets/**/*.styl'),
   views: 'views/*.html'
 };

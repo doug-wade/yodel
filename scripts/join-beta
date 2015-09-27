@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+var crypto = require('crypto');
+var db = require('../build/util/db');
+var logger = require('../build/logger');
+
+logger.info('Adding contacts to beta');
+var contacts = db.getContacts();
+contacts.forEach(function(contact) {
+  logger.info(contact);
+  var buf;
+  try {
+    buf = crypto.randomBytes(48);
+  } catch (ex) {
+    logger.error(ex);
+    return;
+  }
+  // From: http://stackoverflow.com/questions/8855687/secure-random-token-in-node-js
+  var betaToken = buf.toString('base64').replace(/\//g, '_').replace(/\+/g, '-');
+  contact.betaToken = betaToken;
+  logger.info('Assigned betaToken ' + betaToken + ' to contact ' + contact.name + ' with email ' + contact.email);
+});

@@ -5,11 +5,12 @@ var uuid   = require('node-uuid');
 var Loki = require('lokijs');
 var paths = require('../paths.js');
 
-var databaseFile, db, hasRun, schema;
+var databaseFile, db, schema;
 
 schema = {
   contacts: 'contacts',
   disciplines: 'disciplines',
+  events: 'events',
   portfolios: 'portfolios',
   projects: 'projects',
   users: 'users',
@@ -23,6 +24,15 @@ function existsAndIncludes(/* String */ toCheck, /* String */ includes) {
     return true;
   }
   return false;
+}
+
+function fileExists(/* String */ filepath) {
+  try {
+    fs.accessSync(filepath, fs.W_OK);
+  } catch (e) {
+    return false;
+  }
+  return true;
 }
 
 function loadSchema() {
@@ -42,33 +52,10 @@ function loadSchema() {
   db.addCollection(schema.users, {
     indices: [ 'username' ]
   });
-  db.addCollection(schema.contacts);
-}
-
-function loadTestData() {
-  logger.info('Loading testData...');
-  // Doug 2015/7/26 TODO: don't reload test data in prod
-  var users = db.getCollection(schema.users);
-  users.insert(testData.users.ivan);
-  users.insert(testData.users.noel);
-  users.ensureUniqueIndex('username');
-
-  var userDetails = db.getCollection(schema.userDetails);
-  userDetails.insert(testData.userDetails.ivan);
-  userDetails.insert(testData.userDetails.noel);
-  userDetails.ensureUniqueIndex('username');
-
-  var projects = db.getCollection(schema.projects);
-  testData.projects.forEach(function (project) {
-    projects.insert(project);
+  db.addCollection(schema.contacts, {
+    indices: [ 'email' ]
   });
-
-  testData.disciplines.forEach(function (discipline) {
-    var disciplines = db.getCollection(schema.disciplines);
-    disciplines.insert(discipline);
-  });
-
-  db.saveDatabase();
+  db.addCollection(schema.events);
 }
 
 function addDisciplines(/* Object[] */ disciplinesToAdd) {
@@ -285,27 +272,21 @@ function getContacts() {
   return contacts.where(() => true);
 }
 
-function initialize() {
-  if (!hasRun){
-    hasRun = true;
-    databaseFile = paths.db;
-    logger.info('Creating database, to be saved to file ' + databaseFile);
-    db = new Loki(databaseFile);
-    fs.access(databaseFile, fs.W_OK, function(err) {
-      if (err) {
-        loadSchema();
-        loadTestData();
-      } else {
-        db.loadDatabase();
-        loadSchema();
-      }
-    });
+(function initialize() {
+  databaseFile = paths.db;
+  logger.info('Initializing database, to be saved to file ' + databaseFile);
+  var dbExists = fileExists(databaseFile);
+  db = new Loki(databaseFile);
+  if (!dbExists) {
+    logger.info('Database did not exist previously; loading test data.');
+    loadSchema();
+    testData.loadTestData(db, schema);
   } else {
-    logger.info('database already initialized; skipping');
+    db.loadDatabase({}, () => {
+      // TODO: race condition.
+    });
   }
-}
-
-initialize();
+})();
 
 module.exports = {
   addDisciplines: addDisciplines,

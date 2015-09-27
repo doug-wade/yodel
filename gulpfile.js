@@ -80,7 +80,7 @@ gulp.task('clean', function() {
 });
 
 gulp.task('clean-db', function() {
-  return del([paths.db], function(err, deletedFiles) {
+  return del([paths.db], { force: true }, function(err, deletedFiles) {
     if (err) {
       gutil.log(err);
     } else {
