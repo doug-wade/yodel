@@ -33,7 +33,11 @@ app.use(jwt({secret: config.jwtAuthSecret}).unless({ path: [
   /^\/scripts/,
   /^\/signup/,
   /^\/vendor/,
-  /^\/resource/
+  /^\/resource/,
+  /^\/events/,
+  /^\/resource/,
+  /^\/contact-us/,
+  /^\/search/
 ]}));
 
 app.use(json());

@@ -26,7 +26,7 @@ gulp compile-prod
 # TODO: Run the tests and fail the deploy if they don't pass.
 echo "ssh-ing to remote host to remove existing yodel app"
 
-# TODO: Why do we have to use sudo to run our toolchain? And also, really, you're assuming n is installed?!?
+# TODO: Deploy the aws credentials
 ssh -i ${1} ${HOSTNAME} <<ENDSSH
     # Install nodejs
     curl --silent --location https://deb.nodesource.com/setup_0.12 | sudo bash -

@@ -1,0 +1,52 @@
+#!/usr/bin/env node
+var aws = require('aws-sdk');
+var config = require('../build/config');
+var db = require('../build/util/db');
+var logger = require('../build/logger');
+var schema = require('../config/schema');
+var testData = require('../config/test-data');
+
+aws.config.update({
+  region: config.aws.region,
+  endpoint: config.aws.endpoint
+});
+
+var dynamodb = new aws.DynamoDB();
+
+function deleteTableCallback(err, data) {
+    if (err) {
+        logger.error('Unable to delete table due to error ', err);
+    } else {
+        logger.info('Deleted table ', data);
+    }
+}
+
+for (var table in schema) {
+  var params = {
+      TableName: table.tablename
+  };
+
+  dynamodb.deleteTable(params, deleteTableCallback);
+}
+
+testData.contacts.forEach(function(contact) {
+  db.createContact(contact);
+});
+
+// db.addDisciplines(testData.discipline);
+
+testData.events.forEach(function(testEvent) {
+  db.addEvent(testEvent);
+});
+
+// testData.portfolios.forEach(function (portfolio) {
+//   db.addPortfolio(portfolio);
+// });
+
+testData.projects.forEach(function (project) {
+  db.addProject(project);
+});
+
+testData.users.forEach(function(user) {
+  db.addUser(user);
+});

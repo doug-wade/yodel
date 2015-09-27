@@ -21,6 +21,7 @@ var path         = require('path');
 var pngquant     = require('imagemin-pngquant');
 var protractor   = require('gulp-protractor').protractor;
 var ptor         = require('protractor');
+var rename       = require('gulp-rename');
 var sourcemaps   = require('gulp-sourcemaps');
 var stylus       = require('gulp-stylus');
 var uglify       = require('gulp-uglify');
@@ -89,13 +90,14 @@ gulp.task('clean-db', function() {
   });
 });
 
-gulp.task('copy-config', [ 'copy-test-data' ], function() {
-  return gulp.src([path.join(paths.config, 'config.js'), path.join(paths.config, 'paths.js')])
+gulp.task('copy-config', function() {
+  return gulp.src(path.join(paths.config, isProd ? 'config-prod.js' : 'config-dev.js'))
+    .pipe(rename('config.js'))
     .pipe(gulp.dest(paths.build));
 });
 
-gulp.task('copy-test-data', function() {
-  return gulp.src(path.join(paths.config, 'test-data.js'))
+gulp.task('copy-paths', function() {
+  return gulp.src(path.join(paths.config, 'paths.js'))
     .pipe(gulp.dest(paths.build));
 });
 
@@ -157,7 +159,7 @@ gulp.task('server', function() {
     });
 });
 
-gulp.task('server-scripts', ['lint'], function() {
+gulp.task('server-scripts', function() {
   var options = {
     blacklist: [
       'regenerator'
@@ -228,14 +230,14 @@ gulp.task('watch', function() {
   gulp.watch(paths.serverspecs, ['mocha']);
   gulp.watch(path.join(paths.config, 'test-data.js'), ['copy-test-data']);
   gulp.watch(path.join(paths.config, 'config.js'), ['copy-config']);
+  gulp.watch(path.join(paths.config, 'paths.js'), ['copy-paths']);
   return gulp.watch(paths.views, ['views']);
 });
 
 gulp.task('webdriver_standalone', ptor.webdriver_standalone);
 gulp.task('webdriver_update', ptor.webdriver_update);
-gulp.task('debug-prod', ['set-prod', 'views', 'angular-views', 'styles-prod', 'scripts', 'server-scripts', 'copy-config', 'copy-test-data']);
-gulp.task('compile', ['bower', 'images', 'views', 'angular-views', 'styles', 'scripts', 'server-scripts', 'copy-config', 'copy-test-data']);
-gulp.task('compile-prod', ['set-prod', 'images', 'views', 'angular-views', 'styles-prod', 'scripts', 'server-scripts', 'copy-config', 'copy-test-data']);
+gulp.task('compile', ['bower', 'images', 'views', 'angular-views', 'styles', 'scripts', 'server-scripts', 'copy-config', 'copy-paths']);
+gulp.task('compile-prod', ['set-prod', 'images', 'views', 'angular-views', 'styles-prod', 'scripts', 'server-scripts', 'copy-config', 'copy-paths']);
 gulp.task('default', ['set-watch', 'compile', 'watch', 'server']);
 gulp.task('test', ['mocha', 'karma', 'protractor']);
 gulp.task('unit-test', ['watch', 'mocha']);

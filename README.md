@@ -5,6 +5,9 @@ You must install:
 * the most recent version of [node.js](https://nodejs.org)
 * [gulp](http://gulpjs.com) (npm install -g gulp gulp-cli)
 * [bower](bower.io) (npm install -g bower)
+* DynamoDB local.  [Download it](http://dynamodb-local.s3-website-us-west-2.amazonaws.com/dynamodb_local_latest.zip) and extract it somewhere (I use ~/lib/dynamodb).  The database needs to listen on port 3456:
+
+    java -Djava.library.path=./DynamoDBLocal_lib -jar ~/lib/dynamodb/DynamoDBLocal.jar -sharedDb -port 3456
 
 To keep up with the most recent version of node, you should install n, our recommended node version manager:
 
@@ -13,7 +16,7 @@ To keep up with the most recent version of node, you should install n, our recom
 
 If you want to perform a release, you'll need to perform release testing, so you'll definitely need n, and you may also want to install forever, which is what we use to run the node process in prod:
 
-        npm install -g forever
+    npm install -g forever
 
 
 If you want to continuously run the tests while developing, you may also want:
@@ -35,10 +38,25 @@ then navigate to localhost:3000 in your favorite browser.  If you want to follow
 
 # Running the tests
 
+To run the unit tests, you'll need to install DynamoDB local.  [Download it](http://dynamodb-local.s3-website-us-west-2.amazonaws.com/dynamodb_local_latest.zip) and extract it somewhere (I use ~/bin/dynamodb).  Once you've started it, you'll want to create the tables and load the test data:
+
+    java -Djava.library.path=./DynamoDBLocal_lib -jar ~/bin/dynamodb/DynamoDBLocal.jar -sharedDb -port 3456
+    create-tables localhost:3456
+    load-test-data localhost:3456
+
+Then you'll also need to download the Selenium webdriver:
+
     npm install
     gulp webdriver_update
     gulp webdriver_standalone
+
+Compile the application and install the dependencies:
+
+    bower install
     gulp compile
+
+And then run the tests:
+
     gulp test
 
 Note that to end the mocha and test tasks, you have to manually interrupt the selenium standalone process  (ctrl + c)
@@ -94,7 +112,6 @@ If you decide to add more scripts, great!  Please write them as a portable shell
 2. Fix Portfolios
 3. Fix multipart uploads
 4. Add image to project
-5. Update test data for ivan and noel so I can log in
 6. Attend events
 7. Projects -> Events
 8. Event Calendar

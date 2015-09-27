@@ -1,6 +1,7 @@
 var blob = require('../util/blob.js');
 var contactUs = require('./contact-us.js');
 var disciplines = require('./disciplines.js');
+var events = require('./events');
 var login = require('./login.js');
 var portfolios = require('./portfolios.js');
 var projects = require('./projects.js');
@@ -41,4 +42,7 @@ module.exports = function(router, jwt) {
   router.get('/search/:query', search.search);
 
   router.post('/contact-us', contactUs.createContact);
+
+  router.get('/events', events.getEvents);
+  router.post('/events', events.addEvent);
 };

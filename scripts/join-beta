@@ -4,18 +4,24 @@ var db = require('../build/util/db');
 var logger = require('../build/logger');
 
 logger.info('Adding contacts to beta');
-var contacts = db.getContacts();
-contacts.forEach(function(contact) {
-  logger.info(contact);
-  var buf;
-  try {
-    buf = crypto.randomBytes(48);
-  } catch (ex) {
-    logger.error(ex);
-    return;
-  }
-  // From: http://stackoverflow.com/questions/8855687/secure-random-token-in-node-js
-  var betaToken = buf.toString('base64').replace(/\//g, '_').replace(/\+/g, '-');
-  contact.betaToken = betaToken;
-  logger.info('Assigned betaToken ' + betaToken + ' to contact ' + contact.name + ' with email ' + contact.email);
+db.getContacts().then((contacts) => {
+  contacts.forEach(function(contact) {
+    if (contact.betaToken) {
+      logger.info('contact ' + contact.email + ' already has a beta token; returning.');
+      return;
+    }
+
+    logger.info(contact);
+    var buffer;
+    try {
+      buffer = crypto.randomBytes(16);
+    } catch (ex) {
+      logger.error(ex);
+      return;
+    }
+    // From: http://stackoverflow.com/questions/8855687/secure-random-token-in-node-js
+    var betaToken = buffer.toString('base64').replace(/\//g, '_').replace(/\+/g, '-');
+    db.assignBetaToken(contact, betaToken).then((updatedContact) =>
+      logger.info('Assigned betaToken ' + updatedContact.betaToken + ' to contact ' + updatedContact.name + ' with email ' + contact.email));
+  });
 });
