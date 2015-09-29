@@ -48,7 +48,9 @@ app.use(gzip());
 
 views('views/');
 
-app.use(serve('public/'));
+app.use(serve('public/'), {
+  maxage: 60000 * 60 * 24 * 7
+});
 
 require('koa-qs')(app);
 require('./routes')(router, jwt);

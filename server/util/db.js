@@ -3,7 +3,7 @@ var config = require('../config');
 
 aws.config.update({
   region: config.aws.region,
-  endpoint: config.aws.endpoint
+  endpoint: config.aws.ddbEndpoint
 });
 
 var db = new aws.DynamoDB.DocumentClient();

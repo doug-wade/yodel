@@ -8,7 +8,7 @@ function FluidImage($window, $log) {
     controller: ['$scope', ($scope) => {
       $log.info($scope.src);
       var updateStyles = () => {
-        $scope.imageWidth = $window.innerWidth - (.1 * $window.innerWidth);
+        $scope.imageWidth = $window.innerWidth;
         $scope.imageHeight = ((463 / 960) * $window.innerWidth);
         $log.info('resizing image to ' + $scope.imageWidth + ' x ' + $scope.imageHeight);
       };

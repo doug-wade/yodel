@@ -3,8 +3,9 @@
 @import typography
 
 .about
-  padding-left 4rem
   font-family yodel-font-family
+  div.question-column-row
+    margin-left 0
 
   p
     font-size font-medium
@@ -21,6 +22,9 @@
 
   .what-subheader
     text-align center
+
+  .what-content
+    padding-left 5px
 
   .reason-image
     max-width 100%
@@ -39,6 +43,7 @@
 
 .team-photo
   position relative
+  padding-left 15px
 
   .name-overlay
     font-weight 700
@@ -74,6 +79,7 @@
   text-align center
 
   img
+    max-width 100%
     margin-top 15%
 
   .h1
@@ -120,3 +126,18 @@
     position relative
     background yodel-black
     color yodel-white
+
+@media only screen and (max-width: 350px)
+  .hero-image
+    .h1
+      font-size font-medium
+
+  .fluid-image-container
+    .h1
+      font-size font-medium
+    .h2
+      font-size font-small
+
+  .about
+    p
+      padding-right 0

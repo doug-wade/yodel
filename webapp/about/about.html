@@ -52,7 +52,7 @@
         <h3 style="display: inline-block" class="h3 subheader">Yodel is a system of creative networking.</h3>
         <img src="/images/yodel-logo.png"/>
       </div>
-      <p>
+      <p class="what-content">
         It bridges the gaps between art, business, & community by providing a Comprehensive Artistic Network. Yodel's tripartite
         system connects Creatives, Patrons, & Organizations using one dynamic platform. This platforms enhances creative collaboration,
         event attendance, & show booking—bypassing the barriers preventing engagement. Never has it been so easy to cover all your
@@ -62,56 +62,11 @@
     </div>
     <div class="section">
       <h2 class="h2 header">FAQ<h2>
-      <div class="row">
-        <div class="col">
-          <div class="question">
-            <h3 class="h3 col">WHY WOULD I USE YODEL?</h3>
-            <p>
-              Yodel makes it EASY! Whether you're finding cheap tickets, connecting with collaborators, or packing your venues,
-              Yodel is the app to use. We de-stress the creative process, and make finding & hosting entertainment as simple as
-              a few well placed finger taps. Really, why not use Yodel?
-            </p>
-          </div>
-          <div class="question">
-            <h3 class="h3 col">ISN'T THERE ALREADY AN APP FOR THAT?</h3>
-            <p>
-              Not quite...our competitors certainly try but...our tripartite system is unparalleled in its function & potential.
-              It's an innovative, self-sustaining circuit of interaction, deeply rooted in creative connection & cultivating community.
-              We are revolutionizing the logistics of artistic interaction.
-            </p>
-          </div>
-          <div class="question">
-            <h3 class="h3">WHY DOES YODEL EXIST?</h3>
-            <p>
-              A lack of awareness, coupled with stiff ticket prices and lengthy travel times are just a few catalysts causing
-              the national decline in art and cultural event attendance. Yodel's Comprehensive Artistic Network makes events
-              accessible for Patrons, profitable for Organizations, and fulfilling for Creatives.
-            </p>
-          </div>
-        </div>
-        <div class="col">
-          <div class="question">
-            <h3 class="h3 col">HOW DO I USE YODEL?</h3>
-            <p>
-              Simple! Just create a profile and plug into our network. We offer three different profile options suited for your
-              specific needs. Creatives can create an established online presence enabling fluid collaboration, project acquisition,
-              and professional exposure . Patrons can find events tailored to their interests, support ongoing work, connect with
-              other users, and create a following. Organizations can subscribe for customer data & analytics, find the right
-              artists for their venues, and fortify their reputation. Just swipe and type!
-            </p>
-          </div>
-          <div class="question">
-            <h3 class="h3 col">WILL MY DEVICE SUPPORT YODEL?</h3>
-            <p>
-              Yes! Yodel is a multi platform application that can be used on any device with internet connection & browsing capability.
-              This includes but is not limited to Android, IOS, Windows and other mobile devices.
-            </p>
-          </div>
-          <div class="question">
-            <h3 class="h3">CAN I REGISTER?</h3>
-            <p>
-              Not quite yet! We've launched a limited private beta. Fill out the form below to request a beta key.
-            </p>
+      <div class="row question-column-row">
+        <div class="col" ng-repeat="col in questionColumns">
+          <div ng-repeat="question in col" class="question">
+            <h3 class="h3">{{ question.text }}</h3>
+            <p>{{ question.answer }}</p>
           </div>
         </div>
       </div>
