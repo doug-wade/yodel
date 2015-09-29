@@ -40,6 +40,15 @@
                     <input type="password" placeholder="Confirm your password" name="password2" ng-model="signupParams.password2" required compare-to="signupForm.password1" />
                 </label>
                 <div class="error-container" ng-show="signupForm.password2.$error && showValidation" ng-messages="signupForm.password2.$error" ng-messages-include="/partials/signup/error-list.html"></div>
+
+                <br/>
+
+                <label class="item item-input login" ng-class="{ 'has-errors' : signupForm.betaToken.$invalid && showValidation, 'no-errors' : signupForm.betaToken.$valid || !showValidation }" ng-messages-include="/partials/signup/error-list.html">
+                    <span>Beta Token</span>
+                    <input type="text" placeholder="Enter Your Beta Token" name="betaToken" ng-model="signupParams.betaToken" required />
+                </label>
+                <div class="error-container" ng-show="signupForm.betaToken.$error && showValidation" ng-messages="signupForm.betaToken.$error" ng-messages-include="/partials/signup/error-list.html"></div>
+
             </form>
         </div>
 

@@ -28,6 +28,29 @@ module.exports = function(db) {
       return deferred.promise;
     },
 
+    getContact: function(email){
+      logger.info('Getting contact by email address');
+      var deferred = q.defer();
+      var params = {
+        TableName: schema.contact.tablename,
+        KeyConditionExpression: 'email = :email',
+        ExpressionAttributeValues: {
+            'email': email
+        }
+      };
+
+      db.query(params, function(err, data) {
+        if (err) {
+          logger.error(err);
+          deferred.reject(err);
+        } else {
+          deferred.resolve(data);
+        }
+      });
+
+      return q.promise;
+    },
+
     getContacts: function() {
       logger.info('Getting all contacts');
       var deferred = q.defer();

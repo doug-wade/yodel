@@ -34,13 +34,14 @@ function generateHashAndSalt(password) {
 function signup(jwt) {
   return function* () {
     // basic signup validation
-    var signupBody, hash;
+    var contact, signupBody, hash;
 
     signupBody = this.request.body;
     this.checkBody('username').notEmpty();
     this.checkBody('email').isEmail();
     this.checkBody('password1').notEmpty().len(6);
     this.checkBody('password2').notEmpty().eq(signupBody.password1, 'Passwords must match');
+    this.checkBody('betaToken').notEmpty().len(16);
 
     if (isUsernameTaken(signupBody.username)) {
       if (!this.errors) {
@@ -58,6 +59,14 @@ function signup(jwt) {
     }
 
     hash = yield generateHashAndSalt(signupBody.password1);
+    contact = yield db.getContact(signupBody.email);
+
+    if (!contact || signupBody.betaToken !== contact.betaToken) {
+      logger.info('User with email ' + signupBody.email + ' attempted to sign up with invalid beta token.');
+      this.status = 400;
+      this.body = 'Invalid Beta Token';
+      return;
+    }
 
     db.addUser({
       username: signupBody.username,

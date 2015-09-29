@@ -21,11 +21,11 @@ var freeUnits = 10;
 var tables = [{
     TableName: schema.contact.tablename,
     KeySchema: [
-        { AttributeName: schema.contact.hashKey, KeyType: 'HASH'},
-        { AttributeName: schema.contact.rangeKey, KeyType: 'RANGE' }
+        { AttributeName: 'email', KeyType: 'HASH'},
+        { AttributeName: 'created', KeyType: 'RANGE' }
     ],
     AttributeDefinitions: [
-        { AttributeName: 'contactId', AttributeType: 'S'},
+        { AttributeName: 'email', AttributeType: 'S'},
         { AttributeName: 'created', AttributeType: 'N' }
     ],
     ProvisionedThroughput: {
