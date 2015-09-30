@@ -1,0 +1,62 @@
+#!/usr/bin/env node
+var argv = require('minimist')(process.argv.slice(2));
+var aws = require('aws-sdk');
+var config = require('../build/config');
+var db = require('../build/util/db');
+var fs = require('fs');
+var logger = require('../build/logger');
+var testData = require('../config/test-data');
+
+if (argv.h || argv.help) {
+  [
+    'This script load test data in a DynamoDB instance.  We recommend you pipe the logs through bunyan using the short format.',
+    'Options:',
+    '  -h -help Show this help message.',
+    '  -t -test Load test data',
+    '  -e -events Load events from file',
+    '  -endpoint AWS enpoint',
+    '  -r -region AWS region'
+  ].forEach((line) => console.log(line));
+  process.exit(0);
+}
+
+aws.config.update({
+  region: argv.r || argv.region || config.aws.region,
+  endpoint: argv.endpoint || config.aws.endpoint
+});
+
+if (argv.t || argv.test) {
+  logger.info('inserting test data.');
+  testData.contacts.forEach(function(contact) {
+    db.createContact(contact);
+  });
+
+  testData.users.forEach(function(user) {
+    db.addUser(user).then((res) => {
+      testData.projects.forEach((project) => {
+        if (project.username === user.username) {
+          project.userId = res.userId;
+          db.addProject(project);
+        }
+      });
+    });
+  });
+
+  db.addDisciplines(testData.disciplines);
+
+  testData.events.forEach(function(testEvent) {
+    db.addEvent(testEvent);
+  });
+
+  // testData.portfolios.forEach(function (portfolio) {
+  //   portfolio.userId = createdUsers[Math.floor(Math.random() * createdUsers.length)];
+  //   db.addPortfolio(portfolio);
+  // });
+}
+
+if (argv.e || argv.events) {
+  var events = JSON.parse(fs.readFileSync(argv.events || argv.e));
+  events.forEach((eventToAdd) => {
+    db.addEvent(eventToAdd);
+  });
+}
