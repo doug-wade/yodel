@@ -1,27 +1,95 @@
 #!/usr/bin/env node
+var _ = require('lodash');
+var aws = require('aws-sdk');
+var config = require('../build/config');
 var crypto = require('crypto');
 var db = require('../build/util/db');
+var fs = require('fs');
 var logger = require('../build/logger');
+var path = require('path');
+var paths = require('../config/paths');
 
 logger.info('Adding contacts to beta');
+
+aws.config.update({
+  region: config.aws.region,
+  endpoint: config.aws.sesEndpoint
+});
+var ses = new aws.SES();
+var subject = 'Welcome to the Yodel beta!';
+
+function getHtmlEmail(contact) {
+  var uncompiled = fs.readFileSync(path.join(paths.templates, 'beta-key.templ.html'));
+  var compiled = _.template(uncompiled);
+  var types;
+  if (contact.types.length === 1) {
+    types = contact.types;
+  } else {
+    types = '';
+    for (var i = 0; i < contact.types.length; i++) {
+      if (i === (contact.types.length - 1)) {
+        types += ' and ' + contact.types[i];
+      } else {
+        types += contact.types + ', ';
+      }
+    }
+  }
+  return compiled({ name: contact.name, betaToken: contact.betaToken, subject: subject, types: types });
+}
+
+function generateBetaKey(contact) {
+  if (contact.betaToken) {
+    logger.info('contact ' + contact.email + ' already has a beta token; returning.');
+    return '';
+  }
+
+  logger.info(contact);
+  var buffer;
+  try {
+    buffer = crypto.randomBytes(16);
+  } catch (ex) {
+    logger.error(ex);
+    return '';
+  }
+  // From: http://stackoverflow.com/questions/8855687/secure-random-token-in-node-js
+  return buffer.toString('base64').replace(/\//g, '_').replace(/\+/g, '-');
+}
+
+function sendEmail(emailAddress, text) {
+  var params = {
+    Destination: { ToAddresses: [ emailAddress ] },
+    Message: {
+      Body: {
+        Html: {
+          Data: text,
+          Charset: 'utf8'
+        }
+      },
+      Subject: {
+        Data: subject,
+        Charset: 'utf8'
+      }
+    },
+    Source: 'noreply@yodel.to'
+  };
+  ses.sendEmail(params, function(err, data) {
+    if (err) {
+      logger.error(err);
+    } else {
+      logger.info(data);
+    }
+  });
+}
+
 db.getContacts().then((contacts) => {
   contacts.forEach(function(contact) {
-    if (contact.betaToken) {
-      logger.info('contact ' + contact.email + ' already has a beta token; returning.');
-      return;
+    var betaToken = generateBetaKey(contact);
+    if (betaToken) {
+      db.assignBetaToken(contact, betaToken).then((updatedContact) =>
+        logger.info('Assigned betaToken ' + updatedContact.betaToken + ' to contact ' + updatedContact.name + ' with email ' + contact.email));
+      var emailHtml = getHtmlEmail(contact);
+      logger.info('Sending email ', emailHtml);
+      sendEmail(contact.email, emailHtml);
     }
-
-    logger.info(contact);
-    var buffer;
-    try {
-      buffer = crypto.randomBytes(16);
-    } catch (ex) {
-      logger.error(ex);
-      return;
-    }
-    // From: http://stackoverflow.com/questions/8855687/secure-random-token-in-node-js
-    var betaToken = buffer.toString('base64').replace(/\//g, '_').replace(/\+/g, '-');
-    db.assignBetaToken(contact, betaToken).then((updatedContact) =>
-      logger.info('Assigned betaToken ' + updatedContact.betaToken + ' to contact ' + updatedContact.name + ' with email ' + contact.email));
   });
 });

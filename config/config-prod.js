@@ -3,6 +3,7 @@ var config = {
     aws: {
         yodelS3Bucket: 'yodel88',
         ddbEndpoint: 'dynamodb.us-west-2.amazonaws.com',
+        sesEndpoint: 'email.us-west-2.amazonaws.com',
         region: 'us-west-2'
     },
 

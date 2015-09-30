@@ -3,6 +3,7 @@ var config = {
     aws: {
         yodelS3Bucket: 'yodel88',
         ddbEndpoint: 'localhost:3456',
+        sesEndpoint: 'email.us-west-2.amazonaws.com',
         region: 'us-west-2'
     },
 

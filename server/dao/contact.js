@@ -74,7 +74,7 @@ module.exports = function(db) {
       var params = {
         TableName: schema.contact.tablename,
         Key: {
-            contactId: contact.contactId,
+            email: contact.email,
             created: contact.created
         },
         UpdateExpression: 'set betaToken = :b',

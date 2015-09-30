@@ -23,10 +23,12 @@ echo "compiling local instance for deployment"
 gulp clean
 gulp compile-prod
 
+echo "copying aws credentials"
+scp -r -i {$1} ~/.aws ${HOSTNAME}:${DIR}
+
 # TODO: Run the tests and fail the deploy if they don't pass.
 echo "ssh-ing to remote host to remove existing yodel app"
 
-# TODO: Deploy the aws credentials
 ssh -i ${1} ${HOSTNAME} <<ENDSSH
     # Install nodejs
     curl --silent --location https://deb.nodesource.com/setup_0.12 | sudo bash -

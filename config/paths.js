@@ -23,5 +23,6 @@ module.exports = {
   server: 'server/**/*.js',
   serverspecs: 'test/server/*.spec.js',
   styles: path.join(projectRoot, 'stylesheets/**/*.styl'),
+  templates: path.join(projectRoot, 'templates'),
   views: 'views/*.html'
 };
