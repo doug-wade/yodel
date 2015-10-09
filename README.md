@@ -106,22 +106,3 @@ There are a number of scripts for running various common dev ops tasks in /scrip
     chmod +x ./scripts/*
 
 If you decide to add more scripts, great!  Please write them as a portable shell script (make sure they work with bash and zsh at least) or as a JavaScript.  If you write them as a JavaScript, make sure to add your dependencies as dev dependencies, unless you mean to have them executed regularly on the server, in which case add them as normal dependencies.  Furthermore, although linting isn't required (it won't break the build, at least), please try to follow the standard style since linting extensions to IDEs and text editors still throw warnings for scripts, and to improve readability and correctness.
-
-# TODOs:
-1. Contact us - Google docs integration
-2. Fix Portfolios
-3. Fix multipart uploads
-4. Add image to project
-6. Attend events
-7. Projects -> Events
-8. Event Calendar
-9. User types
-10. HTTP2/SPDY support
-11. Sign-up organization
-12. Sign-up patron
-13. Event compact view
-14. Event button candybar
-15. Restyle sidebar
-16. Event "more details" rollover
-17. Buy tickets
-18. Project page
