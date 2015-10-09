@@ -4,6 +4,7 @@ var concat       = require('gulp-concat');
 var consolidate  = require('gulp-consolidate');
 var david        = require('gulp-david');
 var del          = require('del');
+var esdoc        = require('gulp-esdoc');
 var eslint       = require('gulp-eslint');
 var gulp         = require('gulp');
 var gulpif       = require('gulp-if');
@@ -90,6 +91,16 @@ gulp.task('clean-db', function() {
   });
 });
 
+gulp.task('clean-docs', function() {
+  return del([path.join(paths.docs, 'generated')], { force: true }, function(err, deletedFiles) {
+    if (err) {
+      gutil.log(err);
+    } else {
+      gutil.log('Cleaned files: ', deletedFiles.join(', '));
+    }
+  });
+});
+
 gulp.task('copy-config', function() {
   return gulp.src(path.join(paths.config, isProd ? 'config-prod.js' : 'config-dev.js'))
     .pipe(rename('config.js'))
@@ -99,6 +110,11 @@ gulp.task('copy-config', function() {
 gulp.task('copy-paths', function() {
   return gulp.src(path.join(paths.config, 'paths.js'))
     .pipe(gulp.dest(paths.build));
+});
+
+gulp.task('docs', function() {
+  gulp.src(path.join(paths.server, 'routes'))
+    .pipe(esdoc({ destination: path.join(paths.docs, 'generated') }));
 });
 
 gulp.task('images', function() {
@@ -236,6 +252,7 @@ gulp.task('watch', function() {
 
 gulp.task('webdriver_standalone', ptor.webdriver_standalone);
 gulp.task('webdriver_update', ptor.webdriver_update);
+gulp.task('clean-all', ['clean-docs', 'clean-db', 'clean']);
 gulp.task('compile', ['bower', 'images', 'views', 'angular-views', 'styles', 'scripts', 'server-scripts', 'copy-config', 'copy-paths']);
 gulp.task('compile-prod', ['set-prod', 'images', 'views', 'angular-views', 'styles-prod', 'scripts', 'server-scripts', 'copy-config', 'copy-paths']);
 gulp.task('debug-prod', ['set-prod', 'copy-config']);

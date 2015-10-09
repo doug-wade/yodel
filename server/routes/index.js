@@ -1,48 +1,32 @@
 var blob = require('../util/blob.js');
-var contactUs = require('./contact-us.js');
-var disciplines = require('./disciplines.js');
-var events = require('./events');
-var login = require('./login.js');
-var portfolios = require('./portfolios.js');
-var projects = require('./projects.js');
-var search = require('./search.js');
-var signup = require('./signup.js');
-var userDetails = require('./user-details.js');
+
+import {ContactUsController} from './ContactUs';
+import {DisciplineController} from './Disciplines';
+import {EventsController} from './Events';
+import {LoginController} from './Login';
+import {PortfolioController} from './Portfolios';
+import {ProjectsController} from './Projects';
+import {SearchController} from './Search';
+import {SignupController} from './Signup';
+import {UserDetailsController} from './UserDetails';
 
 module.exports = function(router, jwt) {
   router.get('/', function*() {
     this.redirect('/index.html');
   });
 
-  router.post('/login', login.login(jwt));
-  router.post('/signup', signup.signup(jwt));
-
-  router.get('/user', userDetails.getAllUsers);
-  router.get('/user/:username', userDetails.getUser);
-  router.get('/user/:username/portfolio', portfolios.getUserPortfolio);
-  router.get('/user/:username/portfolio/:portfolio/nextToken/:nextToken', portfolios.getPortfolioItems);
-  router.post('/user/:username/portfolio/:portfolio/item', portfolios.addItemToPortfolio);
-  router.del('/user/:username/portfolio/:portfolio/item/:itemId', portfolios.deleteItemFromPortfolio);
-  router.post('/user/:username/portfolio', portfolios.createPortfolio);
-
   router.get('/resource/:username/:resourceId', function*() {
     // TODO how to determine the proper type
     this.body = blob.getDownloadReadStream(this.params.username, this.params.resourceId);
   });
 
-  router.get('/discipline', disciplines.getUserDisciplines);
-  router.post('/discipline', disciplines.addDisciplines);
-  router.post('/user/:username/disciplines', disciplines.setUserDisciplines);
-
-  router.get('/user/:username/projects', projects.listProjects);
-  router.post('/user/:username/projects', projects.createProject);
-  router.get('/user/:username/projects/:projectid', projects.getProject);
-  router.del('/user/:username/projects/:projectid', projects.deleteProject);
-
-  router.get('/search/:query', search.search);
-
-  router.post('/contact-us', contactUs.createContact);
-
-  router.get('/events', events.getEvents);
-  router.post('/events', events.addEvent);
+  (new ContactUsController()).register(router);
+  (new DisciplineController()).register(router);
+  (new EventsController()).register(router);
+  (new LoginController()).register(router, jwt);
+  (new PortfolioController()).register(router);
+  (new ProjectsController()).register(router);
+  (new SearchController()).register(router);
+  (new SignupController()).register(router, jwt);
+  (new UserDetailsController()).register(router);
 };

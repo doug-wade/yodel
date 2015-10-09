@@ -10,6 +10,7 @@ module.exports = {
   build: path.join(projectRoot, 'build'),
   config: config,
   db: path.join(persistentOutput, 'yodel-db.json'),
+  docs: 'docs',
   e2especs: 'test/e2e/*.scenarios.js',
   karmaconf: path.join(config, 'karma.js'),
   logs: path.join(persistentOutput, 'logs'),

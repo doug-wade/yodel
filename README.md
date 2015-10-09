@@ -24,6 +24,12 @@ If you want to continuously run the tests while developing, you may also want:
 * [protractor](http://angular.github.io/protractor/#/) (npm install -g protractor)
 * [mocha](http://mochajs.org/) (npm install -g mocha)
 
+If you want to generate the docs, you'll need to install esdoc (TODO: get gulp-esdoc up and running):
+
+    npm install -g esdoc
+    esdoc -c config/esdoc.json
+    open docs/index.html
+
 The server and the logs expect a sibling directory, yodel-persitent, to exist and contain a child directory name logs (to prevent the logs, db &c from being deleted during deployments), so you may need to create one.
 
     mkdir -p ./yodel-persistent/logs
