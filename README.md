@@ -1,4 +1,4 @@
-Generated using the [Yeoman](http://yeoman.io/) generator [koa-angular](https://github.com/prekolna/generator-koa-angular) (still under development)
+Generated using the [Yeoman](http://yeoman.io/) generator [koa-angular](https://github.com/prekolna/generator-koa-angular), which Yodel sponsors.  Most infrastructure changes should be contributed to the generator.
 
 # Prerequisites
 You must install:
