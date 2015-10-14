@@ -1,7 +1,7 @@
 var encoding = 'utf8';
 var config = {
     aws: {
-        yodelS3Bucket: 'yodel88',
+        yodelS3Bucket: 'yodel.is',
         ddbEndpoint: 'dynamodb.us-west-2.amazonaws.com',
         sesEndpoint: 'email.us-west-2.amazonaws.com',
         sesArn: 'arn:aws:ses:us-west-2:202860285120:identity/yodel.is',

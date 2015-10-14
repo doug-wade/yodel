@@ -1,20 +1,22 @@
-var yodelApp = angular.module('yodel', [
-    'about',
-    'checklist-model',
-    'events',
-    'ionic',
-    'layout',
-    'login',
-    'nav',
-    'ngTagsInput',
-    'ngMessages',
-    'portfolio',
-    'profile',
-    'projects',
-    'signup',
-    'signup-info',
-    'ui.router',
-    'ui.select'
+let yodelApp = angular.module('yodel', [
+  'about',
+  'checklist-model',
+  'events',
+  'ionic',
+  'layout',
+  'login',
+  'nav',
+  'ngMessages',
+  'ngS3upload',
+  'ngSanitize',
+  'ngTagsInput',
+  'portfolio',
+  'profile',
+  'projects',
+  'signup-info',
+  'signup',
+  'ui.router',
+  'ui.select'
 ]);
 
 function appRun($ionicPlatform, $window) {
@@ -31,32 +33,32 @@ function appRun($ionicPlatform, $window) {
 yodelApp.run(['$ionicPlatform', '$window', appRun]);
 
 yodelApp.factory('jwtAuthInterceptor', [
-    '$injector',
-    '$rootScope',
-    '$q',
-    '$window',
-    function ($injector, $rootScope, $q, $window) {
-        return {
-            request: function(config) {
-                config.headers = config.headers || {};
-                if ($window.sessionStorage.token) {
-                    config.headers.Authorization = 'Bearer ' + $window.sessionStorage.token;
-                }
-                return config;
-            },
-            response: function(response) {
-                // TODO add a success toast
-                return response || $q.when(response);
-            },
-            responseError: function(response) {
-                var $state = $injector.get('$state');
-                if (response.status === 401 && $state.current.name !== 'login') {
-                    $state.go('login');
-                }
-                return $q.reject(response);
-            }
-        };
-    }
+  '$injector',
+  '$rootScope',
+  '$q',
+  '$window',
+  ($injector, $rootScope, $q, $window) => {
+    return {
+      request: (config) => {
+        config.headers = config.headers || {};
+        if ($window.sessionStorage.token) {
+          config.headers.Authorization = 'Bearer ' + $window.sessionStorage.token;
+        }
+        return config;
+      },
+      response: (response) => {
+        // TODO add a success toast
+        return response || $q.when(response);
+      },
+      responseError: (response) => {
+        let $state = $injector.get('$state');
+        if (response.status === 401 && $state.current.name !== 'login') {
+          $state.go('login');
+        }
+        return $q.reject(response);
+      }
+    };
+  }
 ]);
 
 yodelApp.config([
@@ -143,10 +145,10 @@ yodelApp.config([
                 conroller: 'SignupInfoCtrl'
             });
 
-        $httpProvider.interceptors.push('jwtAuthInterceptor');
+    $httpProvider.interceptors.push('jwtAuthInterceptor');
 
-        // TODO if a user reloads the page, the $rootScope is wiped even if $window.sessionStorage.token still exists (and contains the username); we should re-create the $rootScope username state from the JWT token in this case
-    }
+    // TODO if a user reloads the page, the $rootScope is wiped even if $window.sessionStorage.token still exists (and contains the username); we should re-create the $rootScope username state from the JWT token in this case
+  }
 ]);
 
 // To add a new feature, give it a random 8 digit id.
@@ -161,12 +163,12 @@ yodelApp.constant('FEATURE', {
 });
 
 yodelApp.run([
-    '$rootScope',
-    '$window',
-    function($rootScope, $window) {
-        if ($window && $window.sessionStorage && $window.sessionStorage.token) {
-            // TODO get this out of the token if the token is still valid (not expired)
-            $rootScope.username = $window.sessionStorage.username;
-        }
+  '$rootScope',
+  '$window',
+  ($rootScope, $window) => {
+    if ($window && $window.sessionStorage && $window.sessionStorage.token) {
+      // TODO get this out of the token if the token is still valid (not expired)
+      $rootScope.username = $window.sessionStorage.username;
     }
+  }
 ]);
