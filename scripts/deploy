@@ -20,7 +20,7 @@ DIR=/home/ubuntu
 FOLDER=yodel
 
 echo "compiling local instance for deployment"
-gulp clean
+gulp clean-all
 gulp compile-prod
 
 echo "copying aws credentials"

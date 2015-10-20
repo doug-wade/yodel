@@ -4,6 +4,7 @@ var concat       = require('gulp-concat');
 var consolidate  = require('gulp-consolidate');
 var david        = require('gulp-david');
 var del          = require('del');
+var esdoc        = require('gulp-esdoc');
 var eslint       = require('gulp-eslint');
 var gulp         = require('gulp');
 var gulpif       = require('gulp-if');
@@ -90,6 +91,16 @@ gulp.task('clean-db', function() {
   });
 });
 
+gulp.task('clean-docs', function() {
+  return del([path.join(paths.docs, 'generated')], { force: true }, function(err, deletedFiles) {
+    if (err) {
+      gutil.log(err);
+    } else {
+      gutil.log('Cleaned files: ', deletedFiles.join(', '));
+    }
+  });
+});
+
 gulp.task('copy-config', function() {
   return gulp.src(path.join(paths.config, isProd ? 'config-prod.js' : 'config-dev.js'))
     .pipe(rename('config.js'))
@@ -99,6 +110,16 @@ gulp.task('copy-config', function() {
 gulp.task('copy-paths', function() {
   return gulp.src(path.join(paths.config, 'paths.js'))
     .pipe(gulp.dest(paths.build));
+});
+
+gulp.task('docs', function() {
+  // doug@ 10.19.2015 TODO: gulp-esdoc doesn't actually use the file stream to generate the docs, strangely enough
+  // (see: https://github.com/nanopx/gulp-esdoc/issues/4), so we have to provide the source on the config object.
+  // I can't figure out how to call esdoc.generate directly, though that seems like the better long-term solution,
+  // since that's the better solution anyway, and it removes one possible source of bugs from our build. See
+  // http://blog.overzealous.com/post/74121048393/why-you-shouldnt-create-a-gulp-plugin-or-how-to for more.
+  gulp.src(path.join(paths.server, 'routes'))
+    .pipe(esdoc({ source: './server', destination: path.join(paths.docs, 'generated') }));
 });
 
 gulp.task('images', function() {
@@ -236,6 +257,7 @@ gulp.task('watch', function() {
 
 gulp.task('webdriver_standalone', ptor.webdriver_standalone);
 gulp.task('webdriver_update', ptor.webdriver_update);
+gulp.task('clean-all', ['clean-docs', 'clean-db', 'clean']);
 gulp.task('compile', ['bower', 'images', 'views', 'angular-views', 'styles', 'scripts', 'server-scripts', 'copy-config', 'copy-paths']);
 gulp.task('compile-prod', ['set-prod', 'images', 'views', 'angular-views', 'styles-prod', 'scripts', 'server-scripts', 'copy-config', 'copy-paths']);
 gulp.task('debug-prod', ['set-prod', 'copy-config']);
