@@ -19,6 +19,7 @@ module.exports = {
   assignBetaToken: contact.assignBetaToken,
   createContact: contact.createContact,
   getContacts: contact.getContacts,
+  getContact: contact.getContact,
 
   // Disciplines
   addDiscipline: discipline.addDiscipline,

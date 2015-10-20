@@ -13,16 +13,6 @@ var ses    = require('../util/ses');
  */
 export class SignupController {
   /**
-   * Checks to see if another user already exists with the same username.
-   *
-   * @param {string} The username to be checked.
-   * @returns {boolean} true if the username is take, false otherwise.
-   */
-  _isUsernameTaken(username) {
-    return db.getUser(username) !== undefined;
-  }
-
-  /**
    * Converts a user object into the profile used to sign the jwt token.
    *
    * @param {object} The user to convert.
@@ -87,7 +77,10 @@ export class SignupController {
       this.checkBody('password2').notEmpty().eq(signupBody.password1, 'Passwords must match');
       this.checkBody('betaToken').notEmpty().len(16);
 
-      if (this.isUsernameTaken(signupBody.username)) {
+      let existingUser = yield db.getUser(signupBody.username);
+      logger.info('checcking to see if username is taken; got user from db', existingUser);
+
+      if (existingUser) {
         if (!this.errors) {
           this.errors = [];
         }
@@ -103,13 +96,15 @@ export class SignupController {
       }
 
       hash = yield this.generateHashAndSalt(signupBody.password1);
-      contact = yield db.getContact(signupBody.email);
+      if (config.isProd || (signupBody.betaToken !== config.universalBetaToken)) {
+        contact = yield db.getContact(signupBody.email);
 
-      if (!contact || signupBody.betaToken !== contact.betaToken) {
-        logger.info('User with email ' + signupBody.email + ' attempted to sign up with invalid beta token.');
-        this.status = 400;
-        this.body = 'Invalid Beta Token';
-        return;
+        if (!contact || signupBody.betaToken !== contact.betaToken) {
+          logger.info('User with email ' + signupBody.email + ' attempted to sign up with invalid beta token.');
+          this.status = 400;
+          this.body = 'Invalid Beta Token';
+          return;
+        }
       }
 
       db.addUser({

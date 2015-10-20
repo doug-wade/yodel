@@ -24,7 +24,9 @@ var config = {
 
     name: 'prod',
 
-    noreply: 'no-reply@yodel.to'
+    noreply: 'no-reply@yodel.to',
+
+    universalBetaToken: 'PleaseDontGiveThisToRealUsers'
 };
 
 module.exports = config;

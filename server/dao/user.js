@@ -121,7 +121,7 @@ module.exports = function(db) {
           deferred.reject(new Error(err));
         } else {
           var results = data.Items.filter((user) => { return existsAndIncludes(user.username, query) || existsAndIncludes(user.email, query); });
-          deferred.resolve(results);
+          deferred.resolve(results[0]);
         }
       });
 

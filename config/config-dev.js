@@ -23,7 +23,9 @@ var config = {
 
     name: 'dev',
 
-    noreply: 'robot-doug@yodel.is'
+    noreply: 'robot-doug@yodel.is',
+
+    universalBetaToken: 'PleaseDontGiveThisToRealUsers'
 };
 
 module.exports = config;
