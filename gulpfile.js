@@ -113,8 +113,13 @@ gulp.task('copy-paths', function() {
 });
 
 gulp.task('docs', function() {
+  // doug@ 10.19.2015 TODO: gulp-esdoc doesn't actually use the file stream to generate the docs, strangely enough
+  // (see: https://github.com/nanopx/gulp-esdoc/issues/4), so we have to provide the source on the config object.
+  // I can't figure out how to call esdoc.generate directly, though that seems like the better long-term solution,
+  // since that's the better solution anyway, and it removes one possible source of bugs from our build. See
+  // http://blog.overzealous.com/post/74121048393/why-you-shouldnt-create-a-gulp-plugin-or-how-to for more.
   gulp.src(path.join(paths.server, 'routes'))
-    .pipe(esdoc({ destination: path.join(paths.docs, 'generated') }));
+    .pipe(esdoc({ source: './server', destination: path.join(paths.docs, 'generated') }));
 });
 
 gulp.task('images', function() {
