@@ -62,7 +62,7 @@ ssh -i ${1} ${HOSTNAME} <<ENDSSH
 ENDSSH
 
 notifySlackAndConsole "Tarring source folders"
-tar czf ../app.tar.gz bower.json package.json build config public README.md .bowerrc
+tar czf ../app.tar.gz bower.json package.json build config public templates README.md .bowerrc
 
 notifySlackAndConsole "SCPing app tarball"
 scp -i ${1} ../app.tar.gz  ${HOSTNAME}:${DIR}
