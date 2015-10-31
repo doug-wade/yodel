@@ -91,7 +91,7 @@ module.exports = {
 
       ses.sendEmail(params, function(innerErr, data) {
         if (err) { logger.error(innerErr); }
-        else     { logger.info(data);           }
+        else     { logger.info(data);      }
       });
     });
   }
