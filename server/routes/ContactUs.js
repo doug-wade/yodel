@@ -4,25 +4,6 @@ var logger = require('../logger.js');
 var ses = require('../util/ses.js');
 
 /**
- * Get a simple plain text email to thank a user for signing up for the beta.
- * @param {Object} contact the contact object for the user to contact.
- */
-function getSimpleThankYouEmail(contact) {
-  var emailBody = '';
-  [
-    contact.name,
-    '',
-    'Thank you for signing up for the Yodel Beta!  We are currently working to prepare the beta.  Look for us to issue you a beta key in January, 2016!',
-    '',
-    'All the best,',
-    'The Yodel Team'
-  ].map((line) => {
-    emailBody += line + '\n';
-  });
-  return emailBody;
-}
-
-/**
  * Creates a controller for handling contacts.
  * @class ContactUsController
  * @classdesc A controller for handling contacts
@@ -42,7 +23,7 @@ export class ContactUsController {
       logger.info(contactInfo);
       db.createContact(contactInfo);
       logger.info('Successfully created new contact; sending thank you email to ' + contactInfo.email);
-      ses.sendPlainTextEmail(contactInfo.email, 'Thanks for signing up for the yodel beta', getSimpleThankYouEmail(contactInfo));
+      ses.sendHtmlEmailFromTemplate(contactInfo.email, 'Thanks for signing up for the yodel beta', 'beta-request.templ.html', contactInfo);
       this.body = config.jsonSuccess;
     };
   }
