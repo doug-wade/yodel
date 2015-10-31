@@ -1,30 +1,22 @@
-<div class="contact-us">
-  <h2 class="h2 header">Sign Up For Beta</h2>
-  <div ng-if="!submitted" ng-hide="submitting">
-    <label>
-      <input class="name" type="text" ng-model="contactForm.name" placeholder="Name"></input>
-    </label>
-    <label>
-      <input class="email" type="email" ng-model="contactForm.email" placeholder="Email"></input>
-    </label>
-    <label>I'm a
-      <span class="type" ng-repeat="type in types">
-        <label>
-          <input type="checkbox" checklist-model="contactForm.types" checklist-value="type.value">  {{type.name}}
-        </label>
-      </span>
-    </label>
-    <label>
-      <textarea class="message" ng-model="contactForm.desc" placeholder="Message"></textarea>
-    </label>
-    <label>
-      <input class="submit" type="submit" ng-click="submit()"></input>
-    <label>
+<h3 class="text-center">Sign Up For the Beta</h3>
+<hr>
+<form ng-if="!submitted" ng-hide="submitting">
+  <input type="text" ng-model="contactForm.name" placeholder="Name">
+  <input type="email" ng-model="contactForm.email" placeholder="Email">
+  <h4>I'm a…</h4>
+  <ul>
+    <li ng-repeat="type in types" class="inline">
+      <label><input type="checkbox" checklist-model="contactForm.types" checklist-value="type.value"> {{type.name}}</label>
+    </li>
+  </ul>
+  <textarea ng-model="contactForm.desc" placeholder="Message"></textarea>
+  <div class="text-center">
+    <input class="button" type="submit" ng-click="submit()">
   </div>
-  <div ng-if="submitting">
-    <p>Submitting...</p>
-  </div>
-  <div ng-if="submitted">
-    <p>Thanks for your feedback!  We'll contact you shortly.</p>
-  </div>
+</form>
+<div ng-if="submitting">
+  <p>Submitting...</p>
+</div>
+<div ng-if="submitted">
+  <p>Thanks for your feedback!  We'll contact you shortly.</p>
 </div>

@@ -40,6 +40,11 @@ h5
 p
   text-align left
 
+li.inline
+  margin-right 30px
+  &last-child
+    margin-right 0
+
 em
   font-style inherit
   letter-spacing .2em
@@ -63,6 +68,26 @@ hr
   max-width 700px
   opacity .5
   width 80%
+
+form
+  margin 1.8em auto
+  max-width 600px
+  h4, h5
+    margin-bottom 0
+
+// ionic is stupid and explicitly sets all minor input types identically AND independently
+input[type="email"], input[type="number"], input[type="password"], input[type="search"], input[type="tel"], input[type="text"], input[type="url"],
+textarea
+  box-sizing content-box
+  margin 10px 0
+  max-width calc(100% - 2.7em)
+  padding .45em 1.35em
+  width 100%
+.button[type="submit"]
+  margin-top 10px
+  margin-bottom 10px
+input[type="checkbox"], input[type="radio"]
+  margin-right 5px
 
 placeholder()
   &::-webkit-input-placeholder
