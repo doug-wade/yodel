@@ -1,2 +1,25 @@
-.branding
+.container
+  margin-right auto
+  margin-left auto
+  max-width 1160px
+  padding 4em 20px
+  width 100%
+
+.row
+  padding 0
+.col
+  padding 0 20px
+.col:first-child
+  padding-left 0
+.col:last-child
+  padding-right 0
+@media all and (max-width: 640px)
+  .col
+    padding 0
+
+.branding // replace .branding with .text-center ~•°The Ionic Way°•~ (layout/footer.html, others?)
   text-align center
+
+@media all and (max-width: 640px)
+  .row
+    display block

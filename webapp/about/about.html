@@ -1,5 +1,5 @@
 <ion-view view-title="About Yodel" align-title="left">
-  <!-- <yodel-header /> -->
+  <!-- <yodel-header > -->
   <ion-nav-buttons side="left">
     <button menu-toggle="left" class="button button-icon icon ion-navicon nav-bar-button"></button>
   </ion-nav-buttons>
@@ -8,85 +8,82 @@
       <i class="icon ion-ios-search placeholder-icon"></i>
       <input type="search" placeholder="Search">
     </label>
-    <button class="button button-clear">
-      Cancel
-    </button>
+    <button class="button button-clear">Cancel</button>
   </div>
 
-  <ion-content class="has-header about">
-    <div class="section">
-      <div style="height: {{heroHeight}}px; width: {{heroWidth}}px;" class="hero-image">
-        <img src="/images/yodel-brand-large.png" />
-        <h1 class="h1">YODEL IS COMING.</h1>
+  <ion-content>
+    <fluid-image src="/images/about-hero.jpg">
+      <div class="container text-center">
+        <img src="/images/yodel-brand-large.png">
+        <h1>YODEL IS COMING.</h1>
+      </div>
+    </fluid-image>
+
+    <div class="container text-center">
+      <h3>WHY SIGN UP?</h3>
+      <hr>
+      <h4><em>THERE ARE A FEW REASONS...</em></h4>
+    </div>
+
+    <fluid-image src="/images/architecture.jpg">
+      <div class="container text-center">
+        <h1>FIND COLLABORATORS</h1>
+        <h5><em>If you're a creative seeking other creatives for collaborations, Yodel was made just for you.</em></h5>
+      </div>
+    </fluid-image>
+    <fluid-image src="/images/cafe-table.jpg">
+      <div class="container text-center">
+        <h1>FIND ENRICHING EXPERIENCES</h1>
+        <h5><em>Not just "things to do" but experiences to remember. Connect with the culture of your city, & find events you never even knew you were looking for.</em></h5>
+      </div>
+    </fluid-image>
+    <fluid-image src="/images/crowd-scene.jpg">
+      <div class="container text-center">
+        <h1>FIND ARTISTS FOR YOUR AUDIENCE</h1>
+        <h5><em>For venues. For events. For an audience you want coming back again & again. Yodel can help you book the right artists for the right events.</em></h5>
+      </div>
+    </fluid-image>
+
+    <div class="container text-center">
+      <h3>WHAT IS YODEL, YOU ASK?</h3>
+      <hr>
+      <h4><em>Yodel is a system of creative networking.</em></h4>
+      <img src="/images/yodel-logo.png">
+      <div class="row">
+        <p>It bridges the gaps between art, business, & community by providing a Comprehensive Artistic Network. Yodel's tripartite system connects Creatives, Patrons, & Organizations using one dynamic platform. This platforms enhances creative collaboration, event attendance, & show booking—bypassing the barriers preventing engagement. Never has it been so easy to cover all your creative bases in one place. Yodel strives to reinspire the creative spirit, reconnect to community, & revolutionize the logistics of creative interaction. With Yodel, you CAN.</p>
       </div>
     </div>
-    <div class="section">
-      <h2 class="h2 header">WHY SIGN UP?</h2>
-      <h3 class="h3 subheader">THERE ARE A FEW REASONS...</h>
-      <div class="col">
-        <div class="row">
-          <fluid-image src="/images/architecture.png">
-            <h1 class="h1">FIND COLLABORATORS</h2>
-            <h2 class="h2">If you're a creative seeking other creatives for collaborations, Yodel was made just for you.</h4>
-          </fluid-image>
-        </div>
-        <div class="row">
-          <fluid-image src="/images/cafe-table.png">
-            <h1 class="h1">FIND ENRICHING EXPERIENCES</h2>
-            <h2 class="h2">Not just "things to do" but experiences to remember. Connect with the culture of your city, &
-              find events you never even knew you were looking for.</h4>
-          </fluid-image>
-        </div>
-        <div class="row">
-          <fluid-image src="/images/crowd-scene.png">
-            <h1 class="h1">FIND ARTISTS FOR YOUR AUDIENCE</h2>
-            <h2 class="h2">For venues. For events. For an audience you want coming back again & again. Yodel can help you
-              book the right artists for the right events.</h4>
-          </fluid-image>
-        </div>
-      </div>
-    </div>
-    <div class="section">
-      <h2 class="h2 header">WHAT IS YODEL, YOU ASK?</h2>
-      <div class="what-subheader">
-        <h3 style="display: inline-block" class="h3 subheader">Yodel is a system of creative networking.</h3>
-        <img src="/images/yodel-logo.png"/>
-      </div>
-      <p class="what-content">
-        It bridges the gaps between art, business, & community by providing a Comprehensive Artistic Network. Yodel's tripartite
-        system connects Creatives, Patrons, & Organizations using one dynamic platform. This platforms enhances creative collaboration,
-        event attendance, & show booking—bypassing the barriers preventing engagement. Never has it been so easy to cover all your
-        creative bases in one place. Yodel strives to reinspire the creative spirit, reconnect to community, & revolutionize the
-        logistics of creative interaction. With Yodel, you CAN.
-      </p>
-    </div>
-    <div class="section">
-      <h2 class="h2 header">FAQ<h2>
-      <div class="row question-column-row">
-        <div class="col" ng-repeat="col in questionColumns">
-          <div ng-repeat="question in col" class="question">
-            <h3 class="h3">{{ question.text }}</h3>
+
+    <div class="container">
+      <h3 class="text-center">FAQ</h3>
+      <hr>
+      <div class="row">
+        <div ng-repeat="col in questionColumns" class="col">
+          <div ng-repeat="question in col">
+            <h5><strong>{{ question.text }}</strong></h5>
             <p>{{ question.answer }}</p>
           </div>
         </div>
       </div>
     </div>
-    <div class="section">
-      <h2 class="h2 header">MEET THE TEAM</h2>
-      <div class="row" ng-repeat="row in rows">
-        <div ng-repeat="teamPhoto in row">
+
+    <div class="container text-center">
+      <h3>MEET THE TEAM</h3>
+      <hr>
+      <div ng-repeat="row in rows">
+        <div ng-repeat="teamPhoto in row" class="inline">
           <team-photo
             team-member-title="teamPhoto.teamMemberTitle"
             team-member-name="teamPhoto.teamMemberName"
-            photo-url="teamPhoto.photoUrl"
-            class="col"
-            />
+            photo-url="teamPhoto.photoUrl">
         </div>
       </div>
     </div>
-    <div class="section">
+
+    <div class="container">
       <contact-us></contact-us>
     </div>
+
     <yodel-footer></yodel-footer>
   </ion-content>
 </ion-view>

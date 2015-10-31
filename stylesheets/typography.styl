@@ -41,10 +41,12 @@ p
   text-align left
 
 em
-  font-style normal
+  font-style inherit
   letter-spacing .2em
 strong
-  font-weight 700
+  font-weight inherit
+  letter-spacing .125em
+  text-transform uppercase
   
 a,
 a:link
@@ -54,7 +56,13 @@ a:visited
 a:hover
 a:active
 
-
+hr
+  border none
+  border-bottom 1px solid
+  margin-bottom 1.2em
+  max-width 700px
+  opacity .5
+  width 80%
 
 placeholder()
   &::-webkit-input-placeholder
