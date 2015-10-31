@@ -54,6 +54,7 @@
   "dependencies": {
     "aws-sdk": "^2.2.4",
     "bcrypt": "^0.8.5",
+    "bottleneck": "^1.9.1",
     "bunyan": "^1.1.2",
     "co": "^3.0.4",
     "co-body": "0.0.1",

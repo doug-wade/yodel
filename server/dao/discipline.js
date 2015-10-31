@@ -5,29 +5,40 @@ var schema = require('../../config/schema');
 
 module.exports = function(db) {
   return {
-    addDisciplines: function(/* Object[] */ disciplinesToAdd) {
+    /**
+     * Adds a single discipline to the database.
+     * @author Doug Wade
+     */
+    addDiscipline: function(/* Object */ disciplineToAdd) {
       var deferred = q.defer();
+      disciplineToAdd.disciplineId = uuid.v4();
+      disciplineToAdd.created = new Date().getTime();
 
+      var params = {
+        TableName: schema.discipline.tablename,
+        Item: disciplineToAdd
+      };
+
+      db.put(params, function(err, data) {
+         if (err) {
+           logger.error('Failed to add discipline ' + disciplineToAdd.text + ' with error ', err);
+           deferred.reject(err);
+         } else {
+           logger.info('Added discipline to db ', disciplineToAdd);
+           deferred.resolve(data);
+         }
+      });
+
+      return deferred.promise;
+    },
+
+    /**
+     * Adds an array of disciplines to the database
+     * @author Doug Wade
+     */
+    addDisciplines: function(/* Object[] */ disciplinesToAdd) {
       return q.all(disciplinesToAdd.map(function(discipline) {
-        discipline.disciplineId = uuid.v4();
-        discipline.created = new Date().getTime();
-
-        var params = {
-          TableName: schema.discipline.tablename,
-          Item: discipline
-        };
-
-        db.put(params, function(err, data) {
-           if (err) {
-             logger.error('Failed to add discipline ' + discipline.text + ' with error ', err);
-             deferred.reject(err);
-           } else {
-             logger.info('Added discipline to db ', discipline);
-             deferred.resolve(data);
-           }
-        });
-
-        return deferred.promise;
+        this.addDiscipline(discipline);
       }));
     },
 
