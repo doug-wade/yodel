@@ -1,15 +1,18 @@
 #!/usr/bin/env node
 var argv = require('minimist')(process.argv.slice(2));
 var aws = require('aws-sdk');
+var Bottleneck = require('bottleneck');
 var config = require('../build/config');
 var db = require('../build/util/db');
 var fs = require('fs');
 var logger = require('../build/logger');
+var q = require('q');
 var testData = require('../config/test-data');
 
 if (argv.h || argv.help) {
   [
     'This script load test data in a DynamoDB instance.  We recommend you pipe the logs through bunyan using the short format.',
+    'Note: the script is rate-limited, so it may take a bit.',
     'Options:',
     '  -h -help Show this help message.',
     '  -t -test Load test data',
@@ -25,10 +28,13 @@ aws.config.update({
   endpoint: argv.endpoint || config.aws.endpoint
 });
 
+Bottleneck.Promise = q;
+var limiter = new Bottleneck(2, 1000, 0);
+
 if (argv.t || argv.test) {
   logger.info('inserting test data.');
   testData.contacts.forEach(function(contact) {
-    db.createContact(contact);
+    limiter.submit(db.createContact, contact);
   });
 
   testData.users.forEach(function(user) {
@@ -36,16 +42,18 @@ if (argv.t || argv.test) {
       testData.projects.forEach((project) => {
         if (project.username === user.username) {
           project.userId = res.userId;
-          db.addProject(project);
+          limiter.submit(db.addProject, project);
         }
       });
     });
   });
 
-  db.addDisciplines(testData.disciplines);
+  testData.disciplines.forEach(function(discipline) {
+    limiter.submit(db.addDiscipline, discipline);
+  });
 
   testData.events.forEach(function(testEvent) {
-    db.addEvent(testEvent);
+    limiter.submit(db.addEvent, testEvent);
   });
 
   // testData.portfolios.forEach(function (portfolio) {
@@ -57,6 +65,6 @@ if (argv.t || argv.test) {
 if (argv.e || argv.events) {
   var events = JSON.parse(fs.readFileSync(argv.events || argv.e));
   events.forEach((eventToAdd) => {
-    db.addEvent(eventToAdd);
+    limiter.submit(db.addEvent, eventToAdd);
   });
 }

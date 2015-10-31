@@ -21,6 +21,7 @@ module.exports = {
   getContacts: contact.getContacts,
 
   // Disciplines
+  addDiscipline: discipline.addDiscipline,
   addDisciplines: discipline.addDisciplines,
   getAllDisciplines: discipline.getAllDisciplines,
 
