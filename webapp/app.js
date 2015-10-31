@@ -64,7 +64,7 @@ yodelApp.config([
     '$stateProvider',
     '$urlRouterProvider',
     function($httpProvider, $stateProvider, $urlRouterProvider) {
-        $urlRouterProvider.otherwise('/y/events');
+        $urlRouterProvider.otherwise('/y/about');
         $stateProvider.
             state('yodel', {
                 url: '/y',
