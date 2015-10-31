@@ -16,7 +16,8 @@ if (argv.h || argv.help) {
   process.exit(0);
 }
 
-var freeUnits = 10;
+// TODO: Deal with the circular dependency
+var freeUnits = Math.floor(25 / 7);
 
 var tables = [{
     TableName: schema.contact.tablename,

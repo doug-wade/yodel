@@ -3,6 +3,7 @@ var config = require('../config.js');
 var db     = require('../util/db.js');
 var logger = require('../logger.js');
 var q      = require('q');
+var ses    = require('../util/ses');
 
 /**
  * Creates a controller for handling signup.
@@ -115,6 +116,12 @@ export class SignupController {
         username: signupBody.username,
         email: signupBody.email,
         password: hash
+      }).then(function(res, err) {
+        if (err) {
+          logger.error(err);
+        } else {
+          ses.sendHtmlEmailFromTemplate(signupBody.email, 'Welcome to Yodel!', 'signup.templ.html', res);
+        }
       });
 
       this.body = {

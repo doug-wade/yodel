@@ -11,56 +11,63 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
-command -v node >/dev/null 2>&1 || n io latest
+command -v node >/dev/null 2>&1 || n latest
 command -v bower >/dev/null 2>&1 || npm install -g bower
 command -v gulp >/dev/null 2>&1 || npm install -g gulp
 
-HOSTNAME=ubuntu@52.11.138.95
+HOSTNAME=ubuntu@52.26.65.193
 DIR=/home/ubuntu
 FOLDER=yodel
 
-echo "compiling local instance for deployment"
+DEPLOY_BOT_NAME="deploy-bot"
+DEPLOY_BOT_EMOJI=":soccer:"
+# TODO: Don't check in credentials; read this from file
+SLACK_API_TOKEN="xoxp-11333240867-11333423428-13379590359-8b9d72ad81"
+
+function notifySlackAndConsole {
+  echo $1
+  curl -X POST --data-urlencode 'payload={"text": "'"$1"'", "channel": "#ops", "username": "'"$DEPLOY_BOT_NAME"'", "icon_emoji": "'"$DEPLOY_BOT_EMOJI"'"}' https://hooks.slack.com/services/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
+}
+
+notifySlackAndConsole "compiling local instance for deployment"
 gulp clean-all
 gulp compile-prod
 
-echo "copying aws credentials"
+notifySlackAndConsole "copying aws credentials"
 scp -r -i {$1} ~/.aws ${HOSTNAME}:${DIR}
 
 # TODO: Run the tests and fail the deploy if they don't pass.
-echo "ssh-ing to remote host to remove existing yodel app"
+notifySlackAndConsole "ssh-ing to remote host to remove existing yodel app"
 
 ssh -i ${1} ${HOSTNAME} <<ENDSSH
-    # Install nodejs
-    curl --silent --location https://deb.nodesource.com/setup_0.12 | sudo bash -
+    echo "Installing nodejs"
     sudo apt-get install nodejs
 
-    # Install latest version of node
+    echo "Installing latest version of node"
     sudo npm install -g n
     sudo n latest
 
-    # Install build tool chain
-    sudo apt-get install git
+    echo "Installing build tool chain"
+    sudo apt-get install git # reqired by bower
     sudo npm install -g bower
     sudo npm install -g forever
-    sudo apt-get install build-essential
+    sudo apt-get install build-essential # TODO: this isn't installed correctly
+    sudo apt-get install nginx
     sudo npm install -g node-gyp
 
+    echo "deleting existing yodel app"
     cd ${DIR}
     rm -rf ${FOLDER}
     mkdir -p ./yodel-persistent/logs
-
-    command -v node >/dev/null 2>&1 || sudo n io latest
-    command -v bower >/dev/null 2>&1 || sudo npm install -g bower
-    command -v forever >/dev/null 2>&1 || sudo npm install -g forever
 ENDSSH
 
-echo "Tarring source folders"
-tar czf ../app.tar.gz bower.json package.json build public README.md .bowerrc
+notifySlackAndConsole "Tarring source folders"
+tar czf ../app.tar.gz bower.json package.json build config public templates README.md .bowerrc
 
-echo "SCPing app tarball"
+notifySlackAndConsole "SCPing app tarball"
 scp -i ${1} ../app.tar.gz  ${HOSTNAME}:${DIR}
 
-echo "ssh-ing to remote host to install and start yodel"
+notifySlackAndConsole "ssh-ing to remote host to install and start yodel"
 ssh -i ${1} ${HOSTNAME} <<ENDSSH
     echo "sshed into remote host"
     cd ${DIR}
@@ -75,10 +82,15 @@ ssh -i ${1} ${HOSTNAME} <<ENDSSH
     npm install --production
     bower install --production
 
+    echo "Configuring nginx"
+    sudo cp ./config/nginx.conf /etc/nginx/nginx.conf
+    service nginx start
+
     echo "Starting server"
-    kill $(ps aux | grep 'node' | awk '{print $2}')
-    forever start ./build/server.js
+    forever restart ./build/server.js
 ENDSSH
+
+notifySlackAndConsole "Deployed Yodel!"
 
 echo "Removing local tarball"
 rm ../app.tar.gz

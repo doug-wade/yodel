@@ -4,6 +4,7 @@ var config = {
         yodelS3Bucket: 'yodel88',
         ddbEndpoint: 'dynamodb.us-west-2.amazonaws.com',
         sesEndpoint: 'email.us-west-2.amazonaws.com',
+        sesArn: 'arn:aws:ses:us-west-2:202860285120:identity/yodel.to',
         region: 'us-west-2'
     },
 
@@ -21,7 +22,9 @@ var config = {
 
     isProd: true,
 
-    name: 'prod'
+    name: 'prod',
+
+    noreply: 'no-reply@yodel.to'
 };
 
 module.exports = config;
