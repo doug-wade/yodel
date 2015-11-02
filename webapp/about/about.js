@@ -33,7 +33,6 @@ function AboutCtrl($scope, $window, $log) {
   ];
 
   function getTeamPhotoRows(windowWidth) {
-    // var numPerRow = Math.floor(windowWidth / 300) || 1;
     var numPerRow = 2;
     var rows = [];
     var row = [];
@@ -45,13 +44,10 @@ function AboutCtrl($scope, $window, $log) {
       }
     }
     rows.push(row);
-    $log.info('team photos should be in a ' + numPerRow + ' x ' + rows.length + ' grid.');
     return rows;
   }
 
   function getQuestionColumns(width) {
-    $log.info('Got window width', width);
-    $log.info(width < 600 ? 'FAQ is in 1 column' : 'FAQ is in 2 columns');
     if (width < 600) {
       return [questions];
     } else {
@@ -61,12 +57,6 @@ function AboutCtrl($scope, $window, $log) {
 
   $scope.rows = getTeamPhotoRows($window.innerWidth);
   $scope.questionColumns = getQuestionColumns($window.innerWidth);
-  // $scope.heroWidth = $window.innerWidth;
-  // $scope.heroHeight = ((682 / 975) * $window.innerWidth);
-  // $window.addEventListener('resize', function() {
-    // $scope.rows = getTeamPhotoRows($window.innerWidth );
-    // $scope.questionColumns = getQuestionColumns(1);
-  // });
 }
 
 angular.module('about', []).controller('AboutCtrl', ['$scope', '$window', '$log', AboutCtrl]);
