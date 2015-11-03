@@ -1,142 +1,22 @@
-@import colors
-@import common
-@import typography
-
-.about
-  div.question-column-row
-    margin-left 0
-
-  p
-    font-size font-medium
-    line-height 2.5rem
-    padding-right 4rem
-
-  h2.header
-    text-align center
-    padding-top 2.5rem
-    padding-bottom .5rem
-
-  h3.subheader
-    text-align center
-
-  .what-subheader
-    text-align center
-
-  .what-content
-    padding-left 5px
-
-  .reason-image
-    max-width 100%
-    height auto
-
-  .image-container-architecture
-    height: 100%;
-    width: 100%;
-    margin: 0 auto;
-    padding: 0;
-
-    background-image: url(../img/exampleImage.jpg);
-    background-position: top center;
-    background-repeat: no-repeat;
-    background-size: 100%;
+.fluid-image
+  background-blend-mode multiply
+  background-color rgba(76,76,76,.7)
+  background-position bottom
+  background-size cover
+  color #fff
+  .container
+    max-width 768px
+    padding 12em 0
 
 .team-photo
+  color #fff
+  display inline-block
+  height 277px
+  max-width 100%
   position relative
-  padding-left 15px
-
-  .name-overlay
-    font-weight 700
-    font-size font-medium
-    color white
-    text-align center
+  width 277px
+  .col
+    bottom 0
     position absolute
-    bottom 10%
-    width 100%
-
-  .title
-    font-size font-small
-
-.fluid-image-container
-  position relative
-
-  .h1
-    color yodel-white
-    position absolute
-    top 35%
-    text-align center
-    width 100%
-
-  .h2
-    color yodel-white
-    position absolute
-    top 55%
-    text-align center
-    width 100%
-
-.hero-image
-  background transparent url("/images/about-hero.jpg")
-  text-align center
-
-  img
-    max-width 100%
-    margin-top 15%
-
-  .h1
-    color white
-
-.contact-us
-  input[type=text], input[type=email], textarea
-    background-color yodel-light-grey
-    border 1px solid yodel-dark-grey
-    width 85%
-    display inline
-    margin-left 1rem
-    +placeholder()
-      color yodel-medium-grey
-      font-size font-small
-
-  input[type=text]:hover, input[type=text]:focus, input[type=email]:hover, input[type=email]:focus, textarea:hover, textarea:focus
-    background-color yodel-white
-
-  .type
-    padding-left 1rem
-
-  .message
-    width 85%
-    height 400px
-
-  label
-    font-size font-medium
-    padding-bottom 2rem
-    display block
-
-    label
-      display inline
-
-  p
-    text-align center
-
-  label.type-name
-    font-size font-small
-
-  .submit
-    flat-button()
-    width 15rem
-    position relative
-    background yodel-black
-    color yodel-white
-
-@media only screen and (max-width: 350px)
-  .hero-image
-    .h1
-      font-size font-medium
-
-  .fluid-image-container
-    .h1
-      font-size font-medium
-    .h2
-      font-size font-small
-
-  .about
-    p
-      padding-right 0
+  h4
+    margin-bottom 0

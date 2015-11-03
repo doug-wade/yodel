@@ -7,28 +7,99 @@ font-tiny = 1rem
 yodel-header-font-family = 'Josefin Sans', 'Lucida Grande', 'Lucida Sans', sans-serif
 
 body
-  font-size 12px
+  color yodel-text
+  line-height 1.8
 
-.h1
+h1, h2, h3, h4, h5, h6,
+p, blockquote,
+ul, ol, dl, li
+  color inherit // ionic is stupid and explicitly makes all text elements black
+
+h1,
+h2,
+h3
   font-family yodel-header-font-family
-  font-size font-xlarge
-
-.h2
-  font-family yodel-header-font-family
-  font-size font-large
-
-.h3
-  font-family yodel-font-family
-  font-size font-medium
+  font-weight 400
+  letter-spacing .15rem
+  text-transform uppercase
+h1
+  font-size 1.8rem
+h2
+  font-size 1.6rem
+h3
+  font-size 1.2rem
+h4,
+h5
+  font-size 1.2rem
+  line-height 1.6
+h4
   font-weight 700
+h5
+  font-weight 300
 
-.h4
-  font-family yodel-header-font-family
-  font-size font-small
+@media all and (min-width: 640px)
+    h1,
+    h2,
+    h3
+      letter-spacing .5rem
+    h1
+      font-size 4rem
+    h2
+      font-size 3.5rem
+    h3
+      font-size 2rem
 
-p.tiny
-  font-size font-tiny
-  font-family yodel-font-family
+p
+  text-align left
+
+li.inline
+  margin-right 30px
+  &last-child
+    margin-right 0
+
+em
+  font-style inherit
+  letter-spacing .2em
+strong
+  font-weight inherit
+  letter-spacing .125em
+  text-transform uppercase
+  
+a,
+a:link
+  text-decoration none
+  color yodel-cyan
+a:visited
+a:hover
+a:active
+
+hr
+  border none
+  border-bottom 1px solid
+  margin-bottom 1.2em
+  max-width 700px
+  opacity .5
+  width 80%
+
+form
+  margin 1.8em auto
+  max-width 600px
+  h4, h5
+    margin-bottom 0
+
+// ionic is stupid and explicitly sets all minor input types identically AND independently
+input[type="email"], input[type="number"], input[type="password"], input[type="search"], input[type="tel"], input[type="text"], input[type="url"],
+textarea
+  box-sizing content-box
+  margin 10px 0
+  max-width calc(100% - 2.7em)
+  padding .45em 1.35em
+  width 100%
+.button[type="submit"]
+  margin-top 10px
+  margin-bottom 10px
+input[type="checkbox"], input[type="radio"]
+  margin-right 5px
 
 placeholder()
   &::-webkit-input-placeholder
