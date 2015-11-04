@@ -29,6 +29,11 @@ function notifySlackAndConsole {
   curl -X POST --data-urlencode 'payload={"text": "'"$1"'", "channel": "#ops", "username": "'"$DEPLOY_BOT_NAME"'", "icon_emoji": "'"$DEPLOY_BOT_EMOJI"'"}' https://hooks.slack.com/services/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
 }
 
+CURRENT_GIT_SHA=$(git rev-parse HEAD)
+PAST_GIT_SHA=`cat ~/workplace/yodel-persistent/deploy-log`
+notifySlackAndConsole `git log ${PAST_GIT_SHA}..${CURRENT_GIT_SHA}`
+echo CURRENT_GIT_SHA > ~/workplace/yodel-persistent/deploy-log
+
 notifySlackAndConsole "compiling local instance for deployment"
 gulp clean-all
 gulp compile-prod
