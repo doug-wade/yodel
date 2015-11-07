@@ -65,8 +65,9 @@ export class SignupController {
    *     }
    *     RESULT {}
    */
-   _signup() {
-    return function* signup(jwt) {
+  _signup(jwt) {
+    var _this = this;
+    return function* signup() {
       // basic signup validation
       var contact, signupBody, hash;
 
@@ -95,7 +96,7 @@ export class SignupController {
         return;
       }
 
-      hash = yield this.generateHashAndSalt(signupBody.password1);
+      hash = yield _this._generateHashAndSalt(signupBody.password1);
       if (config.isProd || (signupBody.betaToken !== config.universalBetaToken)) {
         contact = yield db.getContact(signupBody.email);
 
@@ -115,13 +116,18 @@ export class SignupController {
         if (err) {
           logger.error(err);
         } else {
-          ses.sendHtmlEmailFromTemplate(signupBody.email, 'Welcome to Yodel!', 'signup.templ.html', res);
+          var templateInformation = {
+            username: signupBody.username,
+            email: signupBody.email,
+            subject: 'Welcome to Yodel!'
+          };
+          ses.sendHtmlEmailFromTemplate(signupBody.email, templateInformation.subject, 'signup.templ.html', templateInformation);
         }
       });
 
       this.body = {
         username: signupBody.username,
-        token: jwt.sign(this.constructProfile(signupBody), config.jwtAuthSecret, { expiresInMinutes: config.jwtTtl })
+        token: jwt.sign(_this._constructProfile(signupBody), config.jwtAuthSecret, { expiresInMinutes: config.jwtTtl })
       };
     };
   }

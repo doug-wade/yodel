@@ -37,7 +37,8 @@ var logger = require('../logger.js');
    */
   _getDisciplines() {
     return function* () {
-      var disciplinesBody = db.getAllDisciplines();
+      let disciplinesBody = yield db.getAllDisciplines();
+      logger.info('Got ' + disciplinesBody.length + ' disciplines in GET /discipline');
       this.body = disciplinesBody;
     };
   }
@@ -67,7 +68,7 @@ var logger = require('../logger.js');
    */
   register(router) {
     router.post('/discipline', this._addDisciplines());
-    router.post('/user/:username/disciplines', this._setUserDisciplines);
-    router.get('/discipline', this._getDisciplines);
+    router.post('/user/:username/disciplines', this._setUserDisciplines());
+    router.get('/discipline', this._getDisciplines());
   }
 }
