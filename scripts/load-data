@@ -17,6 +17,7 @@ if (argv.h || argv.help) {
     '  -h -help Show this help message.',
     '  -t -test Load test data',
     '  -e -events Load events from file',
+    '  -d -disciplines Load disciplines from file',
     '  -endpoint AWS enpoint',
     '  -r -region AWS region'
   ].forEach((line) => console.log(line));
@@ -62,9 +63,18 @@ if (argv.t || argv.test) {
   // });
 }
 
+if (argv.d || argv.disciplines) {
+  var disciplines = JSON.parse(fs.readFileSync(argv.disciplines || argv.d));
+  disciplines.forEach(function(discipline) {
+    logger.info('Submitting discipline to rate limiter to add to the db', discipline);
+    limiter.submit(db.addDiscipline, discipline);
+  });
+}
+
 if (argv.e || argv.events) {
   var events = JSON.parse(fs.readFileSync(argv.events || argv.e));
   events.forEach((eventToAdd) => {
+    logger.info('Submitting event to rate limiter to add to the db', eventToAdd);
     limiter.submit(db.addEvent, eventToAdd);
   });
 }
