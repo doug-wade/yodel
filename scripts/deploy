@@ -109,16 +109,15 @@ scp -r -i ${CREDENTIALS} ~/.aws ${HOSTNAME}:${DIR}
 # TODO: Run the tests and fail the deploy if they don't pass.
 notifySlackAndConsole "ssh-ing to remote host to remove existing yodel app"
 
-ssh -i ${CREDENTIALS} ${HOSTNAME} <<ENDSSH
-    echo "Installing nodejs"
-    sudo apt-get install nodejs
+ssh -i ${1} ${HOSTNAME} <<ENDSSH
+    echo "Installing git"
+    sudo apt-get install git # reqired by bower and n-install
 
     echo "Installing latest version of node"
-    sudo npm install -g n
+    curl -L http://git.io/n-install | bash
     sudo n latest
 
     echo "Installing build tool chain"
-    sudo apt-get install git # reqired by bower
     sudo npm install -g bower
     sudo npm install -g forever
     sudo apt-get install build-essential # TODO: this isn't installed correctly
