@@ -114,15 +114,15 @@ ssh -i ${1} ${HOSTNAME} <<ENDSSH
     sudo apt-get install git # reqired by bower and n-install
 
     echo "Installing latest version of node"
+    sudo apt-get install build-essential
     curl -L http://git.io/n-install | bash
-    sudo n latest
+    n latest
 
     echo "Installing build tool chain"
-    sudo npm install -g bower
-    sudo npm install -g forever
-    sudo apt-get install build-essential # TODO: this isn't installed correctly
+    npm install -g bower
+    npm install -g forever
     sudo apt-get install nginx
-    sudo npm install -g node-gyp
+    npm install -g node-gyp
 
     echo "deleting existing yodel app"
     cd ${DIR}
