@@ -67,7 +67,7 @@ if (argv.d || argv.disciplines) {
   var disciplines = JSON.parse(fs.readFileSync(argv.disciplines || argv.d));
   disciplines.forEach(function(discipline) {
     logger.info('Submitting discipline to rate limiter to add to the db', discipline);
-    limiter.submit(db.addDiscipline, discipline);
+    limiter.schedule(db.addDiscipline, discipline);
   });
 }
 
@@ -75,6 +75,6 @@ if (argv.e || argv.events) {
   var events = JSON.parse(fs.readFileSync(argv.events || argv.e));
   events.forEach((eventToAdd) => {
     logger.info('Submitting event to rate limiter to add to the db', eventToAdd);
-    limiter.submit(db.addEvent, eventToAdd);
+    limiter.schedule(db.addEvent, eventToAdd);
   });
 }
