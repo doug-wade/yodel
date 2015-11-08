@@ -5,6 +5,7 @@ logs/
 node_modules/
 public/
 yodel88/
+ops/
 
 *.out
 *.log
