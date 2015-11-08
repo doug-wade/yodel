@@ -29,20 +29,21 @@ module.exports = function(db) {
     },
 
     getContact: function(email){
-      logger.info('Getting contact by email address');
+      logger.info('Getting contact by email address ' + email);
       var deferred = q.defer();
       var params = {
         TableName: schema.contact.tablename,
+        Limit: 1,
         KeyConditionExpression: 'email = :email',
         ExpressionAttributeValues: {
-            'email': email
+          ':email': { 'S': email }
         }
       };
 
       db.query(params, function(err, data) {
         if (err) {
           logger.error(err);
-          deferred.reject(err);
+          deferred.reject(new Error(err));
         } else {
           deferred.resolve(data);
         }
