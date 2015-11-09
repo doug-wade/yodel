@@ -76,9 +76,8 @@ if [ "$ENVIRONMENT" = "jenkins" ]; then
     sudo aptitude -y install nginx
 
     echo 'Configuring nginx'
-    cd /etc/nginx/sites-available
-    sudo rm default /etc/nginx/sites-enabled/default
-    mv ${DIR}/jenkins-nginx.conf /etc/nginx/sites-available/jenkins
+    mkdir -p /etc/nginx/sites-enabled/
+    sudo mv ${DIR}/jenkins-nginx.conf /etc/nginx/sites-available/jenkins
     sudo ln -s /etc/nginx/sites-available/jenkins /etc/nginx/sites-enabled/
     sudo service nginx restart
   "
