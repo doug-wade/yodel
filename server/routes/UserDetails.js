@@ -16,7 +16,7 @@ export class UserDetailsController {
     return function*() {
 
       this.body = [];
-      var userDetails = db.getUserDetails(this.params.username);
+      var userDetails = db.getUser(this.params.username);
 
       if (userDetails) {
         this.body = userDetails;
@@ -32,7 +32,7 @@ export class UserDetailsController {
       var users = db.getAllUsers();
 
       // Strip sensitive information (db index info, plain-text password :smh:, &c) before returning users.
-      this.body = users.map((user) => { return { 'username': user.username, 'email': user.email }; });
+      this.body = users.forEach((user) => { return { 'username': user.username, 'email': user.email }; });
     };
   }
 
