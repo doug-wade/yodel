@@ -51,7 +51,7 @@ FOLDER=yodel
 
 function notifySlackAndConsole {
   echo $1
-  curl -X POST --data-urlencode 'payload={"text": "'"$1"'", "channel": "#ops", "username": "'"$DEPLOY_BOT_NAME"'", "icon_emoji": "'"$DEPLOY_BOT_EMOJI"'"}' https://hooks.slack.com/services/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
+  # curl -X POST --data-urlencode 'payload={"text": "'"$1"'", "channel": "#ops", "username": "'"$DEPLOY_BOT_NAME"'", "icon_emoji": "'"$DEPLOY_BOT_EMOJI"'"}' https://hooks.slack.com/services/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
   printf "\n"
 }
 
@@ -100,29 +100,37 @@ GIT_LOG=`git log ${PAST_GIT_SHA}..${CURRENT_GIT_SHA} | cat -`
 notifySlackAndConsole "Deploying the following commits: $GIT_LOG"
 echo "$CURRENT_GIT_SHA" > ~/workplace/yodel-persistent/deploy-log
 
-notifySlackAndConsole "compiling local instance for deployment"
+notifySlackAndConsole "compiling local instance for deployment and tarring"
 gulp clean-all
-gulp compile-prod
+if [ "$ENVIRONMENT" = "prod" ]; then
+  gulp compile-prod
+  tar czf ../app.tar.gz bower.json package.json build config public templates README.md .bowerrc
+else
+  gulp compile
+  tar czf ../app.tar.gz bower.json package.json build config public templates README.md .bowerrc
+fi
 
-notifySlackAndConsole "copying aws credentials"
+notifySlackAndConsole "SCPing app tarball and aws credentials"
+scp -i ${CREDENTIALS} ../app.tar.gz  ${HOSTNAME}:${DIR}
 scp -r -i ${CREDENTIALS} ~/.aws ${HOSTNAME}:${DIR}
 
 # TODO: Run the tests and fail the deploy if they don't pass.
-notifySlackAndConsole "ssh-ing to remote host to remove existing yodel app"
-
-ssh -i ${1} ${HOSTNAME} <<ENDSSH
-    echo "Installing git"
-    sudo apt-get install git # reqired by bower and n-install
+notifySlackAndConsole "ssh-ing to remote host to install dependencies and remove existing yodel app"
+ssh -i ${CREDENTIALS} ${HOSTNAME} <<ENDSSH
+    echo "Updating Ubuntu packages and installing required packages"
+    yes | sudo apt-get update
+    yes | sudo apt-get upgrade
+    yes | sudo apt-get install build-essential # required by node-gyp
+    yes | sudo apt-get install git # reqired by bower and n-install
+    yes | sudo apt-get install nginx
 
     echo "Installing latest version of node"
-    sudo apt-get install build-essential
     curl -L http://git.io/n-install | bash
-    n latest
+    n 4.2.2
 
-    echo "Installing build tool chain"
+    echo "Installing node dependencies"
     npm install -g bower
     npm install -g forever
-    sudo apt-get install nginx
     npm install -g node-gyp
 
     echo "deleting existing yodel app"
@@ -130,12 +138,6 @@ ssh -i ${1} ${HOSTNAME} <<ENDSSH
     rm -rf ${FOLDER}
     mkdir -p ./yodel-persistent/logs
 ENDSSH
-
-notifySlackAndConsole "Tarring source folders"
-tar czf ../app.tar.gz bower.json package.json build config public templates README.md .bowerrc
-
-notifySlackAndConsole "SCPing app tarball"
-scp -i ${CREDENTIALS} ../app.tar.gz  ${HOSTNAME}:${DIR}
 
 notifySlackAndConsole "ssh-ing to remote host to install and start yodel"
 ssh -i ${CREDENTIALS} ${HOSTNAME} <<ENDSSH
