@@ -27,6 +27,7 @@ export class LoginController {
       return deferred.resolve(false);
     }
 
+    logger.info('comparing password ' + password + ' to hash ' + user.password);
     bcrypt.compare(password, user.password, function (err, res) {
       if (err) {
         deferred.reject(err);
@@ -60,6 +61,7 @@ export class LoginController {
    *     }
    */
   _login(jwt) {
+    var _this = this;
     return function*() {
       var loginAttempt, token, user;
       // basic login validation
@@ -72,9 +74,9 @@ export class LoginController {
       }
 
       loginAttempt = this.request.body;
-      user = db.getUser(loginAttempt.username);
+      user = yield db.getUser(loginAttempt.username);
       logger.info('checking password for user', user);
-      var isValidPassword = yield this._isInvalidPassword(user, loginAttempt.password);
+      var isValidPassword = yield _this._isInvalidPassword(user, loginAttempt.password);
       if (!isValidPassword) {
         this.status = 401;
         this.body = 'Unauthorized';
@@ -82,7 +84,7 @@ export class LoginController {
       }
 
       try {
-        token = jwt.sign(this._constructProfile(user), config.jwtAuthSecret, { expiresInMinutes: config.jwtTtl });
+        token = jwt.sign(_this._constructProfile(user), config.jwtAuthSecret, { expiresInMinutes: config.jwtTtl });
       } catch (e) {
         logger.error(e);
       }
