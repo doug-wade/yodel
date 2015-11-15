@@ -1,26 +1,26 @@
 #!/usr/bin/env bash
 
-while [[ $# > 1 ]]
+while [[ $# > 0 ]]
 do
 key="$1"
 
 case $key in
-    -h|--help)
-    HELP=true
-    ;;
-    -e|--environment)
-    ENVIRONMENT="$2"
-    shift
-    ;;
-    -c|--credentials)
-    CREDENTIALS="$2"
-    shift
-    ;;
+  -h|--help)
+  HELP=true
+  ;;
+  -e|--environment)
+  ENVIRONMENT="$2"
+  shift
+  ;;
+  -c|--credentials)
+  CREDENTIALS="$2"
+  shift
+  ;;
 esac
 shift
 done
 
-if [ "$HELP" == true ]; then
+if [ "$HELP" = true ]; then
     echo "Run this file with the absolute path to the yodel ec2 pem file. Ex: ./scripts/deploy.sh --credentials /path/to/pem/file/pemFile.pem --environment prod"
     exit 0
 fi
@@ -52,6 +52,7 @@ FOLDER=yodel
 function notifySlackAndConsole {
   echo $1
   curl -X POST --data-urlencode 'payload={"text": "'"$1"'", "channel": "#ops", "username": "'"$DEPLOY_BOT_NAME"'", "icon_emoji": "'"$DEPLOY_BOT_EMOJI"'"}' https://hooks.slack.com/services/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
+  printf "\n"
 }
 
 notifySlackAndConsole "Deploying environment $ENVIRONMENT"
@@ -73,7 +74,7 @@ if [ "$ENVIRONMENT" = "jenkins" ]; then
     sudo apt-get install jenkins
 
     echo 'Installing nginx'
-    sudo aptitude -y install nginx
+    sudo apt-get install nginx
 
     echo 'Configuring nginx'
     mkdir -p /etc/nginx/sites-enabled/
@@ -93,10 +94,11 @@ command -v node >/dev/null 2>&1 || n latest
 command -v bower >/dev/null 2>&1 || npm install -g bower
 command -v gulp >/dev/null 2>&1 || npm install -g gulp
 
-CURRENT_GIT_SHA=$(git rev-parse HEAD)
+CURRENT_GIT_SHA=`git rev-parse HEAD`
 PAST_GIT_SHA=`cat ~/workplace/yodel-persistent/deploy-log`
-notifySlackAndConsole `git log ${PAST_GIT_SHA}..${CURRENT_GIT_SHA}`
-echo CURRENT_GIT_SHA > ~/workplace/yodel-persistent/deploy-log
+GIT_LOG=`git log ${PAST_GIT_SHA}..${CURRENT_GIT_SHA} | cat -`
+notifySlackAndConsole "Deploying the following commits: $GIT_LOG"
+echo "$CURRENT_GIT_SHA" > ~/workplace/yodel-persistent/deploy-log
 
 notifySlackAndConsole "compiling local instance for deployment"
 gulp clean-all
