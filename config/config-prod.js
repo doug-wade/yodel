@@ -26,7 +26,28 @@ var config = {
 
     noreply: 'no-reply@yodel.to',
 
-    universalBetaToken: 'PleaseDontGiveThisToRealUsers'
+    universalBetaToken: 'PleaseDontGiveThisToRealUsers',
+
+    schema: {
+      contact: {
+        tablename: 'Contact'
+      },
+      discipline: {
+        tablename: 'Discipline'
+      },
+      event: {
+        tablename: 'Event'
+      },
+      portfolio: {
+        tablename: 'Portfolio'
+      },
+      project: {
+        tablename: 'Project'
+      },
+      user: {
+        tablename: 'User'
+      }
+    }
 };
 
 module.exports = config;

@@ -1,6 +1,6 @@
 var logger = require('../logger.js');
 var uuid   = require('node-uuid');
-var schema = require('../../config/schema');
+var schema = require('../config').schema;
 var q = require('q');
 var {existsAndIncludes} = require('../util/predicates');
 
