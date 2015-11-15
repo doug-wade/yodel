@@ -1,33 +1,97 @@
 #!/usr/bin/env bash
 
-# This is a very light deployment script, a fully featured one should be written in the future
-if [ "$1" == "-h" ]; then
-    echo "Run this file with the absolute path to the yodel ec2 pem file. Ex: ./deploy.sh /path/to/pem/file/pemFile.pem"
+while [[ $# > 1 ]]
+do
+key="$1"
+
+case $key in
+    -h|--help)
+    HELP=true
+    ;;
+    -e|--environment)
+    ENVIRONMENT="$2"
+    shift
+    ;;
+    -c|--credentials)
+    CREDENTIALS="$2"
+    shift
+    ;;
+esac
+shift
+done
+
+if [ "$HELP" == true ]; then
+    echo "Run this file with the absolute path to the yodel ec2 pem file. Ex: ./scripts/deploy.sh --credentials /path/to/pem/file/pemFile.pem --environment prod"
     exit 0
 fi
 
-if [ $# -eq 0 ]; then
-    echo "No arguments provided. Please provide a path to a pem file. e.g. './deploy.sh /path/to/pem/file/pemFile.pem'"
-    exit 1
+if [ -z "$CREDENTIALS" ]; then
+  echo "No credentials provided. Please provide a path to a pem file. Ex: './deploy.sh --credentials /path/to/pem/file/pemFile.pem'"
+  exit 1
 fi
 
-command -v node >/dev/null 2>&1 || n latest
-command -v bower >/dev/null 2>&1 || npm install -g bower
-command -v gulp >/dev/null 2>&1 || npm install -g gulp
-
-HOSTNAME=ubuntu@52.26.65.193
-DIR=/home/ubuntu
-FOLDER=yodel
+if [ "$ENVIRONMENT" = "prod" ]; then
+  HOSTNAME=ubuntu@52.26.65.193
+elif [ "$ENVIRONMENT" = "staging" ]; then
+  HOSTNAME=ubuntu@52.26.80.101
+elif [ "$ENVIRONMENT" = "jenkins" ]; then
+  HOSTNAME=ubuntu@52.11.193.118
+else
+  echo "Must provide an environment, one of: jenkins, staging, prod. Ex.: './scripts/deploy.sh --environment staging'"
+  exit 1
+fi
 
 DEPLOY_BOT_NAME="deploy-bot"
 DEPLOY_BOT_EMOJI=":soccer:"
 # TODO: Don't check in credentials; read this from file
 SLACK_API_TOKEN="xoxp-11333240867-11333423428-13379590359-8b9d72ad81"
 
+DIR=/home/ubuntu
+FOLDER=yodel
+
 function notifySlackAndConsole {
   echo $1
   curl -X POST --data-urlencode 'payload={"text": "'"$1"'", "channel": "#ops", "username": "'"$DEPLOY_BOT_NAME"'", "icon_emoji": "'"$DEPLOY_BOT_EMOJI"'"}' https://hooks.slack.com/services/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
 }
+
+notifySlackAndConsole "Deploying environment $ENVIRONMENT"
+
+####################################################
+# Deploy the jenkins continuous integration server #
+####################################################
+
+if [ "$ENVIRONMENT" = "jenkins" ]; then
+  notifySlackAndConsole "scping nginx config"
+  scp -r -i ${CREDENTIALS} ./config/jenkins-nginx.conf ${HOSTNAME}:${DIR}
+
+  # Taken from https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Ubuntu
+  ssh -i ${CREDENTIALS} ${HOSTNAME} "
+    echo 'Installing jenkins'
+    wget -q -O - https://jenkins-ci.org/debian/jenkins-ci.org.key | sudo apt-key add -
+    sudo sh -c 'echo deb http://pkg.jenkins-ci.org/debian binary/ > /etc/apt/sources.list.d/jenkins.list'
+    sudo apt-get update
+    sudo apt-get install jenkins
+
+    echo 'Installing nginx'
+    sudo aptitude -y install nginx
+
+    echo 'Configuring nginx'
+    mkdir -p /etc/nginx/sites-enabled/
+    sudo mv ${DIR}/jenkins-nginx.conf /etc/nginx/sites-available/jenkins
+    sudo ln -s /etc/nginx/sites-available/jenkins /etc/nginx/sites-enabled/
+    sudo service nginx restart
+  "
+
+  exit 0
+fi
+
+######################
+# Deploy the web app #
+######################
+
+command -v node >/dev/null 2>&1 || n latest
+command -v bower >/dev/null 2>&1 || npm install -g bower
+command -v gulp >/dev/null 2>&1 || npm install -g gulp
 
 CURRENT_GIT_SHA=$(git rev-parse HEAD)
 PAST_GIT_SHA=`cat ~/workplace/yodel-persistent/deploy-log`
@@ -39,26 +103,25 @@ gulp clean-all
 gulp compile-prod
 
 notifySlackAndConsole "copying aws credentials"
-scp -r -i {$1} ~/.aws ${HOSTNAME}:${DIR}
+scp -r -i ${CREDENTIALS} ~/.aws ${HOSTNAME}:${DIR}
 
 # TODO: Run the tests and fail the deploy if they don't pass.
 notifySlackAndConsole "ssh-ing to remote host to remove existing yodel app"
 
 ssh -i ${1} ${HOSTNAME} <<ENDSSH
-    echo "Installing nodejs"
-    sudo apt-get install nodejs
+    echo "Installing git"
+    sudo apt-get install git # reqired by bower and n-install
 
     echo "Installing latest version of node"
-    sudo npm install -g n
-    sudo n latest
+    sudo apt-get install build-essential
+    curl -L http://git.io/n-install | bash
+    n latest
 
     echo "Installing build tool chain"
-    sudo apt-get install git # reqired by bower
-    sudo npm install -g bower
-    sudo npm install -g forever
-    sudo apt-get install build-essential # TODO: this isn't installed correctly
+    npm install -g bower
+    npm install -g forever
     sudo apt-get install nginx
-    sudo npm install -g node-gyp
+    npm install -g node-gyp
 
     echo "deleting existing yodel app"
     cd ${DIR}
@@ -70,10 +133,10 @@ notifySlackAndConsole "Tarring source folders"
 tar czf ../app.tar.gz bower.json package.json build config public templates README.md .bowerrc
 
 notifySlackAndConsole "SCPing app tarball"
-scp -i ${1} ../app.tar.gz  ${HOSTNAME}:${DIR}
+scp -i ${CREDENTIALS} ../app.tar.gz  ${HOSTNAME}:${DIR}
 
 notifySlackAndConsole "ssh-ing to remote host to install and start yodel"
-ssh -i ${1} ${HOSTNAME} <<ENDSSH
+ssh -i ${CREDENTIALS} ${HOSTNAME} <<ENDSSH
     echo "sshed into remote host"
     cd ${DIR}
     mkdir ${FOLDER}
