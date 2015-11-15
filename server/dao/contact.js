@@ -1,12 +1,14 @@
 var logger = require('../logger.js');
 var uuid   = require('node-uuid');
 var q = require('q');
-var schema = require('../../config/schema');
+var schema = require('../config').schema;
 
 module.exports = function(db) {
   return {
     createContact: function(contact) {
       var deferred = q.defer();
+
+      logger.info('creating contact ', contact);
 
       contact.contactId = uuid.v4();
       contact.created = new Date().getTime();

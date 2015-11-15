@@ -3,7 +3,7 @@ var argv = require('minimist')(process.argv.slice(2));
 var aws = require('aws-sdk');
 var config = require('../build/config');
 var logger = require('../build/logger');
-var schema = require('../config/schema');
+var schema = config.schema;
 
 if (argv.h || argv.help) {
   [
@@ -129,6 +129,12 @@ if (argv.d || argv.drop) {
     };
 
     db.deleteTable(params, deleteTableCallback);
+  });
+}
+
+if (argv.s || argv.staging) {
+  tables.forEach((table) => {
+    table.TableName = table.TableName + '-Test';
   });
 }
 
