@@ -26,7 +26,7 @@ module.exports = function(db) {
           logger.error('Unable to persist user ' + username + ' with disciplines ' + disciplinesToAdd + ' with error ', err);
           deferred.reject(new Error(err));
         } else {
-          logger.info('Persisted disciplinesn ' + disciplinesToAdd + ' for user ', username);
+          logger.info('Persisted disciplines ' + disciplinesToAdd + ' for user ', username);
           deferred.resolve(data);
         }
       });

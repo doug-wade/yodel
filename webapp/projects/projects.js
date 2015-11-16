@@ -14,7 +14,9 @@ function ProjectsCtrl($scope, $http, $stateParams, $q, $log) {
     deferred = $q.defer();
     username = $stateParams.username;
     // Strip the token-input specific data structure
-    project.collaborators = project.collaborators.map((elem) => elem.text);
+    if (project.collaborators && project.collaborators.length > 0) {
+      project.collaborators = project.collaborators.map((elem) => elem.text);
+    }
 
     $http.post('/user/' + username + '/projects', project).then(deferred.resolve, deferred.reject);
 

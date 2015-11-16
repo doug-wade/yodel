@@ -6,10 +6,11 @@ var {existsAndIncludes} = require('../util/predicates');
 
 module.exports = function(db) {
   return {
-    addProject: function(project) {
+    addProject: function(userId, project) {
       logger.info('Inserting project into db', project);
       project.projectId = uuid.v4();
       project.created = new Date().getTime();
+      project.userId = userId;
 
       var params = {
         TableName: schema.project.tablename,
@@ -54,13 +55,15 @@ module.exports = function(db) {
       var deferred = q.defer();
       var params = {
         TableName: schema.project.tablename,
-        KeyConditionExpression: 'username = :username',
-        ExpressionAttributeValues: {
-            'username': username
+        ScanFilter: {
+          userId: {
+            ComparisonOperator: 'CONTAINS',
+            AttributeValueList: [{ S: username }]
+          }
         }
       };
 
-      db.query(params, function(err, data) {
+      db.scan(params, function(err, data) {
         if (err) {
             logger.error('Unable to query projects for user ' + username + ' with error ', err);
             deferred.reject(new Error(err));
