@@ -51,7 +51,7 @@ FOLDER=yodel
 
 function notifySlackAndConsole {
   echo $1
-  # curl -X POST --data-urlencode 'payload={"text": "'"$1"'", "channel": "#ops", "username": "'"$DEPLOY_BOT_NAME"'", "icon_emoji": "'"$DEPLOY_BOT_EMOJI"'"}' https://hooks.slack.com/services/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
+  curl -X POST --data-urlencode 'payload={"text": "'"$1"'", "channel": "#ops", "username": "'"$DEPLOY_BOT_NAME"'", "icon_emoji": "'"$DEPLOY_BOT_EMOJI"'"}' https://hooks.slack.com/services/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
   printf "\n"
 }
 
