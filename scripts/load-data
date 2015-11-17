@@ -2,31 +2,47 @@
 var argv = require('minimist')(process.argv.slice(2));
 var aws = require('aws-sdk');
 var Bottleneck = require('bottleneck');
-var config = require('../build/config');
 var db = require('../build/util/db');
 var fs = require('fs');
 var logger = require('../build/logger');
 var q = require('q');
 var testData = require('../config/test-data');
 
-if (argv.h || argv.help) {
+if (argv.h) {
   [
-    'This script load test data in a DynamoDB instance.  We recommend you pipe the logs through bunyan using the short format.',
+    'This script loads data into a DynamoDB instance.  You must provide an environment (dev, staging, or prod),',
+    'and the kind of data to load (events, disciplines, or unit testing data).',
+    'We recommend you pipe the logs through bunyan using the short format.',
+    'Example: ',
+    '    /scripts/load-data -v ./ops/events.json -d ./ops/disciplines.json -e staging | bunyan -o short',
     'Note: the script is rate-limited, so it may take a bit.',
     'Options:',
-    '  -h -help Show this help message.',
-    '  -t -test Load test data',
-    '  -e -events Load events from file',
-    '  -d -disciplines Load disciplines from file',
-    '  -endpoint AWS enpoint',
-    '  -r -region AWS region'
+    '  -h Show this help message.',
+    '  -e The environment to load the data into',
+    '  -t Load test data',
+    '  -v Load events from file',
+    '  -d Load disciplines from file',
+    '  -p (optional) AWS endpoint',
+    '  -r (optional) AWS region'
   ].forEach((line) => console.log(line));
   process.exit(0);
 }
 
+console.log(argv);
+
+var config;
+if (argv.e === 'prod') {
+  config = require('../config/config-prod');
+} else if (argv.e === 'staging' || argv.e === 'dev' ) {
+  config = require('../config/config-dev');
+} else {
+  console.error('Environment is required and must be one of: dev, staging, prod');
+  process.exit(1);
+}
+
 aws.config.update({
-  region: argv.r || argv.region || config.aws.region,
-  endpoint: argv.endpoint || config.aws.endpoint
+  region: argv.r || config.aws.region,
+  endpoint: argv.p || config.aws.endpoint
 });
 
 Bottleneck.Promise = q;
@@ -63,16 +79,16 @@ if (argv.t || argv.test) {
   // });
 }
 
-if (argv.d || argv.disciplines) {
-  var disciplines = JSON.parse(fs.readFileSync(argv.disciplines || argv.d));
+if (argv.d) {
+  var disciplines = JSON.parse(fs.readFileSync(argv.d));
   disciplines.forEach(function(discipline) {
     logger.info('Submitting discipline to rate limiter to add to the db', discipline);
     limiter.schedule(db.addDiscipline, discipline);
   });
 }
 
-if (argv.e || argv.events) {
-  var events = JSON.parse(fs.readFileSync(argv.events || argv.e));
+if (argv.v) {
+  var events = JSON.parse(fs.readFileSync(argv.v));
   events.forEach((eventToAdd) => {
     logger.info('Submitting event to rate limiter to add to the db', eventToAdd);
     limiter.schedule(db.addEvent, eventToAdd);
