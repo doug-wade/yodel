@@ -1,4 +1,5 @@
 var db = require('../util/db.js');
+var logger = require('../logger.js');
 
 /**
  * Creates a controller for handling users.
@@ -16,7 +17,7 @@ export class UserDetailsController {
     return function*() {
 
       this.body = [];
-      var userDetails = db.getUser(this.params.username);
+      var userDetails = yield db.getUser(this.params.username);
 
       if (userDetails) {
         this.body = userDetails;
@@ -29,10 +30,13 @@ export class UserDetailsController {
    */
   _getAllUsers() {
     return function* () {
-      var users = db.getAllUsers();
+      var users = yield db.getAllUsers();
 
-      // Strip sensitive information (db index info, plain-text password :smh:, &c) before returning users.
-      this.body = users.forEach((user) => { return { 'username': user.username, 'email': user.email }; });
+      // Strip sensitive information (db index info, password hash, &c) before returning users.
+      this.body = users.map((user) => {
+        logger.info(user);
+        return { 'username': user.username, 'email': user.email };
+      });
     };
   }
 
