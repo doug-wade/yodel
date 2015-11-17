@@ -115,22 +115,29 @@ scp -i ${CREDENTIALS} ../app.tar.gz  ${HOSTNAME}:${DIR}
 scp -r -i ${CREDENTIALS} ~/.aws ${HOSTNAME}:${DIR}
 
 # TODO: Run the tests and fail the deploy if they don't pass.
+# TODO: Check to see if deps are installed, and install them if they are not.
 notifySlackAndConsole "ssh-ing to remote host to install dependencies and remove existing yodel app"
 ssh -i ${CREDENTIALS} ${HOSTNAME} <<ENDSSH
+    PATH=/home/ubuntu/n/bin/:$PATH
+
     echo "Updating Ubuntu packages and installing required packages"
     yes | sudo apt-get update
     yes | sudo apt-get upgrade
-    yes | sudo apt-get install build-essential # required by node-gyp
-    yes | sudo apt-get install git # reqired by bower and n-install
-    yes | sudo apt-get install nginx
+
+    sudo apt-get install build-essential # required by node-gyp
+    sudo apt-get install nginx
+
+    command -v git >/dev/null 2>&1 || sudo apt-get install git # reqired by bower and n-install
 
     echo "Installing latest version of node"
-    curl -L http://git.io/n-install | bash
-    n 4.2.2
+    # http://stackoverflow.com/questions/592620/check-if-a-program-exists-from-a-bash-script
+    command -v n >/dev/null 2>&1 || curl -L http://git.io/n-install | bash
+    sudo /home/ubuntu/n/bin/n 4.2.2 # it's not on su's path
 
     echo "Installing node dependencies"
-    npm install -g bower
-    npm install -g forever
+    command -v bower >/dev/null 2>&1 || npm install -g bower
+
+    command -v pm2 >/dev/null 2>&1 || npm install -g pm2
     npm install -g node-gyp
 
     echo "deleting existing yodel app"
@@ -141,6 +148,8 @@ ENDSSH
 
 notifySlackAndConsole "ssh-ing to remote host to install and start yodel"
 ssh -i ${CREDENTIALS} ${HOSTNAME} <<ENDSSH
+    PATH=/home/ubuntu/n/bin/:$PATH
+
     echo "sshed into remote host"
     cd ${DIR}
     mkdir ${FOLDER}
@@ -159,7 +168,8 @@ ssh -i ${CREDENTIALS} ${HOSTNAME} <<ENDSSH
     service nginx start
 
     echo "Starting server"
-    forever restart ./build/server.js
+    pm2 stop yodel
+    pm2 start ./build/server.js -i max --name "yodel"
 ENDSSH
 
 notifySlackAndConsole "Deployed Yodel!"
