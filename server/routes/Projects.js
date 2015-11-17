@@ -23,12 +23,11 @@ export class ProjectsController {
       username = this.params.username;
 
       project = this.request.body;
-      project.username = this.params.username;
       project.id = uuid.v4();
 
       logger.info('User ' + username + ' is creating project ' + JSON.stringify(project));
 
-      db.addProject(project);
+      db.addProject(username, project);
       this.body = project;
     };
   }
@@ -65,7 +64,7 @@ export class ProjectsController {
       username = this.params.username;
 
       logger.info('Listing projects for user: ' + username);
-      this.body = db.getProjectsForUser(username);
+      this.body = yield db.getProjectsForUser(username);
     };
   }
 

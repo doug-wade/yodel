@@ -6,10 +6,11 @@ var {existsAndIncludes} = require('../util/predicates');
 
 module.exports = function(db) {
   return {
-    addProject: function(project) {
+    addProject: function(userId, project) {
       logger.info('Inserting project into db', project);
       project.projectId = uuid.v4();
       project.created = new Date().getTime();
+      project.userId = userId;
 
       var params = {
         TableName: schema.project.tablename,
@@ -52,11 +53,14 @@ module.exports = function(db) {
 
     getProjectsForUser: function(username) {
       var deferred = q.defer();
+
+      logger.info('getting projects for user ' + username);
+
       var params = {
         TableName: schema.project.tablename,
-        KeyConditionExpression: 'username = :username',
+        KeyConditionExpression: 'userId = :u',
         ExpressionAttributeValues: {
-            'username': username
+            ':u': username
         }
       };
 
