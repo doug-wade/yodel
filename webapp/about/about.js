@@ -1,24 +1,24 @@
-function AboutCtrl($scope, $window, $log) {
+function AboutCtrl($scope, $window) {
   var teamPhotos = [
     {
       teamMemberName: 'MICHAEL',
       teamMemberTitle: 'Chief Executive Officer',
-      photoUrl: '/images/michael-dreger-business-cat.png'
+      photoUrl: 'https://s3-us-west-2.amazonaws.com/yodel.is/images/michael-dreger-business-cat.png'
     },
     {
       teamMemberName: 'SPENCER',
       teamMemberTitle: 'Vice President',
-      photoUrl: '/images/spencer-funk-business-chicken.png'
+      photoUrl: 'https://s3-us-west-2.amazonaws.com/yodel.is/images/spencer-funk-business-chicken.png'
     },
     {
       teamMemberName: 'JOSHUA',
       teamMemberTitle: 'Chief Creative Officer',
-      photoUrl: '/images/joshua-taylor-tuxedo-cat.png'
+      photoUrl: 'https://s3-us-west-2.amazonaws.com/yodel.is/images/joshua-taylor-tuxedo-cat.png'
     },
     {
       teamMemberName: 'DOUG',
       teamMemberTitle: 'Chief Technical Officer',
-      photoUrl: '/images/doug-wade-lizard-flipped.png'
+      photoUrl: 'https://s3-us-west-2.amazonaws.com/yodel.is/images/doug-wade-lizard-flipped.png'
     }
   ];
 
@@ -32,7 +32,7 @@ function AboutCtrl($scope, $window, $log) {
     { text: 'Can I register?', answer: "Maybe! We've launched a limited private beta. Fill out the form below to request a beta key." }
   ];
 
-  function getTeamPhotoRows(windowWidth) {
+  function getTeamPhotoRows() {
     var numPerRow = 2;
     var rows = [];
     var row = [];
@@ -55,7 +55,7 @@ function AboutCtrl($scope, $window, $log) {
     }
   }
 
-  $scope.rows = getTeamPhotoRows($window.innerWidth);
+  $scope.rows = getTeamPhotoRows();
   $scope.questionColumns = getQuestionColumns($window.innerWidth);
 }
 
