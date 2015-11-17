@@ -64,7 +64,7 @@ export class ProjectsController {
       username = this.params.username;
 
       logger.info('Listing projects for user: ' + username);
-      this.body = db.getProjectsForUser(username);
+      this.body = yield db.getProjectsForUser(username);
     };
   }
 

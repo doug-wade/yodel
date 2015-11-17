@@ -53,17 +53,18 @@ module.exports = function(db) {
 
     getProjectsForUser: function(username) {
       var deferred = q.defer();
+
+      logger.info('getting projects for user ' + username);
+
       var params = {
         TableName: schema.project.tablename,
-        ScanFilter: {
-          userId: {
-            ComparisonOperator: 'CONTAINS',
-            AttributeValueList: [{ S: username }]
-          }
+        KeyConditionExpression: 'userId = :u',
+        ExpressionAttributeValues: {
+            ':u': username
         }
       };
 
-      db.scan(params, function(err, data) {
+      db.query(params, function(err, data) {
         if (err) {
             logger.error('Unable to query projects for user ' + username + ' with error ', err);
             deferred.reject(new Error(err));
