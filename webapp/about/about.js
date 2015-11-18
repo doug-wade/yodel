@@ -1,23 +1,51 @@
 function AboutCtrl($scope, $window) {
+  var advisoryBoardPhotos = [
+    {
+      memberName: 'Jackie Short',
+      memberTitle: 'Marketing Advisor',
+      photoUrl: 'https://s3-us-west-2.amazonaws.com/yodel.is/images/Advisory+board+portraits/Jackie+Short+Blue+Heron.jpg'
+    },
+    {
+      memberName: 'Erika Smith',
+      memberTitle: 'Business & Entrepenurial Ventures',
+      photoUrl: 'https://s3-us-west-2.amazonaws.com/yodel.is/images/Advisory+board+portraits/Erika+Smith+White+Owl.jpg'
+    },
+    {
+      memberName: 'Liisa Spink',
+      memberTitle: 'Art & Business Management',
+      photoUrl: 'https://s3-us-west-2.amazonaws.com/yodel.is/images/Advisory+board+portraits/Liisa+Spink+Screech+Owl.jpg'
+    },
+    // {
+    //   memberName: 'Susie Lee',
+    //   memberTitle: 'Startup Wunderkind',
+    //   photoUrl: 'https://s3-us-west-2.amazonaws.com/yodel.is/images/'
+    // },
+    {
+      memberName: 'Katjana Vadeboncoeur',
+      memberTitle: 'Arts & Business Proceedings',
+      photoUrl: 'https://s3-us-west-2.amazonaws.com/yodel.is/images/Advisory+board+portraits/Katjana+Vadeboncoeur+Red+Panda.jpg'
+    }
+  ];
+
   var teamPhotos = [
     {
-      teamMemberName: 'MICHAEL',
-      teamMemberTitle: 'Chief Executive Officer',
+      memberName: 'MICHAEL',
+      memberTitle: 'Chief Executive Officer',
       photoUrl: 'https://s3-us-west-2.amazonaws.com/yodel.is/images/michael-dreger-business-cat.png'
     },
     {
-      teamMemberName: 'SPENCER',
-      teamMemberTitle: 'Vice President',
+      memberName: 'SPENCER',
+      memberTitle: 'Vice President',
       photoUrl: 'https://s3-us-west-2.amazonaws.com/yodel.is/images/spencer-funk-business-chicken.png'
     },
     {
-      teamMemberName: 'JOSHUA',
-      teamMemberTitle: 'Chief Creative Officer',
+      memberName: 'JOSHUA',
+      memberTitle: 'Chief Creative Officer',
       photoUrl: 'https://s3-us-west-2.amazonaws.com/yodel.is/images/joshua-taylor-tuxedo-cat.png'
     },
     {
-      teamMemberName: 'DOUG',
-      teamMemberTitle: 'Chief Technical Officer',
+      memberName: 'DOUG',
+      memberTitle: 'Chief Technical Officer',
       photoUrl: 'https://s3-us-west-2.amazonaws.com/yodel.is/images/doug-wade-lizard-flipped.png'
     }
   ];
@@ -32,12 +60,13 @@ function AboutCtrl($scope, $window) {
     { text: 'Can I register?', answer: "Maybe! We've launched a limited private beta. Fill out the form below to request a beta key." }
   ];
 
-  function getTeamPhotoRows() {
+  function getPhotoRows(photos) {
     var numPerRow = 2;
     var rows = [];
     var row = [];
-    for (var i = 0; i < teamPhotos.length; i++) {
-      row.push(teamPhotos[i]);
+
+    for (var i = 0; i < photos.length; i++) {
+      row.push(photos[i]);
       if (row.length === numPerRow) {
         rows.push(row);
         row = [];
@@ -55,7 +84,8 @@ function AboutCtrl($scope, $window) {
     }
   }
 
-  $scope.rows = getTeamPhotoRows();
+  $scope.teamPhotoRows = getPhotoRows(teamPhotos);
+  $scope.advisoryBoardRows = getPhotoRows(advisoryBoardPhotos);
   $scope.questionColumns = getQuestionColumns($window.innerWidth);
 }
 
