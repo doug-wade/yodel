@@ -47,7 +47,6 @@
       <h3>WHAT IS YODEL, YOU ASK?</h3>
       <hr>
       <h4><em>Yodel is a system of creative networking.</em></h4>
-      <img src="https://s3-us-west-2.amazonaws.com/yodel.is/images/yodel-logo.png">
       <div class="row">
         <p>It bridges the gaps between art, business, & community by providing a Comprehensive Artistic Network. Yodel's tripartite system connects Creatives, Patrons, & Organizations using one dynamic platform. This platforms enhances creative collaboration, event attendance, & show booking—bypassing the barriers preventing engagement. Never has it been so easy to cover all your creative bases in one place. Yodel strives to reinspire the creative spirit, reconnect to community, & revolutionize the logistics of creative interaction. With Yodel, you CAN.</p>
       </div>
@@ -69,12 +68,25 @@
     <div class="container text-center">
       <h3>MEET THE TEAM</h3>
       <hr>
-      <div ng-repeat="row in rows">
+      <div ng-repeat="row in teamPhotoRows">
         <div ng-repeat="teamPhoto in row" class="inline padding limit-width">
           <team-photo
-            team-member-title="teamPhoto.teamMemberTitle"
-            team-member-name="teamPhoto.teamMemberName"
+            team-member-title="teamPhoto.memberTitle"
+            team-member-name="teamPhoto.memberName"
             photo-url="teamPhoto.photoUrl">
+        </div>
+      </div>
+    </div>
+
+    <div class="container text-center">
+      <h3>DON'T FORGET OUR ASTOUNDING ADVISORY BOARD</h3>
+      <hr>
+      <div ng-repeat="row in advisoryBoardRows">
+        <div ng-repeat="advisoryBoardPhoto in row" class="inline padding limit-width">
+          <team-photo
+            team-member-title="advisoryBoardPhoto.memberTitle"
+            team-member-name="advisoryBoardPhoto.memberName"
+            photo-url="advisoryBoardPhoto.photoUrl">
         </div>
       </div>
     </div>
