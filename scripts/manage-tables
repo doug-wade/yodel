@@ -1,20 +1,34 @@
 #!/usr/bin/env node
 var argv = require('minimist')(process.argv.slice(2));
 var aws = require('aws-sdk');
-var config = require('../build/config');
 var logger = require('../build/logger');
-var schema = config.schema;
 
 if (argv.h || argv.help) {
   [
     'This script manages tables in a DynamoDB instance.  We recommend you pipe the logs through bunyan using the short format.',
     'Options:',
-    '  -h -help Show this help message.',
-    '  -d -drop Drop the tables (before creating them).',
-    '  -c -create Create the tables.'
+    '  -h Show this help message.',
+    '  -d Drop the tables (before creating them).',
+    '  -c Create the tables.',
+    '  -e environment The environment to run in.'
   ].forEach((line) => console.log(line));
   process.exit(0);
 }
+
+var config;
+if (argv.e === 'prod') {
+  if (argv.d) {
+    logger.error('Dropping the production tables?  Really?');
+    process.exit(1);
+  }
+  config = require('../config/config-prod');
+} else if (argv.e === 'staging' || argv.e === 'dev' ) {
+  config = require('../config/config-dev');
+} else {
+  logger.error('Environment is required and must be one of: dev, staging, prod');
+  process.exit(1);
+}
+var schema = config.schema;
 
 // TODO: Deal with the circular dependency
 var freeUnits = Math.floor(25 / 7);

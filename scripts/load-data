@@ -48,7 +48,7 @@ aws.config.update({
 Bottleneck.Promise = q;
 var limiter = new Bottleneck(2, 1000, 0);
 
-if (argv.t || argv.test) {
+if (argv.t) {
   logger.info('inserting test data.');
   testData.contacts.forEach(function(contact) {
     limiter.submit(db.createContact, contact);
