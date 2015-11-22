@@ -2,7 +2,6 @@ var logger = require('../logger.js');
 var uuid   = require('node-uuid');
 var schema = require('../config').schema;
 var q = require('q');
-var {existsAndIncludes} = require('../util/predicates');
 
 module.exports = function(db) {
   return {
@@ -88,11 +87,11 @@ module.exports = function(db) {
 
       db.delete(params, function(err, data) {
         if (err) {
-            logger.error('Unable to delete project ' + projectId + ' for user ' + username + ' with error ', err);
-            deferred.reject(new Error(err));
+          logger.error('Unable to delete project ' + projectId + ' for user ' + username + ' with error ', err);
+          deferred.reject(new Error(err));
         } else {
-            logger.info('Deleted project ', data);
-            deferred.resolve(data.Items);
+          logger.info('Deleted project ', data);
+          deferred.resolve(data.Items);
         }
       });
       return deferred.promise;
@@ -109,9 +108,8 @@ module.exports = function(db) {
          deferred.reject(new Error(err));
        } else {
          var results = data.Items.filter((project) =>
-           existsAndIncludes(project.subhead, query)
-           || existsAndIncludes(project.name, query)
-           || existsAndIncludes(project.description, query));
+           (project.subhead && project.subhead.includes(query)) || (project.name && project.name.includes(query))
+           || (project.description && project.description.includes(query)));
          deferred.resolve(results);
        }
       });

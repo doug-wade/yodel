@@ -2,7 +2,6 @@ var logger = require('../logger.js');
 var uuid   = require('node-uuid');
 var q = require('q');
 var schema = require('../config').schema;
-var {existsAndIncludes} = require('../util/predicates');
 
 module.exports = function(db) {
   return {
@@ -73,17 +72,17 @@ module.exports = function(db) {
       var params = { TableName: schema.user.tablename };
 
       db.scan(params, function(err, data) {
-       if (err) {
-         logger.error('Failed to get users with error ', err);
-         deferred.reject(new Error(err));
-       } else {
-         var results = data.Items.filter((user) => existsAndIncludes(user.username, query)
-           || existsAndIncludes(user.fullName, query)
-           || existsAndIncludes(user.artistType, query)
-           || existsAndIncludes(user.disciplines, query)
-           ).map((user) => { return { 'username': user.username, 'email': user.email }; });
-         deferred.resolve(results);
-       }
+        if (err) {
+          logger.error('Failed to get users with error ', err);
+          deferred.reject(new Error(err));
+        } else {
+          var results = data.Items.filter((user) =>
+            (user.username && user.username.includes(query)) || (user.fullName && user.fullName.includes(query)) ||
+            (user.artistType && user.artistType.includes(query))
+          ).map((user) => { return { 'username': user.username, 'email': user.email }; });
+
+          deferred.resolve(results);
+        }
       });
 
       return deferred.promise;
@@ -115,12 +114,13 @@ module.exports = function(db) {
         TableName: schema.user.tablename
       };
 
+      // doug.wade 21/11/2015 -- query, don't scan
       db.scan(params, function(err, data) {
         if (err) {
           logger.error('Failed to get user ' + query + ' from db with error', err);
           deferred.reject(new Error(err));
         } else {
-          var results = data.Items.filter((user) => { return existsAndIncludes(user.username, query) || existsAndIncludes(user.email, query); });
+          var results = data.Items.filter((user) => user.username === query || user.email === query);
           deferred.resolve(results[0]);
         }
       });
