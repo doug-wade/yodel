@@ -25,14 +25,17 @@ export class SearchController {
       var query = this.params.query;
       var results = [];
 
-      db.searchUsers(query).forEach((user) =>
+      var users = yield db.searchUsers(query);
+      var projects = yield db.searchProjects(query);
+
+      users.forEach((user) =>
         results.push({
           'type': 'user',
           'label': user.username,
           'matchedText': user.username,
           'matchedProperty': 'username' })
       );
-      db.searchProjects(query).forEach((project) =>
+      projects.forEach((project) =>
         results.push({
           type: 'project',
           label: project.name,
