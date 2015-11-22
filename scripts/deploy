@@ -95,10 +95,10 @@ command -v bower >/dev/null 2>&1 || npm install -g bower
 command -v gulp >/dev/null 2>&1 || npm install -g gulp
 
 CURRENT_GIT_SHA=`git rev-parse HEAD`
-PAST_GIT_SHA=`cat ~/workplace/yodel-persistent/deploy-log`
+PAST_GIT_SHA=`cat ~/workplace/yodel-persistent/deploy-log-$ENVIRONMENT`
 GIT_LOG=`git log ${PAST_GIT_SHA}..${CURRENT_GIT_SHA} | cat -`
 notifySlackAndConsole "Deploying the following commits: $GIT_LOG"
-echo "$CURRENT_GIT_SHA" > ~/workplace/yodel-persistent/deploy-log
+echo "$CURRENT_GIT_SHA" > "~/workplace/yodel-persistent/deploy-log-$ENVIRONMENT"
 
 notifySlackAndConsole "compiling local instance for deployment and tarring"
 gulp clean-all
