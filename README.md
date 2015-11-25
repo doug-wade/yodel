@@ -5,18 +5,15 @@ You must install:
 * the most recent version of [node.js](https://nodejs.org)
 * [gulp](http://gulpjs.com) (npm install -g gulp gulp-cli)
 * [bower](bower.io) (npm install -g bower)
-* DynamoDB local.  [Download it](http://dynamodb-local.s3-website-us-west-2.amazonaws.com/dynamodb_local_latest.zip) and extract it somewhere (I use ~/lib/dynamodb).  The database needs to listen on port 3456:
-
-    java -Djava.library.path=./DynamoDBLocal_lib -jar ~/lib/dynamodb/DynamoDBLocal.jar -sharedDb -port 3456
 
 To keep up with the most recent version of node, you should install n, our recommended node version manager:
 
     sudo npm install -g n
     sudo n latest
 
-If you want to perform a release, you'll need to perform release testing, so you'll definitely need n, and you may also want to install forever, which is what we use to run the node process in prod:
+If you want to perform a release, you'll need to perform release testing, so you'll definitely need n, and you may also want to install pm2, which is what we use to run the node process in prod:
 
-    npm install -g forever
+    npm install -g pm2
 
 
 If you want to continuously run the tests while developing, you may also want:
@@ -28,25 +25,25 @@ If you want to generate the docs, use the gulp task:
 
     gulp docs
 
-The server and the logs expect a sibling directory, yodel-persitent, to exist and contain a child directory name logs (to prevent the logs, db &c from being deleted during deployments), so you may need to create one.
+The server and the logs expect a sibling directory, yodel-persistent, to exist and contain a child directory named logs (to prevent the logs from being deleted during deployments), so you may need to create one.
 
     mkdir -p ./yodel-persistent/logs
 
 # Starting the server
+
     npm install
     gulp
 
 then navigate to localhost:3000 in your favorite browser.  If you want to follow the logs, you'll likely want to format them from their current json format into a more human-readable format.  To do that, use the [Bunyan](https://www.npmjs.com/package/bunyan) cli:
+
     npm install -g bunyan
     gulp | bunyan
 
 # Running the tests
 
-To run the unit tests, you'll need to install DynamoDB local.  [Download it](http://dynamodb-local.s3-website-us-west-2.amazonaws.com/dynamodb_local_latest.zip) and extract it somewhere (I use ~/bin/dynamodb).  Once you've started it, you'll want to create the tables and load the test data:
+To run the unit tests, you may need to reload the test data into staging.  [Download it](http://dynamodb-local.s3-website-us-west-2.amazonaws.com/dynamodb_local_latest.zip) and extract it somewhere (I use ~/bin/dynamodb).  Once you've started it, you'll want to create the tables and load the test data:
 
-    java -Djava.library.path=./DynamoDBLocal_lib -jar ~/bin/dynamodb/DynamoDBLocal.jar -sharedDb -port 3456
-    create-tables localhost:3456
-    load-test-data localhost:3456
+    load-test-data staging.yodel.is
 
 Then you'll also need to download the Selenium webdriver:
 
@@ -68,15 +65,15 @@ Note that to end the mocha and test tasks, you have to manually interrupt the se
 # Relase testing & Releasing
 Since our testing strategy is to test the second time we work on a component, there is still a fair bit of manual release testing that needs to be done.
 
-It's important to run a `sudo n latest` before conducting release testing, since the deploy script updates node to the most recent version.  The images problem is not entirely solved currently, so the deploy copies a magical folder called `images` at the root of the project into public, which is included in the deployment.  A release should be as simple as:
+It's important to run a `sudo n 4.2.2` before conducting release testing, since prod and staging are pinned on 4.2.2.  The images problem has some historical eccentricities, so the deploy still copies a magical folder called `images` at the root of the project into public, which is included in the deployment tarball.  A release should be as simple as:
 
-    sudo n latest
+    sudo n 4.2.2
     gulp clean
     gulp compile-prod
-    forever start ./build/server.js
+    pm2 start ./build/server.js
     # Manual testing goes here
-    forever stop ./build/server.js
-    ./deploy.sh /path/to/creds.pem
+    pm2 stop ./build/server.js
+    ./scripts/deploy.sh -c /path/to/creds.pem -e prod
 
 # Contributing
 
