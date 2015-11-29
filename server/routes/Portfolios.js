@@ -43,7 +43,7 @@ export class PortfolioController {
       this.body = [];
       let portfolios = yield _this.portfolioDao.getUserPortfolios(this.params.username);
       if (portfolios) {
-        this.body.concat(portfolios);
+        this.body = portfolios;
       }
     };
   }
