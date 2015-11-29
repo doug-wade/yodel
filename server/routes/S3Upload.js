@@ -90,13 +90,16 @@ export class S3UploadController {
    *     RETURNS { 'policy': x, 'signature': y, 'key': z }
    */
   _getS3UploadPolicy() {
+    var _this = this;
+
     return function*() {
       var result = {};
-      var creds = yield this._getKeyFromCredentials();
+      var creds = yield _this._getKeyFromCredentials();
 
       result.key = creds.accessKeyId;
-      result.policy = yield this._getPolicy();
-      result.signature = yield this._getSignature(result.policy, creds.secretAccessKey);
+      result.policy = yield _this._getPolicy();
+      result.signature = yield _this._getSignature(result.policy, creds.secretAccessKey);
+      this.body = result;
     };
   }
 
@@ -106,6 +109,6 @@ export class S3UploadController {
    * @param {Object} router the koa router object.
    */
   register(router) {
-    router.post('/s3-upload-policy', this._getS3UploadPolicy());
+    router.get('/s3-upload-policy', this._getS3UploadPolicy());
   }
 }
