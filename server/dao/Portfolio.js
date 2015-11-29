@@ -1,6 +1,6 @@
 var logger = require('../logger.js');
 var uuid   = require('node-uuid');
-var schema = require('../../config/schema');
+var schema = require('../config').schema;
 
 import {ClientFactory} from '../util/ClientFactory';
 
@@ -24,13 +24,14 @@ export class PortfolioDao {
     return new Promise((resolve, reject) => {
       let params = {
         TableName: schema.portfolio.tablename,
-        Key: {
-          'username': username
+        KeyConditionExpression: 'userId = :u',
+        ExpressionAttributeValues: {
+            ':u': username
         }
       };
 
       let client = this.clientFactory.getDdbClient();
-      client.get(params, (err, data) => {
+      client.query(params, (err, data) => {
         if (err) {
             logger.error('Unable to get portfolios for user ' + username + ' with error ', err);
             reject(new Error(err));
@@ -53,7 +54,7 @@ export class PortfolioDao {
       let params = {
         TableName: schema.portfolio.tablename,
         Key: {
-          'username': username,
+          'userId': username,
           'portfolioId': portfolioId
         }
       };
@@ -80,26 +81,18 @@ export class PortfolioDao {
    * @param {String} imageUrl the S3 url for the image portfolio.
    * @returns {Promise} a promise for the portfolio persisted.
    */
-  createPortfolio(username, portfolioTitle, description, imageUrl, items) {
+  createPortfolio(username, portfolio) {
     return new Promise((resolve, reject) => {
-      let portfolioId = uuid.v4();
+      portfolio.portfolioId = uuid.v4();
+      portfolio.userId = username;
       let createdDate = new Date();
 
-      items = items || [];
-      items = items.map((item) => {
+      let items = portfolio.items || [];
+      portfolio.items = items.map((item) => {
         item.createdDate = createdDate;
         item.itemId = uuid.v4();
       });
 
-      let portfolio = {
-        createdDate: createdDate,
-        username: username,
-        title: portfolioTitle,
-        description: description,
-        imageUrl: imageUrl,
-        id: portfolioId,
-        items: items
-      };
       let params = {
         TableName: schema.portfolio.tablename,
         Item: portfolio
@@ -108,7 +101,7 @@ export class PortfolioDao {
       let client = this.clientFactory.getDdbClient();
       client.put(params, (err) => {
         if (err) {
-            logger.error('Unable to create portfolio ' + portfolioTitle + ' for user ' + username + ' with error ', err);
+            logger.error('Unable to create portfolio ' + JSON.stringify(portfolio) + ' for user ' + username + ' with error ', err);
             reject(new Error(err));
         } else {
             logger.info('Created portfolio for user ' + username, portfolio);
@@ -132,7 +125,7 @@ export class PortfolioDao {
       let getParams = {
         TableName: schema.portfolio.tablename,
         Key: {
-          'username': username,
+          'userId': username,
           'portfolioId': portfolioId
         }
       };
@@ -184,7 +177,7 @@ export class PortfolioDao {
       let getParams = {
         TableName: schema.portfolio.tablename,
         Key: {
-          'username': username,
+          'userId': username,
           'portfolioId': portfolioId
         }
       };

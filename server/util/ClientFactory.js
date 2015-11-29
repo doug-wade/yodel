@@ -1,5 +1,5 @@
-import {config} from '../config';
-import {aws} from 'aws-sdk';
+var config = require('../config');
+var aws = require('aws-sdk');
 
 /**
  * A client factory for getting aws clients.

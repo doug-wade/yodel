@@ -155,7 +155,7 @@ yodelApp.config([
 // Math.floor(Math.random() * (100000000))
 yodelApp.constant('FEATURE', {
   isEnabled(featureId) {
-    let enabled = [];
+    let enabled = [47415668];
     return enabled.indexOf(featureId) >= 0;
   },
   'ADD_PORTFOLIO': 47415668,

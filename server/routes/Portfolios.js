@@ -1,4 +1,5 @@
-var config = require('../config');
+let config = require('../config');
+let logger = require('../logger');
 import {PortfolioDao} from '../dao/Portfolio';
 
 /**
@@ -36,10 +37,11 @@ export class PortfolioController {
    *     }]
    */
   _getUserPortfolios() {
-    return function*() {
+    var _this = this;
 
+    return function*() {
       this.body = [];
-      let portfolios = yield this.portfolioDao.getUserPortfolios(this.params.username);
+      let portfolios = yield _this.portfolioDao.getUserPortfolios(this.params.username);
       if (portfolios) {
         this.body.concat(portfolios);
       }
@@ -63,9 +65,11 @@ export class PortfolioController {
    * @todo pagination
    */
  _getPortfolioItems() {
+    var _this = this;
+
     return function*() {
       this.body = [];
-      let portfolio = yield this.portfolioDao.getPortfolio(this.params.username, this.params.portfolio);
+      let portfolio = yield _this.portfolioDao.getPortfolio(this.params.username, this.params.portfolio);
       let portfolioItems = portfolio.items;
 
       if (portfolioItems) {
@@ -97,12 +101,14 @@ export class PortfolioController {
    *     }
    */
   _addItemToPortfolio() {
+    var _this = this;
+
     return function*() {
       let username = this.params.username;
       let portfolioId = this.params.portfolio;
       let item = this.request.body;
 
-      this.body = yield this.portfolioDao.addItemToPortfolio(username, portfolioId, item.imageUrl, item.caption);
+      this.body = yield _this.portfolioDao.addItemToPortfolio(username, portfolioId, item.imageUrl, item.caption);
     };
   }
 
@@ -114,8 +120,10 @@ export class PortfolioController {
    *     RETURN { status: 200, message: 'success' }
    */
   _deleteItemFromPortfolio() {
+    var _this = this;
+
     return function*() {
-      this.portfolioDao.deleteItemFromPortfolio(this.params.username, this.params.portfolio, this.params.itemId);
+      _this.portfolioDao.deleteItemFromPortfolio(this.params.username, this.params.portfolio, this.params.itemId);
       this.body = config.jsonSuccess;
     };
   }
@@ -157,11 +165,15 @@ export class PortfolioController {
    *     }
    */
   _createPortfolio() {
+    var _this = this;
+
     return function*() {
       let username = this.params.username;
       let portfolio = this.request.body;
 
-      this.body = yield this.portfolioDao.createPortfolio(username, portfolio.title, portfolio.description, portfolio.imageUrl, portfolio.items);
+      logger.info(portfolio);
+
+      this.body = yield _this.portfolioDao.createPortfolio(username, portfolio);
     };
   }
 
