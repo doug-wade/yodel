@@ -17,7 +17,7 @@
             <p class="double-padding-x">{{ user.description }}</p>
         </div>
 
-        <div>
+        <div ng-if="addPortfolio">
             <h4 class="content padding double-padding-x">Portfolios</h4>
             <div class="list">
                 <p class="double-padding-x" ng-if="!portfolios || portfolios.length === 0">You don't have any portfolios yet.</p>

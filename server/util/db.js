@@ -11,7 +11,6 @@ var contact = require('../dao/contact')(db);
 var event = require('../dao/event')(db);
 var discipline = require('../dao/discipline')(db);
 var project = require('../dao/project')(db);
-var portfolio = require('../dao/portfolio')(db);
 var user = require('../dao/user')(db);
 
 module.exports = {
@@ -29,13 +28,6 @@ module.exports = {
   // Events
   addEvent: event.addEvent,
   getEvents: event.getEvents,
-
-  // Portfolios
-  addItemToPortfolio: portfolio.addItemToPortfolio,
-  createPortfolio: portfolio.createPortfolio,
-  deleteItemFromPortfolio: portfolio.deleteItemFromPortfolio,
-  getPortfolioItems: portfolio.getPortfolioItems,
-  getUserPortfolios: portfolio.getUserPortfolios,
 
   // Projects
   addProject: project.addProject,

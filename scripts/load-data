@@ -73,10 +73,10 @@ if (argv.t) {
     limiter.submit(db.addEvent, testEvent);
   });
 
-  // testData.portfolios.forEach(function (portfolio) {
-  //   portfolio.userId = createdUsers[Math.floor(Math.random() * createdUsers.length)];
-  //   db.addPortfolio(portfolio);
-  // });
+  var portfolioDao = new PortfolioDao();
+  testData.portfolios.forEach((portfolio) => {
+    portfolioDao.createPortfolio(portfolio.username, portfolio.title, portfolio.description, portfolio.imageUrl, portfolio.items);
+  });
 }
 
 if (argv.d) {
