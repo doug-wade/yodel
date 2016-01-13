@@ -24,7 +24,8 @@ aws.config.region = config.aws.region;
 
 app.use(jwt({secret: config.jwtAuthSecret}).unless({ path: [
   /^\/$/,
-  /^\/favico\.ico/,
+  /^\/google39a401e34b9a7d21.html$/,
+  /^\/favicon\.ico/,
   /^\/css/,
   /^\/images/,
   /^\/js/,
