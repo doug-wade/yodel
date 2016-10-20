@@ -16,6 +16,10 @@ case $key in
   CREDENTIALS="$2"
   shift
   ;;
+  -s|--slack-api-token
+  SLACK_API_TOKEN="$2"
+  shift
+  ;;
 esac
 shift
 done
@@ -43,8 +47,6 @@ fi
 
 DEPLOY_BOT_NAME="deploy-bot"
 DEPLOY_BOT_EMOJI=":soccer:"
-# TODO: Don't check in credentials; read this from file
-SLACK_API_TOKEN="xoxp-11333240867-11333423428-13379590359-8b9d72ad81"
 
 DIR=/home/ubuntu
 FOLDER=yodel
